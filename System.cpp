@@ -5,6 +5,7 @@ namespace planeGameEngine {
 
 	System::System()
 	{
+		srand(NULL);
 		SDL_Init(SDL_INIT_EVERYTHING);
 		window = SDL_CreateWindow("Plane Game", 100, 100, XRESOLUTION, YRESOLUTION, 0);
 		renderer = SDL_CreateRenderer(window, -1, 0);
@@ -21,6 +22,12 @@ namespace planeGameEngine {
 		return font;
 	}
 
+	int System::generateRandomNumber(int maxRandomNr, int minRandomNr) {
+		int result = 0;
+		result = rand() % maxRandomNr + minRandomNr;
+		return result;
+	}
+
 	System::~System()
 	{
 		TTF_CloseFont(font);
@@ -30,5 +37,5 @@ namespace planeGameEngine {
 		SDL_Quit();
 	}
 
-	System system;
+	System sys;
 } //ns

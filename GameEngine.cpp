@@ -13,6 +13,7 @@ namespace planeGameEngine {
 	void GameEngine::run() {
 		bool running = true;
 		while (running) {
+			Uint32 nextTick = SDL_GetTicks() + TICKINTERVAL;
 			SDL_Event event;
 			while (SDL_PollEvent(&event)) {
 				switch (event.type) {
@@ -39,13 +40,17 @@ namespace planeGameEngine {
 			} //Inner while loop
 
 			//Render stuff for the current frame
-			SDL_RenderClear(system.getRenderer());
+			SDL_RenderClear(sys.getRenderer());
 			for (Sprite* s : sprites) {
 				s->draw();
+				s->tick();
 
 			}
-			SDL_RenderPresent(system.getRenderer());
-
+			SDL_RenderPresent(sys.getRenderer());
+			int delay = nextTick - SDL_GetTicks();
+			if (delay > 0) {
+				SDL_Delay(delay);
+			}
 		} //Outer while loop
 	}
 

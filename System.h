@@ -12,6 +12,10 @@ namespace planeGameEngine {
 		~System();
 		SDL_Renderer* getRenderer() const;
 		TTF_Font* getFont() const;
+		int getXResolution() const { return XRESOLUTION; }
+		int getYResolution() const { return YRESOLUTION; }
+		int generateRandomNumber(int maxRandomNr, int minRandomNr);
+
 	private:
 		const int XRESOLUTION = 1280;
 		const int YRESOLUTION = 720;
@@ -20,7 +24,7 @@ namespace planeGameEngine {
 		TTF_Font* font;
 	};
 
-	extern System system;
+	extern System sys;
 
 } //ns
 #endif

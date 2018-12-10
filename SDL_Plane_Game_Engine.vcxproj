@@ -125,6 +125,7 @@
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MovingSprite.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="System.cpp" />
   </ItemGroup>
@@ -133,6 +134,7 @@
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="ImagePaths.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="MovingSprite.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="System.h" />
   </ItemGroup>

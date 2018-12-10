@@ -13,4 +13,10 @@ namespace planeGameEngine {
 		rect.w = w;
 		rect.h = h;
 	}
+
+	void Sprite::setXY(int x, int y) {
+		rect.x = x;
+		rect.y = y;
+	}
+
 }

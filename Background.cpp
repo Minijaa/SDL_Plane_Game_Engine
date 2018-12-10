@@ -11,7 +11,7 @@ namespace planeGameEngine {
 
 	Background::Background(std::string& imagePath) :Sprite(0, 0, NULL, NULL)
 	{
-		bgTexture = IMG_LoadTexture(system.getRenderer(), imagePath.c_str());
+		bgTexture = IMG_LoadTexture(sys.getRenderer(), imagePath.c_str());
 		if (bgTexture == nullptr) {
 			throw std::runtime_error("Background image not found");
 		}
@@ -24,7 +24,7 @@ namespace planeGameEngine {
 
 	void Background::draw() const
 	{
-		SDL_RenderCopy(system.getRenderer(), bgTexture, NULL, NULL);
+		SDL_RenderCopy(sys.getRenderer(), bgTexture, NULL, NULL);
 	}
 
 	Background::~Background()

@@ -17,6 +17,7 @@ namespace planeGameEngine {
 		virtual void mouseUp(const SDL_Event& event) {}
 		virtual void keyDown(const SDL_Event& event) {}
 		virtual void keyUp(const SDL_Event& event) {}
+		virtual void tick() {}
 
 		//Subclasses must override this function
 		virtual void draw() const = 0;
@@ -31,6 +32,7 @@ namespace planeGameEngine {
 	protected:
 		Sprite(int x, int y, int w, int h);
 		void setWH(int w, int h);
+		void setXY(int x, int y);
 
 	private:
 		SDL_Rect rect;
