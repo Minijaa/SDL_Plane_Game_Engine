@@ -4,64 +4,86 @@
 #include "ImagePaths.h"
 #include "MovingSprite.h"
 
-
-
 using namespace planeGameEngine;
 using namespace std;
+
+const int minOutOfBoundsValue = 200;
+const int maxOutOfBoundsValue = 600;
+GameEngine game;
+ImagePaths path;
 
 //Implementation classes below
 class Cloud : public MovingSprite {
 public:
-	Cloud(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath) : MovingSprite(x, y, w, h, moveDirection, speed, imagePath)
+	Cloud(int x, int y, int w, int h, int speed, std::string& imagePath) : Sprite(x, y, w, h), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, speed, imagePath, NULL, NULL)
 	{
-		
 	}
 
-
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
-		switch (moveDirection) {
-		case MOVELEFT:
-			setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
-			break;
-		}
-		//case MOVERIGHT:
-		//	setXY(sys.generateRandomNumber(-minOutOfBoundsValue, -maxOutOfBoundsValue), rect->y);
-		//	break;
-		//case MOVEUP:
-		//	setXY(rect->x, sys.generateRandomNumber(sys.getYResolution() + minOutOfBoundsValue, sys.getYResolution() + maxOutOfBoundsValue));
-		//	break;
-		//case MOVEDOWN:
-		//	setXY(rect->x, sys.generateRandomNumber(-minOutOfBoundsValue, -maxOutOfBoundsValue));
-		//}
+		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
 		int size = sys.generateRandomNumber(400, 256);
 		setWH(size, size);
 		setMoveSpeed(sys.generateRandomNumber(3, 1));
 	}
-private:
-	const int minOutOfBoundsValue = 200;
-	const int maxOutOfBoundsValue = 600;
+};
+
+class SpaceShip : public MovingSprite {
+public:
+	SpaceShip(int x, int y, int w, int h, MovingSprite::moveDirections moveDir, int speed, std::string& imagePath, int weight, int hp) : Sprite(x, y, w, h, true), MovingSprite(x, y, w, h, moveDir, speed, imagePath, weight, hp)
+	{}
+	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
+		if (inferiorWeight) {
+			this->decreaseHp();
+		}
+		if (this->getHp() < 1) {
+			//game.remove(this);
+			setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
+		}
+	}
+
+	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
+		setMoveSpeed(sys.generateRandomNumber(8, 1));
+	}
+};
+
+class Bullet : public MovingSprite {
+	Bullet(int x, int y, int w, int h, int weight, int hp) : Sprite(x, y, w, h, true), MovingSprite(x, y, w, h, MovingSprite::MOVERIGHT, 20, path.fx_Bullet, 3, 0)
+	{}
+
+	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
+		//Add 100 points. Update Points label
+		game.remove(this);
+		//Play hit-sound
+	}
+
+	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+		game.remove(this);
+	}
+
 };
 
 int main(int argc, char** argv) {
-	GameEngine game;
-	ImagePaths path;
+
 	Background* bg_Level_1 = Background::getInstance(path.bg_Level_1);
-	MovingSprite* ni_Cloud_1 = new Cloud(1180, 50, 256, 256, MovingSprite::MOVELEFT, 1, path.ni_Cloud_1);
-	MovingSprite* ni_Cloud_2 = new Cloud(880, 250, 450, 450, MovingSprite::MOVELEFT, 2, path.ni_Cloud_2);
-	MovingSprite* ni_Cloud_3 = new Cloud(1000, 650, 300, 300, MovingSprite::MOVELEFT, 3, path.ni_Cloud_1);
-	MovingSprite* ni_Cloud_4 = new Cloud(570, 500, 280, 280, MovingSprite::MOVELEFT, 2, path.ni_Cloud_2);
-	MovingSprite* ni_Cloud_5 = new Cloud(350, 400, 400, 400, MovingSprite::MOVELEFT, 1, path.ni_Cloud_1);
-	MovingSprite* ni_Cloud_6 = new Cloud(220, 800, 256, 256, MovingSprite::MOVELEFT, 2, path.ni_Cloud_2);
-	MovingSprite* ni_Cloud_7 = new Cloud(70, 100, 320, 320, MovingSprite::MOVELEFT, 3, path.ni_Cloud_1);
-	MovingSprite* ni_Cloud_8 = new Cloud(1570, -100, 300, 300, MovingSprite::MOVELEFT, 2, path.ni_Cloud_2);
+	game.add(new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1));
+	MovingSprite* ni_Cloud_2 = new Cloud(880, 250, 450, 450, 2, path.ni_Cloud_2);
+	MovingSprite* ni_Cloud_3 = new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_1);
+	MovingSprite* ni_Cloud_4 = new Cloud(570, 500, 280, 280, 2, path.ni_Cloud_2);
+	MovingSprite* ni_Cloud_5 = new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1);
+	MovingSprite* ni_Cloud_6 = new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2);
+	MovingSprite* ni_Cloud_7 = new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_1);
+	MovingSprite* ni_Cloud_8 = new Cloud(1570, -100, 300, 300, 2, path.ni_Cloud_2);
+
+	MovingSprite* enemy1 = new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 2, path.e_SpaceShip, 2, 2);
+	MovingSprite* enemy2 = new SpaceShip(0, 350, 126, 93, MovingSprite::MOVERIGHT, 2, path.e_SpaceShip, 1, 2);
 
 	//MovingSprite* ni_Cloud_1 = MovingSprite::getInstance(1290, 100, 0, 0, MovingSprite::MOVELEFT, 4, path.ni_Cloud_1);
 	//MovingSprite* ni_Cloud_2 = MovingSprite::getInstance(0, 300, 0, 0, MovingSprite::MOVERIGHT, 4, path.ni_Cloud_1);
 	//MovingSprite* ni_Cloud_3 = MovingSprite::getInstance(300, 500, 0, 0, MovingSprite::MOVEUP, 4, path.ni_Cloud_1);
 	//MovingSprite* ni_Cloud_4 = MovingSprite::getInstance(700, 100, 0, 0, MovingSprite::MOVEDOWN, 4, path.ni_Cloud_1);
-
 	game.add(bg_Level_1);
-	game.add(ni_Cloud_1);
+	//game.add(ni_Cloud_1);
 	game.add(ni_Cloud_2);
 	game.add(ni_Cloud_3);
 	game.add(ni_Cloud_4);
@@ -69,6 +91,9 @@ int main(int argc, char** argv) {
 	game.add(ni_Cloud_6);
 	game.add(ni_Cloud_7);
 	game.add(ni_Cloud_8);
+	game.add(enemy1);
+	game.add(enemy2);
+
 	game.run();
 	//SDL_Delay(5000);
 	return 0;

@@ -10,15 +10,19 @@ namespace planeGameEngine {
 	public:
 		GameEngine();
 		void add(Sprite*);
+		void remove(Sprite*);
 		void run();
-		
+		GameEngine* getEngine() {
+			return this;
+		}
 		~GameEngine();
 
 	private:
 		const int FRAMERATE = 60;
 		const int TICKINTERVAL = 1000 / FRAMERATE;
 		std::vector<Sprite*> sprites;
-		
+
+
 	};
 
 }

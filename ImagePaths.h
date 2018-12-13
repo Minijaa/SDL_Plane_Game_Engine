@@ -16,6 +16,7 @@ namespace planeGameEngine {
 		std::string ni_Cloud_2 = "Images/Cloud2.png";
 
 		//Effects [fx]
+		std::string fx_Bullet = "Images/Bullet.png";
 
 		//Player Sprites [p]
 		std::string p_Plane_1 = "Images/Fly1.png";

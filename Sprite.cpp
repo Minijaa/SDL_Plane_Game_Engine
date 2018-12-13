@@ -5,7 +5,7 @@
 namespace planeGameEngine {
 
 
-	Sprite::Sprite(int x, int y, int w, int h) :rect{ x, y, w, h }
+	Sprite::Sprite(int x, int y, int w, int h, bool isInteractable) :rect{ x, y, w, h },interactable(isInteractable)
 	{
 	}
 
@@ -18,5 +18,5 @@ namespace planeGameEngine {
 		rect.x = x;
 		rect.y = y;
 	}
-
+	
 }

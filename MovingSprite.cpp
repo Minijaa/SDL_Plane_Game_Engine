@@ -2,12 +2,18 @@
 
 
 namespace planeGameEngine {
-
-	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath) :Sprite(x, y, w, h), moveDir(moveDirection), moveSpeed(speed)
-	{
-		makeTexture(imagePath);
-	}
-	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight) : Sprite(x, y, w, h), moveDir(moveDirection), moveSpeed(speed)
+	//MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed) :Sprite(x, y, w, h), moveDir(moveDirection), moveSpeed(speed)
+	//{
+	//}
+	//MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath) :Sprite(x, y, w, h), moveDir(moveDirection), moveSpeed(speed)
+	//{
+	//	makeTexture(imagePath);
+	//}
+	//MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight)
+	//{
+	//	makeTexture(imagePath);
+	//}
+	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
 		makeTexture(imagePath);
 	}
@@ -26,14 +32,18 @@ namespace planeGameEngine {
 		}*/
 	}
 
-	MovingSprite* MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath)
+	/*MovingSprite* MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath)
 	{
 		return new MovingSprite(x, y, w, h, moveDirection, speed, imagePath);
 	}
 
-	MovingSprite * MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight)
+	MovingSprite* MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight)
 	{
 		return nullptr;
+	}*/
+	MovingSprite * MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight, int hp)
+	{
+		return new MovingSprite(x, y, w, h, moveDirection, speed, imagePath, colissionWeight, hp);
 	}
 
 	void MovingSprite::move()
@@ -78,9 +88,10 @@ namespace planeGameEngine {
 		}
 	}
 
-	void MovingSprite::collisionCheck()
+	/*void MovingSprite::collisionCheck()
 	{
-	}
+		
+	}*/
 
 	void MovingSprite::setDirection(moveDirections moveDirection)
 	{
@@ -89,9 +100,9 @@ namespace planeGameEngine {
 	void MovingSprite::tick()
 	{
 		move();
-		if (isInteractable) {
-			collisionCheck();
-		}
+		//if (isInteractable) {
+		//	//collisionCheck();
+		//}
 	}
 	void MovingSprite::draw() const {
 		SDL_RenderCopy(sys.getRenderer(), spriteTexture, NULL, &getRect());

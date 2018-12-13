@@ -10,6 +10,9 @@ namespace planeGameEngine {
 	void GameEngine::add(Sprite* sprite) {
 		sprites.push_back(sprite);
 	}
+	void GameEngine::remove(Sprite* sprite) {
+		//Spara grejjer som ska tas bort i ta bort-vector
+	}
 	void GameEngine::run() {
 		bool running = true;
 		while (running) {
@@ -41,10 +44,19 @@ namespace planeGameEngine {
 
 			//Render stuff for the current frame
 			SDL_RenderClear(sys.getRenderer());
+			//Discover collisions
 			for (Sprite* s : sprites) {
+				if (s->isInteractable()) {
+					for (Sprite* otherSprite : sprites) {
+						if (otherSprite->isInteractable()) {
+							if (SDL_HasIntersection(&s->getRect(), &otherSprite->getRect())) {
+								s->collisionAction(otherSprite, s->getCollisionWeight() < otherSprite->getCollisionWeight());
+							}
+						}
+					}
+				}
 				s->draw();
 				s->tick();
-
 			}
 			SDL_RenderPresent(sys.getRenderer());
 			int delay = nextTick - SDL_GetTicks();

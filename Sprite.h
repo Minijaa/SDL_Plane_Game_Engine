@@ -11,6 +11,10 @@ namespace planeGameEngine {
 		SDL_Rect getRect() const {
 			return rect;
 		}
+		bool isInteractable() const {
+			return interactable;
+		}
+
 
 		//Subclasses can override these functions
 		virtual void mouseDown(const SDL_Event& event) {}
@@ -18,6 +22,8 @@ namespace planeGameEngine {
 		virtual void keyDown(const SDL_Event& event) {}
 		virtual void keyUp(const SDL_Event& event) {}
 		virtual void tick() {}
+		virtual void collisionAction(Sprite* sprite, bool inferiorWeight) {}
+		virtual int getCollisionWeight() const { return 0; }
 
 		//Subclasses must override this function
 		virtual void draw() const = 0;
@@ -30,12 +36,13 @@ namespace planeGameEngine {
 		const Sprite& operator=(const Sprite&) = delete;
 
 	protected:
-		Sprite(int x, int y, int w, int h);
+		Sprite(int x, int y, int w, int h, bool interactable = false);
 		void setWH(int w, int h);
 		void setXY(int x, int y);
 
 	private:
 		SDL_Rect rect;
+		bool interactable;
 	};
 
 }
