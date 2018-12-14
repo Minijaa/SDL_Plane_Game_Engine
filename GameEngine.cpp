@@ -56,14 +56,26 @@ namespace planeGameEngine {
 					}
 				}
 				s->draw();
-				s->tick();
+				s->tick(iterationCount);
 			}
 			SDL_RenderPresent(sys.getRenderer());
 			int delay = nextTick - SDL_GetTicks();
 			if (delay > 0) {
 				SDL_Delay(delay);
 			}
+			if (iterationCount < INT32_MAX) {
+				iterationCount++;
+			}
+			else {
+				iterationCount = 0;
+			}
+
 		} //Outer while loop
+	}
+
+	int GameEngine::getIterationCount()
+	{
+		return iterationCount;
 	}
 
 	GameEngine::~GameEngine()

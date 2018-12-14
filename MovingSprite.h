@@ -13,23 +13,25 @@ namespace planeGameEngine {
 	{
 	private:
 		int moveSpeed, moveDir, width, height, healthPoints, weight;
-
+	
 		SDL_Texture* spriteTexture;
-		void move();
 		//void collisionCheck();
 		void makeTexture(std::string& imagePath);
 
 	public:
-		enum moveDirections { MOVELEFT, MOVERIGHT, MOVEDOWN, MOVEUP, MOVESTOP };
+		enum moveDirections { MOVELEFT, MOVERIGHT, MOVEDOWN, MOVEUP, MOVEUPLEFT, MOVEUPRIGHT, MOVEDOWNLEFT, MOVEDOWNRIGHT, MOVESTOP };
 		//static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath);
 		//static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight);
 		static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight, int hp);
+		static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp);
 
 		int getMoveSpeed() const { return moveSpeed; }
 		void setMoveSpeed(int speed) { moveSpeed = speed; }
+		
 		void setDirection(moveDirections moveDirection);
-		void tick();
+		void tick(const int iteractionCount);
 		void draw() const;
+		void move();
 		int getCollisionWeight() const {
 			return weight;
 		}
@@ -47,6 +49,7 @@ namespace planeGameEngine {
 		//MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath);
 		//MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight);
 		MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp);
+		MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp);
 
 	};
 }

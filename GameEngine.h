@@ -12,6 +12,7 @@ namespace planeGameEngine {
 		void add(Sprite*);
 		void remove(Sprite*);
 		void run();
+		int getIterationCount();
 		GameEngine* getEngine() {
 			return this;
 		}
@@ -21,6 +22,7 @@ namespace planeGameEngine {
 		const int FRAMERATE = 60;
 		const int TICKINTERVAL = 1000 / FRAMERATE;
 		std::vector<Sprite*> sprites;
+		int iterationCount;
 
 
 	};
