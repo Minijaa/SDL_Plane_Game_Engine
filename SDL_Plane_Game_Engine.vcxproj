@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClCompile Include="AnimatedSprite.cpp" />
     <ClCompile Include="Background.cpp" />
+    <ClCompile Include="ControllableSprite.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -133,6 +134,7 @@
   <ItemGroup>
     <ClInclude Include="AnimatedSprite.h" />
     <ClInclude Include="Background.h" />
+    <ClInclude Include="ControllableSprite.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="ImagePaths.h" />
     <ClInclude Include="Level.h" />

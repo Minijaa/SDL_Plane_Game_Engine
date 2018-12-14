@@ -4,6 +4,7 @@
 #include "ImagePaths.h"
 #include "MovingSprite.h"
 #include "AnimatedSprite.h"
+#include "ControllableSprite.h"
 #include <unordered_map>
 
 using namespace planeGameEngine;
@@ -66,82 +67,26 @@ public:
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
 		game.remove(this);
 	}
-
 };
 
-class Player : public AnimatedSprite, public MovingSprite {
+class Player : public AnimatedSprite, public ControllableSprite {
 public:
-	Player(int x, int y, int w, int h, std::unordered_map<std::string, std::string> animationsSpriteSheets, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, animationsSpriteSheets, defaultImage), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3)
+	Player(int x, int y, int w, int h, std::unordered_map<std::string, std::string> animationsSpriteSheets, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, animationsSpriteSheets, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3)
 	{}
-	Player(int x, int y, int w, int h, std::unordered_map<std::string, std::vector<std::string>> animationSprites, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, animationSprites, defaultImage), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3)
+	Player(int x, int y, int w, int h, std::unordered_map<std::string, std::vector<std::string>> animationSprites, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, animationSprites, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3)
 	{}
 
 	void tick(int iterationCount) {
 		AnimatedSprite::tick(game.getIterationCount());
-		determineDiagonalMoveDirections();
+		determineMoveDirection();
 		move();
 	}
-	void determineDiagonalMoveDirections() {
-		if (moveUp && moveRight) {
-			setDirection(MovingSprite::MOVEUPRIGHT);
-		}
-		else if (moveUp && moveLeft) {
-			setDirection(MovingSprite::MOVEUPLEFT);
-		}
-		else if (moveDown && moveRight) {
-			setDirection(MovingSprite::MOVEDOWNRIGHT);
-		}
-		else if (moveDown && moveLeft) {
-			setDirection(MovingSprite::MOVEDOWNLEFT);
-		}
-	}
+	
 	void draw() const {
 		AnimatedSprite::draw();
 	}
 
-	void keyDown(const SDL_Event& event) {
-		switch (event.key.keysym.sym) {
-		case SDLK_UP:
-			moveUp = true;
-			setDirection(MovingSprite::MOVEUP);
-			break;
-		case SDLK_DOWN:
-			moveDown = true;
-			setDirection(MovingSprite::MOVEDOWN);
-			break;
-		case SDLK_LEFT:
-			moveLeft = true;
-			setDirection(MovingSprite::MOVELEFT);
-			break;
-		case SDLK_RIGHT:
-			moveRight = true;
-			setDirection(MovingSprite::MOVERIGHT);
-			break;
-		}
-	}
-
-	void keyUp(const SDL_Event& event) {
-		switch (event.key.keysym.sym) {
-		case SDLK_UP:
-			moveUp = false;
-			setDirection(MovingSprite::MOVESTOP);
-			break;
-		case SDLK_DOWN:
-			moveDown = false;
-			setDirection(MovingSprite::MOVESTOP);
-			break;
-		case SDLK_LEFT:
-			moveLeft = false;
-			setDirection(MovingSprite::MOVESTOP);
-			break;
-		case SDLK_RIGHT:
-			moveRight = false;
-			setDirection(MovingSprite::MOVESTOP);
-			break;
-		}
-	}
-private:
-	bool moveUp, moveDown, moveLeft, moveRight;
+	
 };
 
 int main(int argc, char** argv) {
