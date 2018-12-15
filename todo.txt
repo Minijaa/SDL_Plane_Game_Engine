@@ -1,0 +1,4 @@
+* Change AnimatedSprite constructors to only receive 1 std::string imagepath. Instead add function addAnimation(string, vector) and let that function
+	insert to unordered_map. Add another addAnimation(string, string) for spritesheets.
+* Add music and sounds (shoot, hit, crash, etc.)
+* 
