@@ -21,7 +21,7 @@ namespace planeGameEngine {
 	private:
 		const int FRAMERATE = 60;
 		const int TICKINTERVAL = 1000 / FRAMERATE;
-		std::vector<Sprite*> sprites;
+		std::vector<Sprite*> sprites, spritesToAdd, spritesToRemove;
 		int iterationCount;
 
 

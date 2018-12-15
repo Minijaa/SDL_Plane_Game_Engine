@@ -19,6 +19,7 @@ namespace planeGameEngine {
 	}
 	AnimatedSprite::~AnimatedSprite()
 	{
+		
 	}
 	void AnimatedSprite::draw() const
 	{

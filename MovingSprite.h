@@ -29,6 +29,7 @@ namespace planeGameEngine {
 		void setMoveSpeed(int speed) { moveSpeed = speed; }
 		
 		void setDirection(moveDirections moveDirection);
+		void setHp(int hp) { healthPoints = hp; }
 		void tick(const int iteractionCount);
 		void draw() const;
 		void move();

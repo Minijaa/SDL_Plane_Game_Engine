@@ -53,6 +53,42 @@ namespace planeGameEngine {
 		determineMoveDirection();
 		MovingSprite::tick(0);
 	}
+	void ControllableSprite::implementBasicMovement(const SDL_Event& event) {
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_UP:
+				moveUp = true;
+				break;
+			case SDLK_DOWN:
+				moveDown = true;
+				break;
+			case SDLK_LEFT:
+				moveLeft = true;
+				break;
+			case SDLK_RIGHT:
+				moveRight = true;
+				break;
+			}
+		}
+		else if (event.type == SDL_KEYUP) {
+			switch (event.key.keysym.sym) {
+			case SDLK_UP:
+				moveUp = false;
+				break;
+			case SDLK_DOWN:
+				moveDown = false;
+				break;
+			case SDLK_LEFT:
+				moveLeft = false;
+				break;
+			case SDLK_RIGHT:
+				moveRight = false;
+				break;
+			}
+		} 
+
+	}
 	void ControllableSprite::mouseDown(const SDL_Event & event)
 	{
 	}
@@ -61,36 +97,8 @@ namespace planeGameEngine {
 	}
 	void ControllableSprite::keyDown(const SDL_Event & event)
 	{
-		switch (event.key.keysym.sym) {
-		case SDLK_UP:
-			moveUp = true;
-			break;
-		case SDLK_DOWN:
-			moveDown = true;
-			break;
-		case SDLK_LEFT:
-			moveLeft = true;
-			break;
-		case SDLK_RIGHT:
-			moveRight = true;
-			break;
-		}
 	}
 	void ControllableSprite::keyUp(const SDL_Event & event)
 	{
-		switch (event.key.keysym.sym) {
-		case SDLK_UP:
-			moveUp = false;
-			break;
-		case SDLK_DOWN:
-			moveDown = false;
-			break;
-		case SDLK_LEFT:
-			moveLeft = false;
-			break;
-		case SDLK_RIGHT:
-			moveRight = false;
-			break;
-		}
 	}
 }

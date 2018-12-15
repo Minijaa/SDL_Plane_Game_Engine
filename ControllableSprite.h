@@ -10,6 +10,7 @@ namespace planeGameEngine {
 		static ControllableSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight, int hp);
 		static ControllableSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp);
 		void tick(const int iteractionCount);
+		void implementBasicMovement(const SDL_Event& event);
 		
 		virtual void mouseDown(const SDL_Event& event);
 		virtual void mouseUp(const SDL_Event& event);

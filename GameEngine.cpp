@@ -1,5 +1,6 @@
 #include "GameEngine.h"
 #include "System.h"
+using namespace std;
 
 namespace planeGameEngine {
 
@@ -8,10 +9,11 @@ namespace planeGameEngine {
 	}
 
 	void GameEngine::add(Sprite* sprite) {
-		sprites.push_back(sprite);
+		//sprites.push_back(sprite);
+		spritesToAdd.push_back(sprite);
 	}
 	void GameEngine::remove(Sprite* sprite) {
-		//Spara grejjer som ska tas bort i ta bort-vector
+		spritesToRemove.push_back(sprite);
 	}
 	void GameEngine::run() {
 		bool running = true;
@@ -42,21 +44,41 @@ namespace planeGameEngine {
 				} //Switch
 			} //Inner while loop
 
-			//Render stuff for the current frame
-			SDL_RenderClear(sys.getRenderer());
 			//Discover collisions
 			for (Sprite* s : sprites) {
 				if (s->isInteractable()) {
 					for (Sprite* otherSprite : sprites) {
 						if (otherSprite->isInteractable()) {
-							if (SDL_HasIntersection(&s->getRect(), &otherSprite->getRect())) {
+							if (SDL_HasIntersection(&s->getRect(), &otherSprite->getRect()) && s != otherSprite) {
 								s->collisionAction(otherSprite, s->getCollisionWeight() < otherSprite->getCollisionWeight());
 							}
 						}
 					}
 				}
-				s->draw();
 				s->tick(iterationCount);
+			}
+
+			for (Sprite* s : spritesToAdd) {
+				sprites.push_back(s);
+			}
+			spritesToAdd.clear();
+
+			for (Sprite* s : spritesToRemove) {
+				for (vector<Sprite*>::iterator i = sprites.begin(); i != sprites.end();) {
+					if (*i == s) {
+						i = sprites.erase(i);
+						delete s;
+					}
+					else {
+						i++;
+					}
+				}
+			}
+			spritesToRemove.clear();
+			//Render stuff for the current frame
+			SDL_RenderClear(sys.getRenderer());
+			for (Sprite*s : sprites) {
+				s->draw();
 			}
 			SDL_RenderPresent(sys.getRenderer());
 			int delay = nextTick - SDL_GetTicks();
@@ -80,6 +102,8 @@ namespace planeGameEngine {
 
 	GameEngine::~GameEngine()
 	{
+		for (Sprite* s : sprites) {
+			delete s;
+		}
 	}
-
 }

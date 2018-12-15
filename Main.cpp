@@ -6,6 +6,7 @@
 #include "AnimatedSprite.h"
 #include "ControllableSprite.h"
 #include <unordered_map>
+#include <iostream>
 
 using namespace planeGameEngine;
 using namespace std;
@@ -36,31 +37,43 @@ public:
 class SpaceShip : public MovingSprite {
 public:
 	SpaceShip(int x, int y, int w, int h, MovingSprite::moveDirections moveDir, int speed, std::string& imagePath, int weight, int hp) : Sprite(x, y, w, h, true), MovingSprite(x, y, w, h, moveDir, speed, imagePath, weight, hp)
-	{}
+	{
+		defaultHp = hp;
+	}
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (inferiorWeight) {
 			this->decreaseHp();
 		}
 		if (this->getHp() < 1) {
 			//game.remove(this);
-			setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
+			respawnEnemy();
 		}
 	}
 
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
-		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
-		setMoveSpeed(sys.generateRandomNumber(8, 1));
+		respawnEnemy();
 	}
+private:
+	void respawnEnemy() {
+		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
+		setMoveSpeed(sys.generateRandomNumber(8, 1));
+		this->setHp(defaultHp);
+	}
+	int defaultHp;
 };
 
 class Bullet : public MovingSprite {
 public:
-	Bullet(int x, int y, int w, int h, int weight, int hp) : Sprite(x, y, w, h, true), MovingSprite(x, y, w, h, MovingSprite::MOVERIGHT, 20, path.fx_Bullet, 3, 0)
+	Bullet(int x, int y, GameEngine& engine) : Sprite(x, y, 40, 40, true), MovingSprite(x, y, 40, 40, MovingSprite::MOVERIGHT, 20, path.fx_Bullet, 3, 0)
 	{}
 
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		//Add 100 points. Update Points label
-		game.remove(this);
+		//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
+		if (otherSprite->getCollisionWeight() != 1) {
+			cout << otherSprite->getCollisionWeight();
+			game.remove(this);
+		}
 		//Play hit-sound
 	}
 
@@ -81,12 +94,52 @@ public:
 		determineMoveDirection();
 		move();
 	}
-	
+	void keyDown(const SDL_Event& event)
+	{
+		if (isAlive) {
+			implementBasicMovement(event);
+			if (event.key.keysym.sym == SDLK_SPACE) {
+				if (event.key.repeat == 0) { //Don't allow holding down space bar to shoot
+					shoot();
+				}
+			}
+		} if (event.key.keysym.sym == 'r') {
+			isAlive = true;
+			setXY(100, 100);
+			setMoveLeft(false);
+			setMoveUp(false);
+			setMoveDown(false);
+			setMoveRight(false);
+		}
+	}
+	void keyUp(const SDL_Event& event)
+	{
+		if (isAlive) {
+			implementBasicMovement(event);
+		}
+
+	}
 	void draw() const {
 		AnimatedSprite::draw();
 	}
+	void shoot() {
+		game.add(new Bullet(getRect().x + 90, getRect().y + 53, game));
+	}
 
-	
+	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
+		if (otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
+			cout << otherSprite->getCollisionWeight();
+			isAlive = false;
+			setMoveLeft(false);
+			setMoveUp(false);
+			setMoveDown(true);
+			setMoveRight(true);
+			//Sätt Death-animation event eller liknande
+		}
+		//Play crash-sound
+	}
+private:
+	bool isAlive = true;
 };
 
 int main(int argc, char** argv) {
@@ -101,8 +154,8 @@ int main(int argc, char** argv) {
 	MovingSprite* ni_Cloud_7 = new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_1);
 	MovingSprite* ni_Cloud_8 = new Cloud(1570, -100, 300, 300, 2, path.ni_Cloud_2);
 
-	MovingSprite* enemy1 = new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 2, path.e_SpaceShip, 2, 2);
-	MovingSprite* enemy2 = new SpaceShip(0, 350, 126, 93, MovingSprite::MOVERIGHT, 2, path.e_SpaceShip, 1, 2);
+	MovingSprite* enemy1 = new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 2, path.e_SpaceShip, 2, 10);
+	MovingSprite* enemy2 = new SpaceShip(0, 350, 126, 93, MovingSprite::MOVERIGHT, 2, path.e_SpaceShip, 2, 2);
 
 	unordered_map<std::string, std::vector<std::string>> animations;
 	animations["idle"] = vector<std::string>{ path.p_Plane_idle_1, path.p_Plane_idle_2 };
@@ -122,7 +175,7 @@ int main(int argc, char** argv) {
 	game.add(ni_Cloud_7);
 	game.add(ni_Cloud_8);
 	game.add(enemy1);
-	game.add(enemy2);
+	//game.add(enemy2);
 	game.add(player);
 
 	game.run();
