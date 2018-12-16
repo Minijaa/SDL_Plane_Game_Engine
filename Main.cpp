@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include "GameEngine.h"
 #include "Background.h"
-#include "ImagePaths.h"
+#include "FilePaths.h"
 #include "MovingSprite.h"
 #include "AnimatedSprite.h"
 #include "ControllableSprite.h"
@@ -14,7 +14,6 @@ using namespace std;
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 GameEngine game;
-ImagePaths path;
 
 //Implementation classes below
 class Cloud : public MovingSprite {

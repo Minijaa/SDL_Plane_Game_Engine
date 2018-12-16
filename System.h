@@ -2,6 +2,7 @@
 #define SYSTEM_H
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include "FilePaths.h"
 
 namespace planeGameEngine {
 
@@ -25,6 +26,7 @@ namespace planeGameEngine {
 	};
 
 	extern System sys;
+	
 
 } //ns
 #endif

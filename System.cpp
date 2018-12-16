@@ -10,7 +10,7 @@ namespace planeGameEngine {
 		window = SDL_CreateWindow("Plane Game", 100, 100, XRESOLUTION, YRESOLUTION, 0);
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		TTF_Init();
-		font = TTF_OpenFont("Fonts/BAUHS93.TTF", 24);
+		font = TTF_OpenFont(path.f_BauhausFont.c_str(), 24);
 		if (font == nullptr) {
 			throw std::runtime_error("Font not found");
 		}
@@ -38,4 +38,5 @@ namespace planeGameEngine {
 	}
 
 	System sys;
+	FilePaths path;
 } //ns

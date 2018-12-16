@@ -3,7 +3,7 @@
 #include "Sprite.h"
 #include <SDL.h>
 #include <SDL_image.h>
-#include "ImagePaths.h"
+#include "FilePaths.h"
 #include <string>
 #include "System.h"
 

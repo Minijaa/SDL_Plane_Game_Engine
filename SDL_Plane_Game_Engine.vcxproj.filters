@@ -59,9 +59,6 @@
     <ClInclude Include="Background.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImagePaths.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MovingSprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -69,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ControllableSprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePaths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
