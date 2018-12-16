@@ -13,8 +13,9 @@ namespace planeGameEngine {
 		font = TTF_OpenFont(path.f_BauhausFont.c_str(), 24);
 		if (font == nullptr) {
 			throw std::runtime_error("Font not found");
-		}
+		}	
 	}
+
 	SDL_Renderer* System::getRenderer()const {
 		return renderer;
 	}
@@ -37,6 +38,6 @@ namespace planeGameEngine {
 		SDL_Quit();
 	}
 
-	System sys;
 	FilePaths path;
+	System sys;
 } //ns

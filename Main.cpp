@@ -7,18 +7,20 @@
 #include "ControllableSprite.h"
 #include <unordered_map>
 #include <iostream>
+#include "Level.h"
 
 using namespace planeGameEngine;
 using namespace std;
 
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
+Level* activeLevel; //DÅLIG LÖSNING, FUNKAR INTE VID BANBYTE
 GameEngine game;
 
 //Implementation classes below
 class Cloud : public MovingSprite {
 public:
-	Cloud(int x, int y, int w, int h, int speed, std::string& imagePath) : Sprite(x, y, w, h), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, speed, imagePath, NULL, NULL)
+	Cloud(int x, int y, int w, int h, int speed, std::string& imagePath) : Sprite(x, y, w, h), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, speed, imagePath, 1, NULL)
 	{
 
 	}
@@ -26,10 +28,16 @@ public:
 		MovingSprite::tick(game.getIterationCount());
 	}
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+		if (!isFlaggedForDeletion()) {
+
 		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
 		int size = sys.generateRandomNumber(400, 256);
 		setWH(size, size);
 		setMoveSpeed(sys.generateRandomNumber(3, 1));
+		}
+		else {
+			game.remove(this);
+		}
 	}
 };
 
@@ -45,6 +53,7 @@ public:
 		}
 		if (this->getHp() < 1) {
 			//game.remove(this);
+			activeLevel->incrementKillCounter();
 			respawnEnemy();
 		}
 	}
@@ -54,9 +63,15 @@ public:
 	}
 private:
 	void respawnEnemy() {
+		if (!isFlaggedForDeletion()) {
+
 		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
 		setMoveSpeed(sys.generateRandomNumber(8, 1));
 		this->setHp(defaultHp);
+		}
+		else {
+			game.remove(this);
+		}
 	}
 	int defaultHp;
 };
@@ -142,40 +157,45 @@ private:
 };
 
 int main(int argc, char** argv) {
+	
+	Level* level1 = game.addLevel();
+	level1->addSprite(Background::getInstance(path.bg_Level_3));
+	level1->addSprite(new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1));
+	level1->addSprite(new Cloud(880, 250, 450, 450, 2, path.ni_Cloud_2));
+	level1->addSprite(new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_1));
+	level1->addSprite(new Cloud(570, 500, 280, 280, 2, path.ni_Cloud_2));
+	level1->addSprite(new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1));
+	level1->addSprite(new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2));
+	level1->addSprite(new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_1));
+	level1->addSprite(new Cloud(1570, -100, 300, 300, 2, path.ni_Cloud_2));
 
-	Background* bg_Level_1 = Background::getInstance(path.bg_Level_1);
-	game.add(new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1));
-	MovingSprite* ni_Cloud_2 = new Cloud(880, 250, 450, 450, 2, path.ni_Cloud_2);
-	MovingSprite* ni_Cloud_3 = new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_1);
-	MovingSprite* ni_Cloud_4 = new Cloud(570, 500, 280, 280, 2, path.ni_Cloud_2);
-	MovingSprite* ni_Cloud_5 = new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1);
-	MovingSprite* ni_Cloud_6 = new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2);
-	MovingSprite* ni_Cloud_7 = new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_1);
-	MovingSprite* ni_Cloud_8 = new Cloud(1570, -100, 300, 300, 2, path.ni_Cloud_2);
+	level1->addSprite(new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2));
+	level1->addSprite(new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2));
+	level1->addSprite(new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2));
+	level1->addSprite(new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2));
+	level1->addSprite(new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2));
+	level1->addSprite(new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2));
 
-	MovingSprite* enemy1 = new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 2, path.e_SpaceShip, 2, 10);
-	MovingSprite* enemy2 = new SpaceShip(0, 350, 126, 93, MovingSprite::MOVERIGHT, 2, path.e_SpaceShip, 2, 2);
-
+	activeLevel = level1;
+	Level* level2 = game.addLevel();
+	level2->addSprite(Background::getInstance(path.bg_Level_2));
+	
 	unordered_map<std::string, std::vector<std::string>> animations;
 	animations["idle"] = vector<std::string>{ path.p_Plane_idle_1, path.p_Plane_idle_2 };
-	AnimatedSprite* player = new Player(100, 350, 148, 101, animations, path.p_Plane_idle_1);
+	Player* player = new Player(100, 350, 148, 101, animations, path.p_Plane_idle_1);
+	level1->addSprite(player);
 
-	//MovingSprite* ni_Cloud_1 = MovingSprite::getInstance(1290, 100, 0, 0, MovingSprite::MOVELEFT, 4, path.ni_Cloud_1);
-	//MovingSprite* ni_Cloud_2 = MovingSprite::getInstance(0, 300, 0, 0, MovingSprite::MOVERIGHT, 4, path.ni_Cloud_1);
-	//MovingSprite* ni_Cloud_3 = MovingSprite::getInstance(300, 500, 0, 0, MovingSprite::MOVEUP, 4, path.ni_Cloud_1);
-	//MovingSprite* ni_Cloud_4 = MovingSprite::getInstance(700, 100, 0, 0, MovingSprite::MOVEDOWN, 4, path.ni_Cloud_1);
-	game.add(bg_Level_1);
-	//game.add(ni_Cloud_1);
-	game.add(ni_Cloud_2);
-	game.add(ni_Cloud_3);
-	game.add(ni_Cloud_4);
-	game.add(ni_Cloud_5);
-	game.add(ni_Cloud_6);
-	game.add(ni_Cloud_7);
-	game.add(ni_Cloud_8);
-	game.add(enemy1);
-	//game.add(enemy2);
-	game.add(player);
+	level2->addSprite(new Cloud(1180+1280, 50, 256, 256, 1, path.ni_Cloud_1));
+	level2->addSprite(new Cloud(880+1280, 250, 450, 450, 2, path.ni_Cloud_2));
+	level2->addSprite(new Cloud(1000+1280, 650, 300, 300, 3, path.ni_Cloud_1));
+	level2->addSprite(new Cloud(570+1280, 500, 280, 280, 2, path.ni_Cloud_2));
+	level2->addSprite(new Cloud(350+1280, 400, 400, 400, 1, path.ni_Cloud_1));
+	level2->addSprite(new Cloud(220+1280, 800, 256, 256, 2, path.ni_Cloud_2));
+	level2->addSprite(new Cloud(70+1280, 100, 320, 320, 3, path.ni_Cloud_1));
+	level2->addSprite(new Cloud(1570+1280, -100, 300, 300, 2, path.ni_Cloud_2));
+
+	level2->addSprite(new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 50));
+	level2->addSprite(player);	
 
 	game.run();
 	//SDL_Delay(5000);

@@ -1,21 +1,23 @@
 #include "GameEngine.h"
 #include "System.h"
+#include "MovingSprite.h"
 using namespace std;
 
 namespace planeGameEngine {
 
-	GameEngine::GameEngine()
+	GameEngine::GameEngine() :activeLevelNumber(0)
 	{
 	}
 
 	void GameEngine::add(Sprite* sprite) {
-		//sprites.push_back(sprite);
 		spritesToAdd.push_back(sprite);
 	}
 	void GameEngine::remove(Sprite* sprite) {
 		spritesToRemove.push_back(sprite);
 	}
 	void GameEngine::run() {
+		activeLevel = levels[0];
+		sprites = levels[activeLevelNumber]->getLevelSprites();
 		bool running = true;
 		while (running) {
 			Uint32 nextTick = SDL_GetTicks() + TICKINTERVAL;
@@ -79,6 +81,8 @@ namespace planeGameEngine {
 			SDL_RenderClear(sys.getRenderer());
 			for (Sprite*s : sprites) {
 				s->draw();
+
+
 			}
 			SDL_RenderPresent(sys.getRenderer());
 			int delay = nextTick - SDL_GetTicks();
@@ -90,6 +94,35 @@ namespace planeGameEngine {
 			}
 			else {
 				iterationCount = 0;
+			}
+			if (activeLevel->getKillCount() > 10) {
+				incomingLevelChange = true;
+			}
+			if (incomingLevelChange) {
+				int counter = 0;
+				//Rätt fult, känns som hur levelbytet ska se ut borde avgöras av implementeraren. Eventuell "fada" bort alla sprites.
+				//Check that all non-player moving sprites are removed before switching level
+				for (Sprite* s : sprites) {
+					if (s->getRect().x > 1280) {
+						remove(s);
+					}
+					else {
+					s->setFlagForDeletion(true);
+					}
+					if (!s->isInteractable()) {
+						if (MovingSprite* ms = dynamic_cast<MovingSprite*>(s)) {
+							ms->setMoveSpeed(5);
+						}
+					}
+					if (s->getCollisionWeight() > 0) {
+						counter++;
+					}
+				}if (counter < 2) {
+					activeLevelNumber++;
+					sprites = levels[activeLevelNumber]->getLevelSprites();
+					activeLevel = levels[activeLevelNumber];
+					incomingLevelChange = false;
+				}
 			}
 
 		} //Outer while loop
@@ -105,5 +138,6 @@ namespace planeGameEngine {
 		for (Sprite* s : sprites) {
 			delete s;
 		}
+
 	}
 }

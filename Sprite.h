@@ -25,6 +25,9 @@ namespace planeGameEngine {
 		virtual void collisionAction(Sprite* sprite, bool inferiorWeight) {}
 		virtual int getCollisionWeight() const { return 0; }
 
+		void setFlagForDeletion(bool deletionValue) { flagForDeletion = deletionValue; }
+		bool isFlaggedForDeletion() { return flagForDeletion; }
+
 		//Subclasses must override this function
 		virtual void draw() const = 0;
 
@@ -43,6 +46,7 @@ namespace planeGameEngine {
 	private:
 		SDL_Rect rect;
 		bool interactable;
+		bool flagForDeletion;
 	};
 
 }

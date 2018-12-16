@@ -21,4 +21,4 @@ namespace planeGameEngine {
 	};
 
 }
-#endif // !BACKGROUND_H
+#endif

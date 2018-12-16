@@ -13,7 +13,6 @@ namespace planeGameEngine {
 	{
 	private:
 		int moveSpeed, moveDir, width, height, healthPoints, weight;
-	
 		SDL_Texture* spriteTexture;
 		//void collisionCheck();
 		void makeTexture(std::string& imagePath);
@@ -24,10 +23,10 @@ namespace planeGameEngine {
 		//static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight);
 		static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight, int hp);
 		static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp);
-
+		
 		int getMoveSpeed() const { return moveSpeed; }
 		void setMoveSpeed(int speed) { moveSpeed = speed; }
-		
+
 		void setDirection(moveDirections moveDirection);
 		void setHp(int hp) { healthPoints = hp; }
 		void tick(const int iteractionCount);

@@ -2,6 +2,7 @@
 #define GAMEENGINE_H
 #include <vector>
 #include "Sprite.h"
+#include "Level.h"
 
 namespace planeGameEngine {
 
@@ -13,6 +14,12 @@ namespace planeGameEngine {
 		void remove(Sprite*);
 		void run();
 		int getIterationCount();
+		void setIncomingLevelChange(bool value) { incomingLevelChange = value; }
+		Level* addLevel() {
+			Level* level = Level::getInstance();
+			levels.push_back(level);
+			return level;
+		}
 		GameEngine* getEngine() {
 			return this;
 		}
@@ -22,9 +29,11 @@ namespace planeGameEngine {
 		const int FRAMERATE = 60;
 		const int TICKINTERVAL = 1000 / FRAMERATE;
 		std::vector<Sprite*> sprites, spritesToAdd, spritesToRemove;
+		std::vector<Level*> levels;
+		Level* activeLevel;
 		int iterationCount;
-
-
+		int activeLevelNumber;
+		bool incomingLevelChange;
 	};
 
 }
