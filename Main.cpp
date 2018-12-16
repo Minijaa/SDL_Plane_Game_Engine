@@ -30,10 +30,10 @@ public:
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
 		if (!isFlaggedForDeletion()) {
 
-		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
-		int size = sys.generateRandomNumber(400, 256);
-		setWH(size, size);
-		setMoveSpeed(sys.generateRandomNumber(3, 1));
+			setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
+			int size = sys.generateRandomNumber(400, 256);
+			setWH(size, size);
+			setMoveSpeed(sys.generateRandomNumber(3, 1));
 		}
 		else {
 			game.remove(this);
@@ -49,12 +49,13 @@ public:
 	}
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (inferiorWeight) {
-			this->decreaseHp();
+			decreaseHp();
 		}
-		if (this->getHp() < 1) {
+		if (getHp() < 1) {
 			//game.remove(this);
 			activeLevel->incrementKillCounter();
 			respawnEnemy();
+			//Add 100 points. Update Points label
 		}
 	}
 
@@ -65,9 +66,9 @@ private:
 	void respawnEnemy() {
 		if (!isFlaggedForDeletion()) {
 
-		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
-		setMoveSpeed(sys.generateRandomNumber(8, 1));
-		this->setHp(defaultHp);
+			setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
+			setMoveSpeed(sys.generateRandomNumber(8, 4));
+			this->setHp(defaultHp);
 		}
 		else {
 			game.remove(this);
@@ -82,10 +83,11 @@ public:
 	{}
 
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
-		//Add 100 points. Update Points label
+		
 		//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
 		if (otherSprite->getCollisionWeight() != 1) {
-			cout << otherSprite->getCollisionWeight();
+			
+			cout << "hit " << otherSprite->getCollisionWeight() << endl; 
 			game.remove(this);
 		}
 		//Play hit-sound
@@ -157,45 +159,51 @@ private:
 };
 
 int main(int argc, char** argv) {
-	
-	Level* level1 = game.addLevel();
-	level1->addSprite(Background::getInstance(path.bg_Level_3));
-	level1->addSprite(new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1));
-	level1->addSprite(new Cloud(880, 250, 450, 450, 2, path.ni_Cloud_2));
-	level1->addSprite(new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_1));
-	level1->addSprite(new Cloud(570, 500, 280, 280, 2, path.ni_Cloud_2));
-	level1->addSprite(new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1));
-	level1->addSprite(new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2));
-	level1->addSprite(new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_1));
-	level1->addSprite(new Cloud(1570, -100, 300, 300, 2, path.ni_Cloud_2));
 
-	level1->addSprite(new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2));
-	level1->addSprite(new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2));
-	level1->addSprite(new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2));
-	level1->addSprite(new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2));
-	level1->addSprite(new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2));
-	level1->addSprite(new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2));
+	Level* level1 = game.addLevel(10);
 
+	// LEVEL 1 - Adding all sprites
+	level1->addSprite({ 
+	Background::getInstance(path.bg_Level_3),
+	new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1),
+	new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_2),
+	new Cloud(880, 250, 450, 450, 2, path.ni_Cloud_1),
+	new Cloud(1570, -100, 300, 300, 2, path.ni_Cloud_2),
+	new Cloud(570, 500, 280, 280, 2, path.ni_Cloud_2),
+	new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1),
+	new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2),
+	new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_2),
+	new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2),
+	new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
+	new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2),
+	new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2),
+	new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
+	new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
+		});
 	activeLevel = level1;
-	Level* level2 = game.addLevel();
-	level2->addSprite(Background::getInstance(path.bg_Level_2));
-	
 	unordered_map<std::string, std::vector<std::string>> animations;
 	animations["idle"] = vector<std::string>{ path.p_Plane_idle_1, path.p_Plane_idle_2 };
 	Player* player = new Player(100, 350, 148, 101, animations, path.p_Plane_idle_1);
 	level1->addSprite(player);
+	
+	Level* level2 = game.addLevel(10);
+	level2->addSprite(Background::getInstance(path.bg_Level_2));
 
-	level2->addSprite(new Cloud(1180+1280, 50, 256, 256, 1, path.ni_Cloud_1));
-	level2->addSprite(new Cloud(880+1280, 250, 450, 450, 2, path.ni_Cloud_2));
-	level2->addSprite(new Cloud(1000+1280, 650, 300, 300, 3, path.ni_Cloud_1));
-	level2->addSprite(new Cloud(570+1280, 500, 280, 280, 2, path.ni_Cloud_2));
-	level2->addSprite(new Cloud(350+1280, 400, 400, 400, 1, path.ni_Cloud_1));
-	level2->addSprite(new Cloud(220+1280, 800, 256, 256, 2, path.ni_Cloud_2));
-	level2->addSprite(new Cloud(70+1280, 100, 320, 320, 3, path.ni_Cloud_1));
-	level2->addSprite(new Cloud(1570+1280, -100, 300, 300, 2, path.ni_Cloud_2));
+
+	//level2->addSprite({ c1, c2, c3, c4, c5, c6, c7, c8 });
+	/*level2->addSprite({ c1->makeTexture(path.ni_Cloud_1d), c2->makeTexture(path.ni_Cloud_2d), c3->makeTexture(path.ni_Cloud_1d), c4->makeTexture(path.ni_Cloud_2d), c5->makeTexture(path.ni_Cloud_1d), c6->makeTexture(path.ni_Cloud_2d), c7->makeTexture(path.ni_Cloud_1d), c8->makeTexture(path.ni_Cloud_2d) });*/
+
+	level2->addSprite(new Cloud(1180 + 1280, 50, 256, 256, 1, path.ni_Cloud_1d));
+	level2->addSprite(new Cloud(880 + 1280, 250, 450, 450, 2, path.ni_Cloud_2d));
+	level2->addSprite(new Cloud(1000 + 1280, 650, 300, 300, 3, path.ni_Cloud_1d));
+	level2->addSprite(new Cloud(570 + 1280, 500, 280, 280, 2, path.ni_Cloud_2d));
+	level2->addSprite(new Cloud(350 + 1280, 400, 400, 400, 1, path.ni_Cloud_1d));
+	level2->addSprite(new Cloud(220 + 1280, 800, 256, 256, 2, path.ni_Cloud_2d));
+	level2->addSprite(new Cloud(70 + 1280, 100, 320, 320, 3, path.ni_Cloud_1d));
+	level2->addSprite(new Cloud(1570 + 1280, -100, 300, 300, 2, path.ni_Cloud_2d));
 
 	level2->addSprite(new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 50));
-	level2->addSprite(player);	
+	level2->addSprite(player);
 
 	game.run();
 	//SDL_Delay(5000);

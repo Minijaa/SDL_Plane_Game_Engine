@@ -1,6 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 #include <SDL.h>
+#include <string>
 
 namespace planeGameEngine {
 
@@ -24,10 +25,11 @@ namespace planeGameEngine {
 		virtual void tick(const int iteractionCount) {}
 		virtual void collisionAction(Sprite* sprite, bool inferiorWeight) {}
 		virtual int getCollisionWeight() const { return 0; }
+		virtual void changeTextureForLevelChange() {}
 
 		void setFlagForDeletion(bool deletionValue) { flagForDeletion = deletionValue; }
 		bool isFlaggedForDeletion() { return flagForDeletion; }
-
+		Sprite* makeTexture(std::string& imagepath) {}
 		//Subclasses must override this function
 		virtual void draw() const = 0;
 

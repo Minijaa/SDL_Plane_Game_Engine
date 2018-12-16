@@ -15,8 +15,8 @@ namespace planeGameEngine {
 		void run();
 		int getIterationCount();
 		void setIncomingLevelChange(bool value) { incomingLevelChange = value; }
-		Level* addLevel() {
-			Level* level = Level::getInstance();
+		Level* addLevel(int killCount) {
+			Level* level = Level::getInstance(killCount);
 			levels.push_back(level);
 			return level;
 		}

@@ -10,13 +10,14 @@ namespace planeGameEngine {
 		//IMAGES:
 			//Background Sprites [bg]
 			std::string bg_Level_1 = "Images/background.png";
-			std::string bg_Level_2 = "Images/background2.png";
+			std::string bg_Level_2 = "Images/background_night.png";
 			std::string bg_Level_3 = "Images/background3_darker.png";
 
 			//Non-interactable Sprites [ni] 
 			std::string ni_Cloud_1 = "Images/Cloud1.png";
 			std::string ni_Cloud_2 = "Images/Cloud2.png";
-
+			std::string ni_Cloud_1d = "Images/Cloud1_dark.png";
+			std::string ni_Cloud_2d = "Images/Cloud2_dark.png";
 
 			//Effects [fx]
 			std::string fx_Bullet = "Images/Bullet.png";

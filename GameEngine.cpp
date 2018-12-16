@@ -1,6 +1,7 @@
 #include "GameEngine.h"
 #include "System.h"
 #include "MovingSprite.h"
+#include <iostream>
 using namespace std;
 
 namespace planeGameEngine {
@@ -81,8 +82,6 @@ namespace planeGameEngine {
 			SDL_RenderClear(sys.getRenderer());
 			for (Sprite*s : sprites) {
 				s->draw();
-
-
 			}
 			SDL_RenderPresent(sys.getRenderer());
 			int delay = nextTick - SDL_GetTicks();
@@ -95,7 +94,7 @@ namespace planeGameEngine {
 			else {
 				iterationCount = 0;
 			}
-			if (activeLevel->getKillCount() > 10) {
+			if (activeLevel->getKillCount() > activeLevel->getRequiredKillCount()) { //Det här blir knäppt att bestämma här. Måste göras i main på något sätt.
 				incomingLevelChange = true;
 			}
 			if (incomingLevelChange) {
@@ -118,13 +117,16 @@ namespace planeGameEngine {
 						counter++;
 					}
 				}if (counter < 2) {
+					std::cout << "HEJ";
 					activeLevelNumber++;
 					sprites = levels[activeLevelNumber]->getLevelSprites();
 					activeLevel = levels[activeLevelNumber];
 					incomingLevelChange = false;
+					
 				}
+				//iterationCount++;
 			}
-
+			
 		} //Outer while loop
 	}
 
