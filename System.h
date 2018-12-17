@@ -18,7 +18,9 @@ namespace planeGameEngine {
 		int getXResolution() const { return XRESOLUTION; }
 		int getYResolution() const { return YRESOLUTION; }
 		int generateRandomNumber(int maxRandomNr, int minRandomNr);
-		//void addSfx(std::string name, std::string path);
+		void addSfx(std::string name, std::string& path);
+		int playSfx(int channel, std::string name, int loops);
+		int audioChannel1, audioChannel2;
 
 	private:
 		const int XRESOLUTION = 1280;
@@ -26,13 +28,8 @@ namespace planeGameEngine {
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 		TTF_Font* font;
-		Mix_Chunk* music;
-		//Lägg till dessa i en vector eller unordered_map istället med metod addSfx(string, )
-		Mix_Chunk* bulletSound;
-		Mix_Chunk* hitSound;
-		Mix_Chunk* exploadSound;
-		Mix_Chunk* missileSound;
-		//unordered_map<Mix_Chunk*> musicAndSounds; //FORTSÄTT HÄR
+		
+		std::unordered_map<std::string, Mix_Chunk*> musicAndSounds;
 	};
 
 	extern System sys;

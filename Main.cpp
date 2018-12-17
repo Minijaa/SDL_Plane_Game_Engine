@@ -50,9 +50,10 @@ public:
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (inferiorWeight) {
 			decreaseHp();
+			std::cout << "HIT!" << endl;
 		}
 		if (getHp() < 1) {
-			//game.remove(this);
+			sys.playSfx(-1, "boomSound", 0);
 			activeLevel->incrementKillCounter();
 			respawnEnemy();
 			//Add 100 points. Update Points label
@@ -67,7 +68,7 @@ private:
 		if (!isFlaggedForDeletion()) {
 
 			setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
-			setMoveSpeed(sys.generateRandomNumber(8, 4));
+			setMoveSpeed(sys.generateRandomNumber(8, 3));
 			this->setHp(defaultHp);
 		}
 		else {
@@ -86,8 +87,7 @@ public:
 		
 		//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
 		if (otherSprite->getCollisionWeight() != 1) {
-			
-			cout << "hit " << otherSprite->getCollisionWeight() << endl; 
+			//cout << "hit " << otherSprite->getCollisionWeight() << endl; 
 			game.remove(this);
 		}
 		//Play hit-sound
@@ -140,10 +140,12 @@ public:
 	}
 	void shoot() {
 		game.add(new Bullet(getRect().x + 90, getRect().y + 53, game));
+		sys.playSfx(-1, "bulletSound", 0);
 	}
 
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
-		if (otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
+		if (isAlive && otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
+			sys.playSfx(-1, "boomSound2", 0);
 			cout << otherSprite->getCollisionWeight();
 			isAlive = false;
 			setMoveLeft(false);
@@ -164,34 +166,30 @@ int main(int argc, char** argv) {
 
 	// LEVEL 1 - Adding all sprites
 	level1->addSprite({ 
-	Background::getInstance(path.bg_Level_3),
-	new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1),
-	new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_2),
-	new Cloud(880, 250, 450, 450, 2, path.ni_Cloud_1),
-	new Cloud(1570, -100, 300, 300, 2, path.ni_Cloud_2),
-	new Cloud(570, 500, 280, 280, 2, path.ni_Cloud_2),
-	new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1),
-	new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2),
-	new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_2),
-	new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2),
-	new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
-	new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2),
-	new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2),
-	new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
-	new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
-		});
+		Background::getInstance(path.bg_Level_3),
+		new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1),
+		new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_2),
+		new Cloud(880, 250, 450, 450, 2, path.ni_Cloud_1),
+		new Cloud(1570, -100, 300, 300, 2, path.ni_Cloud_2),
+		new Cloud(570, 500, 280, 280, 2, path.ni_Cloud_2),
+		new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1),
+		new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2),
+		new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_2),
+		new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2),
+		new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
+		new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2),
+		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2),
+		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
+		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
+	});
 	activeLevel = level1;
 	unordered_map<std::string, std::vector<std::string>> animations;
 	animations["idle"] = vector<std::string>{ path.p_Plane_idle_1, path.p_Plane_idle_2 };
 	Player* player = new Player(100, 350, 148, 101, animations, path.p_Plane_idle_1);
 	level1->addSprite(player);
 	
-	Level* level2 = game.addLevel(10);
+	Level* level2 = game.addLevel(1);
 	level2->addSprite(Background::getInstance(path.bg_Level_2));
-
-
-	//level2->addSprite({ c1, c2, c3, c4, c5, c6, c7, c8 });
-	/*level2->addSprite({ c1->makeTexture(path.ni_Cloud_1d), c2->makeTexture(path.ni_Cloud_2d), c3->makeTexture(path.ni_Cloud_1d), c4->makeTexture(path.ni_Cloud_2d), c5->makeTexture(path.ni_Cloud_1d), c6->makeTexture(path.ni_Cloud_2d), c7->makeTexture(path.ni_Cloud_1d), c8->makeTexture(path.ni_Cloud_2d) });*/
 
 	level2->addSprite(new Cloud(1180 + 1280, 50, 256, 256, 1, path.ni_Cloud_1d));
 	level2->addSprite(new Cloud(880 + 1280, 250, 450, 450, 2, path.ni_Cloud_2d));
@@ -205,7 +203,14 @@ int main(int argc, char** argv) {
 	level2->addSprite(new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 50));
 	level2->addSprite(player);
 
+	sys.addSfx("music", path.m_Level1_Music);
+	sys.addSfx("bulletSound", path.sfx_BulletSound);
+	sys.addSfx("boomSound", path.sfx_BoomSound_1);
+	sys.addSfx("boomSound2", path.sfx_BoomSound_2);
+	sys.audioChannel1 = sys.playSfx(0, "music", 0);
+	Mix_Volume(sys.audioChannel1, 20);
+
 	game.run();
-	//SDL_Delay(5000);
+
 	return 0;
 }

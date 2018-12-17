@@ -49,11 +49,14 @@ namespace planeGameEngine {
 
 			//Discover collisions
 			for (Sprite* s : sprites) {
-				if (s->isInteractable()) {
-					for (Sprite* otherSprite : sprites) {
-						if (otherSprite->isInteractable()) {
-							if (SDL_HasIntersection(&s->getRect(), &otherSprite->getRect()) && s != otherSprite) {
-								s->collisionAction(otherSprite, s->getCollisionWeight() < otherSprite->getCollisionWeight());
+				if (s->isInteractable() && !s->isCollisionHandeled()) {
+					for (Sprite* other : sprites) {
+						if (other->isInteractable() && s != other && !other->isCollisionHandeled()) {
+							if (SDL_HasIntersection(&s->getRect(), &other->getRect())) {
+								s->collisionAction(other, s->getCollisionWeight() < other->getCollisionWeight());
+								s->setCollisionHandeled(true);
+								other->collisionAction(s, other->getCollisionWeight() < s->getCollisionWeight());
+								other->setCollisionHandeled(true);
 							}
 						}
 					}
@@ -81,6 +84,7 @@ namespace planeGameEngine {
 			//Render stuff for the current frame
 			SDL_RenderClear(sys.getRenderer());
 			for (Sprite*s : sprites) {
+				s->setCollisionHandeled(false);
 				s->draw();
 			}
 			SDL_RenderPresent(sys.getRenderer());
@@ -119,7 +123,7 @@ namespace planeGameEngine {
 				}if (counter < 2) {
 					std::cout << "HEJ";
 					activeLevelNumber++;
-					sprites = levels[activeLevelNumber]->getLevelSprites();
+					sprites = levels[activeLevelNumber]->getLevelSprites(); // OBS!!! objekten i gamla sprites måste deletas
 					activeLevel = levels[activeLevelNumber];
 					incomingLevelChange = false;
 					

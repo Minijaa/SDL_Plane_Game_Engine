@@ -31,9 +31,12 @@ namespace planeGameEngine {
 
 		//SOUNDS:
 			//Sound Effect [sfx]
-			std::string sfx_BulletSound = "Sfx/show.wav";
+			std::string sfx_BulletSound = "Sfx/shot.wav";
+			std::string sfx_BoomSound_1 = "Sfx/boom.wav";
+			std::string sfx_BoomSound_2 = "Sfx/boom2.wav";
+
 			//Music [m]
-			std::string m_Level1_Music = "Sfx/L1Music.wav";
+			std::string m_Level1_Music = "Sfx/L1Music.mp3";
 
 		//FONTS [f]:
 			std::string f_BauhausFont= "Fonts/BAUHS93.TTF";

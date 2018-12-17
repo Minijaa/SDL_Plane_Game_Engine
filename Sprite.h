@@ -26,7 +26,8 @@ namespace planeGameEngine {
 		virtual void collisionAction(Sprite* sprite, bool inferiorWeight) {}
 		virtual int getCollisionWeight() const { return 0; }
 		virtual void changeTextureForLevelChange() {}
-
+		void setCollisionHandeled(bool value) { collisionHandeled = value; }
+		bool isCollisionHandeled() { return collisionHandeled; }
 		void setFlagForDeletion(bool deletionValue) { flagForDeletion = deletionValue; }
 		bool isFlaggedForDeletion() { return flagForDeletion; }
 		Sprite* makeTexture(std::string& imagepath) {}
@@ -49,6 +50,8 @@ namespace planeGameEngine {
 		SDL_Rect rect;
 		bool interactable;
 		bool flagForDeletion;
+		bool collisionHandeled = false;
+		
 	};
 
 }
