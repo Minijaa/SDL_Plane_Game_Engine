@@ -8,10 +8,13 @@ namespace planeGameEngine {
 
 	class GameEngine
 	{
+
 	public:
+		struct ShortCommand;
 		GameEngine();
-		void add(Sprite*);
-		void remove(Sprite*);
+		void addSprite(Sprite*);
+		void removeSprite(Sprite*);
+		void addShortCommand(char keyDown, void(*f)());
 		void run();
 		int getIterationCount();
 		void setIncomingLevelChange(bool value) { incomingLevelChange = value; }
@@ -30,6 +33,7 @@ namespace planeGameEngine {
 		const int TICKINTERVAL = 1000 / FRAMERATE;
 		std::vector<Sprite*> sprites, spritesToAdd, spritesToRemove;
 		std::vector<Level*> levels;
+		std::vector<ShortCommand*> shortCommands;
 		Level* activeLevel;
 		int iterationCount;
 		int activeLevelNumber;

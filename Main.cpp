@@ -14,8 +14,18 @@ using namespace std;
 
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
+int volume = 30;
 Level* activeLevel; //DÅLIG LÖSNING, FUNKAR INTE VID BANBYTE
 GameEngine game;
+
+void volumeUp() {
+	volume+=2;
+	Mix_Volume(sys.audioChannel1, volume);
+}
+void volumeDown() {
+	volume-=2;
+	Mix_Volume(sys.audioChannel1, volume);
+}
 
 //Implementation classes below
 class Cloud : public MovingSprite {
@@ -36,7 +46,7 @@ public:
 			setMoveSpeed(sys.generateRandomNumber(3, 1));
 		}
 		else {
-			game.remove(this);
+			game.removeSprite(this);
 		}
 	}
 };
@@ -53,7 +63,7 @@ public:
 			std::cout << "HIT!" << endl;
 		}
 		if (getHp() < 1) {
-			sys.playSfx(-1, "boomSound", 0);
+			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
 			activeLevel->incrementKillCounter();
 			respawnEnemy();
 			//Add 100 points. Update Points label
@@ -72,7 +82,7 @@ private:
 			this->setHp(defaultHp);
 		}
 		else {
-			game.remove(this);
+			game.removeSprite(this);
 		}
 	}
 	int defaultHp;
@@ -88,13 +98,13 @@ public:
 		//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
 		if (otherSprite->getCollisionWeight() != 1) {
 			//cout << "hit " << otherSprite->getCollisionWeight() << endl; 
-			game.remove(this);
+			game.removeSprite(this);
 		}
 		//Play hit-sound
 	}
 
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
-		game.remove(this);
+		game.removeSprite(this);
 	}
 };
 
@@ -139,13 +149,13 @@ public:
 		AnimatedSprite::draw();
 	}
 	void shoot() {
-		game.add(new Bullet(getRect().x + 90, getRect().y + 53, game));
+		game.addSprite(new Bullet(getRect().x + 90, getRect().y + 53, game));
 		sys.playSfx(-1, "bulletSound", 0);
 	}
 
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (isAlive && otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
-			sys.playSfx(-1, "boomSound2", 0);
+			Mix_Volume(sys.playSfx(-1, "boomSound2", 0), 50);
 			cout << otherSprite->getCollisionWeight();
 			isAlive = false;
 			setMoveLeft(false);
@@ -200,17 +210,35 @@ int main(int argc, char** argv) {
 	level2->addSprite(new Cloud(70 + 1280, 100, 320, 320, 3, path.ni_Cloud_1d));
 	level2->addSprite(new Cloud(1570 + 1280, -100, 300, 300, 2, path.ni_Cloud_2d));
 
+	level2->addSprite( {
+
+		new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 4),
+		new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 6),
+		new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 3),
+		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVELEFT, 7, path.e_SpaceShip, 2, 4),
+		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 8),
+		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVELEFT, 5, path.e_SpaceShip, 2, 9),
+	});
+	
 	level2->addSprite(new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 50));
 	level2->addSprite(player);
 
+	//Add sounds
 	sys.addSfx("music", path.m_Level1_Music);
 	sys.addSfx("bulletSound", path.sfx_BulletSound);
 	sys.addSfx("boomSound", path.sfx_BoomSound_1);
 	sys.addSfx("boomSound2", path.sfx_BoomSound_2);
-	sys.audioChannel1 = sys.playSfx(0, "music", 0);
+	sys.audioChannel1 = sys.playSfx(0, "music", -1);
 	Mix_Volume(sys.audioChannel1, 20);
+	Mix_Volume(sys.audioChannel2, 20);
+
+	//Short Commands
+	game.addShortCommand('+', volumeUp);
+	game.addShortCommand('-', volumeDown);
 
 	game.run();
 
 	return 0;
 }
+
+

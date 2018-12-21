@@ -6,14 +6,32 @@ using namespace std;
 
 namespace planeGameEngine {
 
+	struct GameEngine::ShortCommand {
+		ShortCommand(char k, void(*f)()) :key(k), func(f) {}
+
+		void action(SDL_Event event) {
+			if (event.key.keysym.sym == key) {
+				func();
+			}
+		}
+	private:
+		char key;
+		void(*func)();
+	};
+
 	GameEngine::GameEngine() :activeLevelNumber(0)
 	{
 	}
 
-	void GameEngine::add(Sprite* sprite) {
+	void GameEngine::addShortCommand(char keyDown, void(*f)()) {
+		shortCommands.push_back(new ShortCommand(keyDown, f));
+	}
+
+	void GameEngine::addSprite(Sprite* sprite) {
 		spritesToAdd.push_back(sprite);
 	}
-	void GameEngine::remove(Sprite* sprite) {
+
+	void GameEngine::removeSprite(Sprite* sprite) {
 		spritesToRemove.push_back(sprite);
 	}
 	void GameEngine::run() {
@@ -28,6 +46,17 @@ namespace planeGameEngine {
 				case SDL_QUIT:
 					running = false;
 					break;
+				case SDL_KEYDOWN:
+					for (ShortCommand* sc : shortCommands) {
+						sc->action(event);
+					}
+					for (Sprite* s : sprites) {
+						s->keyDown(event);
+					}break;
+				case SDL_KEYUP:
+					for (Sprite* s : sprites) {
+						s->keyUp(event);
+					}break;
 				case SDL_MOUSEBUTTONDOWN:
 					for (Sprite* s : sprites) {
 						s->mouseDown(event);
@@ -35,14 +64,6 @@ namespace planeGameEngine {
 				case SDL_MOUSEBUTTONUP:
 					for (Sprite* s : sprites) {
 						s->mouseUp(event);
-					}break;
-				case SDL_KEYDOWN:
-					for (Sprite* s : sprites) {
-						s->keyDown(event);
-					}break;
-				case SDL_KEYUP:
-					for (Sprite* s : sprites) {
-						s->keyUp(event);
 					}break;
 				} //Switch
 			} //Inner while loop
@@ -107,10 +128,10 @@ namespace planeGameEngine {
 				//Check that all non-player moving sprites are removed before switching level
 				for (Sprite* s : sprites) {
 					if (s->getRect().x > 1280) {
-						remove(s);
+						removeSprite(s);
 					}
 					else {
-					s->setFlagForDeletion(true);
+						s->setFlagForDeletion(true);
 					}
 					if (!s->isInteractable()) {
 						if (MovingSprite* ms = dynamic_cast<MovingSprite*>(s)) {
@@ -126,11 +147,11 @@ namespace planeGameEngine {
 					sprites = levels[activeLevelNumber]->getLevelSprites(); // OBS!!! objekten i gamla sprites måste deletas
 					activeLevel = levels[activeLevelNumber];
 					incomingLevelChange = false;
-					
+
 				}
 				//iterationCount++;
 			}
-			
+
 		} //Outer while loop
 	}
 
