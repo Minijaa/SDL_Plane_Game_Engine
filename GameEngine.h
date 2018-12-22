@@ -17,7 +17,7 @@ namespace planeGameEngine {
 		void addShortCommand(char keyDown, void(*f)());
 		void run();
 		int getIterationCount();
-		void setIncomingLevelChange(bool value) { incomingLevelChange = value; }
+		void setLevelChange(bool value) { levelChange = value; }
 		Level* addLevel(int killCount) {
 			Level* level = Level::getInstance(killCount);
 			levels.push_back(level);
@@ -34,11 +34,11 @@ namespace planeGameEngine {
 		std::vector<Sprite*> sprites, spritesToAdd, spritesToRemove;
 		std::vector<Level*> levels;
 		std::vector<ShortCommand*> shortCommands;
-		Level* activeLevel;
 		int iterationCount;
-		int activeLevelNumber;
-		bool incomingLevelChange;
+		int activeLevelNumber = 0;
+		bool levelChange = false;
+		void RenderSprites(int nextTick);
+		void changeLevel(bool nextLevel);
 	};
-
 }
 #endif

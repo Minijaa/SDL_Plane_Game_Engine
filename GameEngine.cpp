@@ -35,7 +35,6 @@ namespace planeGameEngine {
 		spritesToRemove.push_back(sprite);
 	}
 	void GameEngine::run() {
-		activeLevel = levels[0];
 		sprites = levels[activeLevelNumber]->getLevelSprites();
 		bool running = true;
 		while (running) {
@@ -85,11 +84,13 @@ namespace planeGameEngine {
 				s->tick(iterationCount);
 			}
 
+			//Add added Sprites to main Sprite-vector
 			for (Sprite* s : spritesToAdd) {
 				sprites.push_back(s);
 			}
 			spritesToAdd.clear();
 
+			//Remove flagged Sprites from main Sprite-vector
 			for (Sprite* s : spritesToRemove) {
 				for (vector<Sprite*>::iterator i = sprites.begin(); i != sprites.end();) {
 					if (*i == s) {
@@ -102,55 +103,9 @@ namespace planeGameEngine {
 				}
 			}
 			spritesToRemove.clear();
-			//Render stuff for the current frame
-			SDL_RenderClear(sys.getRenderer());
-			for (Sprite*s : sprites) {
-				s->setCollisionHandeled(false);
-				s->draw();
-			}
-			SDL_RenderPresent(sys.getRenderer());
-			int delay = nextTick - SDL_GetTicks();
-			if (delay > 0) {
-				SDL_Delay(delay);
-			}
-			if (iterationCount < INT32_MAX) {
-				iterationCount++;
-			}
-			else {
-				iterationCount = 0;
-			}
-			if (activeLevel->getKillCount() > activeLevel->getRequiredKillCount()) { //Det här blir knäppt att bestämma här. Måste göras i main på något sätt.
-				incomingLevelChange = true;
-			}
-			if (incomingLevelChange) {
-				int counter = 0;
-				//Rätt fult, känns som hur levelbytet ska se ut borde avgöras av implementeraren. Eventuell "fada" bort alla sprites.
-				//Check that all non-player moving sprites are removed before switching level
-				for (Sprite* s : sprites) {
-					if (s->getRect().x > 1280) {
-						removeSprite(s);
-					}
-					else {
-						s->setFlagForDeletion(true);
-					}
-					if (!s->isInteractable()) {
-						if (MovingSprite* ms = dynamic_cast<MovingSprite*>(s)) {
-							ms->setMoveSpeed(5);
-						}
-					}
-					if (s->getCollisionWeight() > 0) {
-						counter++;
-					}
-				}if (counter < 2) {
-					std::cout << "HEJ";
-					activeLevelNumber++;
-					sprites = levels[activeLevelNumber]->getLevelSprites(); // OBS!!! objekten i gamla sprites måste deletas
-					activeLevel = levels[activeLevelNumber];
-					incomingLevelChange = false;
+			RenderSprites(nextTick);
+			changeLevel(levelChange);
 
-				}
-				//iterationCount++;
-			}
 
 		} //Outer while loop
 	}
@@ -164,6 +119,45 @@ namespace planeGameEngine {
 	{
 		for (Sprite* s : sprites) {
 			delete s;
+		}
+
+	}
+	void GameEngine::RenderSprites(int nextTick)
+	{
+		//Render stuff for the current frame
+		SDL_RenderClear(sys.getRenderer());
+		for (Sprite*s : sprites) {
+			s->setCollisionHandeled(false);
+			s->draw();
+		}
+		SDL_RenderPresent(sys.getRenderer());
+		int delay = nextTick - SDL_GetTicks();
+		if (delay > 0) {
+			SDL_Delay(delay);
+		}
+		if (iterationCount < INT32_MAX) {
+			iterationCount++;
+		}
+		else {
+			iterationCount = 0;
+		}
+	}
+	void GameEngine::changeLevel(bool nextLevel)
+	{
+		if (nextLevel) {
+			if ((activeLevelNumber + 1) < levels.size()) {
+
+				//Remove current game Sprites
+				for (Sprite* s : sprites) {
+					if (!s->isPlayer()) {
+						removeSprite(s);
+					}
+				}
+				activeLevelNumber++;
+				//Load in sprites from new level
+				sprites = levels[activeLevelNumber]->getLevelSprites();
+				levelChange = false;
+			}
 		}
 
 	}

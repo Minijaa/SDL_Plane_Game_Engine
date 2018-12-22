@@ -2,16 +2,11 @@ Todo:
 * Change AnimatedSprite constructors to only receive 1 std::string imagepath. Instead add function addAnimation(string, vector) and let that function
 	insert to unordered_map. Add another addAnimation(string, string) for spritesheets. Implement eventAnimation
 * Kanske bättre att AnimatedSprite har en egen tickCounter för att reglera sina animationer är att den kommer som argument i tick?
-
+* FPS-grejjen. Kunna välja aktuell framerate.
+* Ta bort allt som har med "FlagForDeletion " att göra?
 
 Betygskriterier:
-? Denna metod (tick) bör ta som argument något som ger Sprite-objekten åtkomst till omvärlden, så att de kan interagera med omvärlden
-	(t.ex. samlingen av andra Sprite-objekt eller själva GameEngine-objektet)
-* (för betyget C och högre) om det finns användargenererade händelser så kollas om händelsen är ett kortkommando – i så fall anropas motsvarande funktion
-	annars skickas händelsen vidare till Sprite-objekten. Alltså: spelmotorn ska vara förberedd för att tillämpningen vill installera kortkommandon (enkla
-	tangenttryckningar). Tillämpningen ska kunna ange en tangent och en call back-funktion som ska anropas då denna tangent har tryckts ner 
-? spelmotorn ska vara förberedd för hantering av spelnivåer (levels). Tillämpningar ska kunna skapa flera olika "scener" bestående av olika Sprite-objekt 
-	och bakgrundsbilder och OBS!! -->lätt växla mellan dem <-- OBS!!! .
+
 * kortkommandon (tangenttryckningar) ska kunna knytas även till medlemsfunktioner i angivna objekt (förutom till fria funktioner). Det ska vara lätt
 	för tillämpningen att ange antingen en funktionspekare till en fri funktion eller kombinationen av en objektpekare och en funktionsmedlemspekare
 	tillsammans med tangenten.
@@ -24,12 +19,6 @@ A:
 	påverkas av en gravitation samt ska kunna studsa mot varandra vid kollision osv.
 	Sprites ska ha en viss elasticitet som påverkar deras studs-beteende. 
 
-
 Frågor:
 * Räcker det att hålla en Surface per sprite och göra kollisionsdetektering på pixelnivå utifrån den? Eller behöver man spara surfaces
 	för alla animations-texturer. (om man inte använder sprite sheets alltså)
-* Kortkommandon med funktionspekare. En vector i GameEngine som innehåller objekt av ex "ShortCommand". Konstruktorn ska ta:
-	konstruktorargument:
-	-char (tangent som ska aktivera funktion)			
-	-funktionspekare (till implementerarens funktion)
-	metod: perform();

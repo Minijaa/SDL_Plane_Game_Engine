@@ -7,6 +7,13 @@ namespace planeGameEngine {
 
 	class Sprite
 	{
+	private:
+		SDL_Rect rect;
+		bool interactable;
+		bool flagForDeletion;
+		bool collisionHandeled = false;
+		bool player = false;
+
 	public:
 		//Inline function
 		SDL_Rect getRect() const {
@@ -30,6 +37,8 @@ namespace planeGameEngine {
 		bool isCollisionHandeled() { return collisionHandeled; }
 		void setFlagForDeletion(bool deletionValue) { flagForDeletion = deletionValue; }
 		bool isFlaggedForDeletion() { return flagForDeletion; }
+		bool isPlayer() { return player; }
+		void setIsPlayer(bool isPlayer) { player = isPlayer; }
 		Sprite* makeTexture(std::string& imagepath) {}
 		//Subclasses must override this function
 		virtual void draw() const = 0;
@@ -46,12 +55,7 @@ namespace planeGameEngine {
 		void setWH(int w, int h);
 		void setXY(int x, int y);
 
-	private:
-		SDL_Rect rect;
-		bool interactable;
-		bool flagForDeletion;
-		bool collisionHandeled = false;
-		
+
 	};
 
 }

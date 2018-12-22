@@ -14,16 +14,16 @@ using namespace std;
 
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
+int killCount;
 int volume = 30;
-Level* activeLevel; //DÅLIG LÖSNING, FUNKAR INTE VID BANBYTE
 GameEngine game;
 
 void volumeUp() {
-	volume+=2;
+	volume += 2;
 	Mix_Volume(sys.audioChannel1, volume);
 }
 void volumeDown() {
-	volume-=2;
+	volume -= 2;
 	Mix_Volume(sys.audioChannel1, volume);
 }
 
@@ -64,7 +64,12 @@ public:
 		}
 		if (getHp() < 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
-			activeLevel->incrementKillCounter();
+			killCount++;
+			if (killCount > 3) {
+				killCount = 0;
+				game.setLevelChange(true);
+			}
+
 			respawnEnemy();
 			//Add 100 points. Update Points label
 		}
@@ -94,7 +99,7 @@ public:
 	{}
 
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
-		
+
 		//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
 		if (otherSprite->getCollisionWeight() != 1) {
 			//cout << "hit " << otherSprite->getCollisionWeight() << endl; 
@@ -111,9 +116,13 @@ public:
 class Player : public AnimatedSprite, public ControllableSprite {
 public:
 	Player(int x, int y, int w, int h, std::unordered_map<std::string, std::string> animationsSpriteSheets, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, animationsSpriteSheets, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3)
-	{}
+	{
+		setIsPlayer(true);
+	}
 	Player(int x, int y, int w, int h, std::unordered_map<std::string, std::vector<std::string>> animationSprites, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, animationSprites, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3)
-	{}
+	{
+		setIsPlayer(true);
+	}
 
 	void tick(int iterationCount) {
 		AnimatedSprite::tick(game.getIterationCount());
@@ -175,7 +184,7 @@ int main(int argc, char** argv) {
 	Level* level1 = game.addLevel(10);
 
 	// LEVEL 1 - Adding all sprites
-	level1->addSprite({ 
+	level1->addSprite({
 		Background::getInstance(path.bg_Level_3),
 		new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1),
 		new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_2),
@@ -191,13 +200,13 @@ int main(int argc, char** argv) {
 		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2),
 		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
 		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
-	});
-	activeLevel = level1;
+		});
+
 	unordered_map<std::string, std::vector<std::string>> animations;
 	animations["idle"] = vector<std::string>{ path.p_Plane_idle_1, path.p_Plane_idle_2 };
 	Player* player = new Player(100, 350, 148, 101, animations, path.p_Plane_idle_1);
 	level1->addSprite(player);
-	
+
 	Level* level2 = game.addLevel(1);
 	level2->addSprite(Background::getInstance(path.bg_Level_2));
 
@@ -210,7 +219,7 @@ int main(int argc, char** argv) {
 	level2->addSprite(new Cloud(70 + 1280, 100, 320, 320, 3, path.ni_Cloud_1d));
 	level2->addSprite(new Cloud(1570 + 1280, -100, 300, 300, 2, path.ni_Cloud_2d));
 
-	level2->addSprite( {
+	level2->addSprite({
 
 		new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 4),
 		new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 6),
@@ -218,8 +227,8 @@ int main(int argc, char** argv) {
 		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVELEFT, 7, path.e_SpaceShip, 2, 4),
 		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 8),
 		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVELEFT, 5, path.e_SpaceShip, 2, 9),
-	});
-	
+		});
+
 	level2->addSprite(new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 50));
 	level2->addSprite(player);
 
@@ -235,7 +244,6 @@ int main(int argc, char** argv) {
 	//Short Commands
 	game.addShortCommand('+', volumeUp);
 	game.addShortCommand('-', volumeDown);
-
 	game.run();
 
 	return 0;
