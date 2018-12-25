@@ -19,7 +19,11 @@ namespace planeGameEngine {
 		void(*func)();
 	};
 
-	GameEngine::GameEngine() :activeLevelNumber(0)
+	GameEngine::GameEngine() :activeLevelNumber(0), FRAMERATE(60)
+	{
+	}
+
+	GameEngine::GameEngine(int fps) : activeLevelNumber(0), FRAMERATE(fps)
 	{
 	}
 
@@ -81,7 +85,7 @@ namespace planeGameEngine {
 						}
 					}
 				}
-				s->tick(iterationCount);
+				s->tick();
 			}
 
 			//Add added Sprites to main Sprite-vector

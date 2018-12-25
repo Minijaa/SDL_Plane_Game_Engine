@@ -12,6 +12,7 @@ namespace planeGameEngine {
 	public:
 		struct ShortCommand;
 		GameEngine();
+		GameEngine(int fps);
 		void addSprite(Sprite*);
 		void removeSprite(Sprite*);
 		void addShortCommand(char keyDown, void(*f)());
@@ -29,7 +30,7 @@ namespace planeGameEngine {
 		~GameEngine();
 
 	private:
-		const int FRAMERATE = 60;
+		const int FRAMERATE;
 		const int TICKINTERVAL = 1000 / FRAMERATE;
 		std::vector<Sprite*> sprites, spritesToAdd, spritesToRemove;
 		std::vector<Level*> levels;

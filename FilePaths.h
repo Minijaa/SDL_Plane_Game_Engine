@@ -25,6 +25,11 @@ namespace planeGameEngine {
 			//Player Sprites [p]
 			std::string p_Plane_idle_1 = "Images/Fly1.png";
 			std::string p_Plane_idle_2 = "Images/Fly2.png";
+			std::string p_Plane_shooting_1 = "Images/Shoot1.png";
+			std::string p_Plane_shooting_2 = "Images/Shoot2.png";
+			std::string p_Plane_shooting_3 = "Images/Shoot3.png";
+			std::string p_Plane_shooting_4 = "Images/Shoot4.png";
+			std::string p_Plane_shooting_5 = "Images/Shoot5.png";
 
 			//Enemy Sprites [e]
 			std::string e_SpaceShip = "Images/Enemy1.png";

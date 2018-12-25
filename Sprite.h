@@ -29,7 +29,7 @@ namespace planeGameEngine {
 		virtual void mouseUp(const SDL_Event& event) {}
 		virtual void keyDown(const SDL_Event& event) {}
 		virtual void keyUp(const SDL_Event& event) {}
-		virtual void tick(const int iteractionCount) {}
+		virtual void tick() {}
 		virtual void collisionAction(Sprite* sprite, bool inferiorWeight) {}
 		virtual int getCollisionWeight() const { return 0; }
 		virtual void changeTextureForLevelChange() {}

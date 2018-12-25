@@ -16,7 +16,7 @@ const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 int killCount;
 int volume = 30;
-GameEngine game;
+GameEngine game(60); //Choose Frame Rate
 
 void volumeUp() {
 	volume += 2;
@@ -35,7 +35,7 @@ public:
 
 	}
 	void tick() {
-		MovingSprite::tick(game.getIterationCount());
+		MovingSprite::tick();
 	}
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
 		if (!isFlaggedForDeletion()) {
@@ -108,24 +108,19 @@ public:
 		//Play hit-sound
 	}
 
-	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
-		game.removeSprite(this);
+	void hitBoundryAction(SDL_Rect* rect) {
+
 	}
 };
 
 class Player : public AnimatedSprite, public ControllableSprite {
 public:
-	Player(int x, int y, int w, int h, std::unordered_map<std::string, std::string> animationsSpriteSheets, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, animationsSpriteSheets, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3)
+	Player(int x, int y, int w, int h, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 6, 1, 3)
 	{
 		setIsPlayer(true);
 	}
-	Player(int x, int y, int w, int h, std::unordered_map<std::string, std::vector<std::string>> animationSprites, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, animationSprites, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3)
-	{
-		setIsPlayer(true);
-	}
-
-	void tick(int iterationCount) {
-		AnimatedSprite::tick(game.getIterationCount());
+	void tick() {
+		AnimatedSprite::tick();
 		determineMoveDirection();
 		move();
 	}
@@ -152,7 +147,6 @@ public:
 		if (isAlive) {
 			implementBasicMovement(event);
 		}
-
 	}
 	void draw() const {
 		AnimatedSprite::draw();
@@ -160,8 +154,8 @@ public:
 	void shoot() {
 		game.addSprite(new Bullet(getRect().x + 90, getRect().y + 53, game));
 		sys.playSfx(-1, "bulletSound", 0);
+		setActiveEvent("shoot");
 	}
-
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (isAlive && otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound2", 0), 50);
@@ -180,7 +174,6 @@ private:
 };
 
 int main(int argc, char** argv) {
-
 	Level* level1 = game.addLevel(10);
 
 	// LEVEL 1 - Adding all sprites
@@ -202,9 +195,9 @@ int main(int argc, char** argv) {
 		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
 		});
 
-	unordered_map<std::string, std::vector<std::string>> animations;
-	animations["idle"] = vector<std::string>{ path.p_Plane_idle_1, path.p_Plane_idle_2 };
-	Player* player = new Player(100, 350, 148, 101, animations, path.p_Plane_idle_1);
+	Player* player = new Player(100, 350, 148, 101, path.p_Plane_idle_1);
+	player->addAnimation("idle", { path.p_Plane_idle_1, path.p_Plane_idle_2 });
+	player->addAnimation("shoot", { path.p_Plane_shooting_1, path.p_Plane_shooting_2, path.p_Plane_shooting_3, path.p_Plane_shooting_4, path.p_Plane_shooting_5 });
 	level1->addSprite(player);
 
 	Level* level2 = game.addLevel(1);

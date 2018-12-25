@@ -13,6 +13,7 @@ namespace planeGameEngine {
 	{
 	private:
 		int moveSpeed, moveDir, width, height, healthPoints, weight;
+
 		SDL_Texture* spriteTexture;
 
 		//void collisionCheck();
@@ -28,7 +29,7 @@ namespace planeGameEngine {
 
 		void setDirection(moveDirections moveDirection);
 		void setHp(int hp) { healthPoints = hp; }
-		void tick(const int iteractionCount);
+		void tick();
 		void draw() const;
 		void move();
 		int getCollisionWeight() const {
@@ -39,7 +40,7 @@ namespace planeGameEngine {
 			healthPoints -= decreaseValue;
 		}
 		virtual void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {};
-		virtual void hitBoundryAction(SDL_Rect* rect) {} //Endast aktuell för Player och Ufo
+		virtual void hitBoundryAction(SDL_Rect* rect, int moveDirection) {} //Endast aktuell för Player och Ufo
 		virtual void collisionAction(Sprite* sprite_1, Sprite* sprite_2) {}
 		~MovingSprite();
 

@@ -5,34 +5,31 @@
 #include "MovingSprite.h"
 #include <unordered_map>
 #include <vector>
-
+#include <iostream>
 namespace planeGameEngine {
-
 	class AnimatedSprite : virtual public Sprite
 	{
 	public:
-		static AnimatedSprite* getInstance(int x, int y, int w, int h, std::unordered_map<std::string, std::string>, std::string& defaultImage);
-		//, std::string& imagePath
+		static AnimatedSprite* getInstance(int x, int y, int w, int h, std::string& defaultImage);
 		~AnimatedSprite();
 		void draw() const;
-		void tick(const int intervalCounter);
-		void setActiveEvent(std::string& nameOfEvent);
+		void tick();
+		void setActiveEvent(std::string nameOfEvent);
+		void addAnimation(std::string eventName, std::vector<std::string> paths);
 	protected:
-		AnimatedSprite(int x, int y, int w, int h, std::unordered_map<std::string, std::string> animationSpriteSheets, std::string& defaultImage);
-		AnimatedSprite(int x, int y, int w, int h, std::unordered_map<std::string, std::vector<std::string>> animationSprites, std::string& defaultImage);
+		AnimatedSprite(int x, int y, int w, int h, std::string& defaultImage);
 	private:
+		unsigned intervalCounter;
+		int eventCounter;
 		bool eventAnimationActive = false;
 		void idleAnimation(int intervalCounter);
-		void eventAnimation(int intervalCounter, std::string& animationName);
-		std::unordered_map<std::string, std::vector<std::string>> animationSprites;
-		std::unordered_map<std::string, std::string> animationSpriteSheets;
-
+		void eventAnimation(int intervalCounter);
 		std::unordered_map<std::string, std::vector<SDL_Texture*>> animationSpriteTextures;
 		std::string activeEvent;
 		SDL_Texture* activeSpriteTexture;
 		SDL_Texture* defaultSpriteTexture;
+		SDL_Texture* lastAnimationTexture;
 		void makeTextures(std::string& defaultSprite);
 	};
-
 }
 #endif

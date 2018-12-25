@@ -2,52 +2,55 @@
 
 namespace planeGameEngine {
 
-	AnimatedSprite* AnimatedSprite::getInstance(int x, int y, int w, int h, std::unordered_map<std::string, std::string> animations, std::string& defaultImage) {
-		//return new AnimatedSprite(x, y, w, h, imagePath);
-		return nullptr;
-	}
-
-	AnimatedSprite::AnimatedSprite(int x, int y, int w, int h, std::unordered_map<std::string, std::string> animations, std::string& defaultImage) :Sprite(x, y, w, h)
+	AnimatedSprite::AnimatedSprite(int x, int y, int w, int h, std::string & defaultImage) :Sprite(x, y, w, h)
 	{
-		animationSpriteSheets.insert(animations.begin(), animations.end());
 		makeTextures(defaultImage);
-		//animationSpriteSheets["shooting"] = imagePath;
 	}
-	AnimatedSprite::AnimatedSprite(int x, int y, int w, int h, std::unordered_map<std::string, std::vector<std::string>> animations, std::string& defaultImage) :Sprite(x, y, w, h) {
-		animationSprites.insert(animations.begin(), animations.end());
-		makeTextures(defaultImage);
+	AnimatedSprite * AnimatedSprite::getInstance(int x, int y, int w, int h, std::string & defaultImage)
+	{
+		return new AnimatedSprite(x, y, w, h, defaultImage);
 	}
 	AnimatedSprite::~AnimatedSprite()
 	{
-		
 	}
 	void AnimatedSprite::draw() const
 	{
 		SDL_RenderCopy(sys.getRenderer(), activeSpriteTexture, NULL, &getRect());
-
 	}
-	void AnimatedSprite::tick(const int intervalCounter)
+	void AnimatedSprite::tick()
 	{
-		if (!animationSprites.empty()) { //Måste fixas och kolla om "idle" inte pekar på nåt vettigt
-
+		intervalCounter++;
+		if (!animationSpriteTextures.empty()) { //Måste fixas och kolla om "idle" inte pekar på nåt vettigt
 			if (!eventAnimationActive) {
 				idleAnimation(intervalCounter);
 			}
 			else {
-				//eventAnimation(intervalCounter);
+				eventAnimation(intervalCounter);
 			}
 		}
 	}
 
-	void AnimatedSprite::setActiveEvent(std::string & nameOfEvent)
+	void AnimatedSprite::setActiveEvent(std::string nameOfEvent)
 	{
+		eventAnimationActive = true;
 		activeEvent = nameOfEvent;
+	}
+
+	void AnimatedSprite::addAnimation(std::string eventName, std::vector<std::string> paths)
+	{
+		//animationSprites[eventName] = paths;
+		for (std::string s : paths) {
+			SDL_Texture* tx = IMG_LoadTexture(sys.getRenderer(), s.c_str());
+			animationSpriteTextures[eventName].push_back(tx);
+		}
 	}
 
 	void AnimatedSprite::idleAnimation(int intervalCounter) {
 
 		std::vector<SDL_Texture*> atx = animationSpriteTextures["idle"];
+		std::cout << "SIZE: " << atx.size() << std::endl;
 		if ((intervalCounter % 4) == 0) {
+			intervalCounter = 0;
 			for (unsigned i = 0; i < atx.size(); i++) {
 				if (activeSpriteTexture == defaultSpriteTexture) {
 					activeSpriteTexture = atx[0];
@@ -55,6 +58,7 @@ namespace planeGameEngine {
 				}
 				if (activeSpriteTexture == atx[atx.size() - 1]) {
 					activeSpriteTexture = defaultSpriteTexture;
+					lastAnimationTexture = nullptr;
 					break;
 				}
 				if (activeSpriteTexture == atx[i]) {
@@ -63,19 +67,26 @@ namespace planeGameEngine {
 				}
 			}
 		}
-
 	}
-	void AnimatedSprite::eventAnimation(int intervalCounter, std::string& animationName) {
-		SDL_Texture* lastAnimationTexture;
-		if ((intervalCounter % 4) == 0) {
-			for (SDL_Texture* tx : animationSpriteTextures[animationName]) {
-				if (activeSpriteTexture == defaultSpriteTexture) {
-					activeSpriteTexture = tx;
-					lastAnimationTexture = tx;
+	void AnimatedSprite::eventAnimation(int intervalCounter) {
+		std::vector<SDL_Texture*> etx = animationSpriteTextures[activeEvent];
+		if ((intervalCounter % 2) == 0) {
+			intervalCounter = 0;
+			for (unsigned i = 0; i < etx.size(); i++) {
+				if (lastAnimationTexture == nullptr) {
+					activeSpriteTexture = etx[0];
+					lastAnimationTexture = activeSpriteTexture;
 					break;
 				}
-				if (activeSpriteTexture == tx) {
-
+				if (activeSpriteTexture == etx[etx.size() - 1]) {
+					activeSpriteTexture = defaultSpriteTexture;
+					eventAnimationActive = false;
+					lastAnimationTexture = nullptr;
+					break;
+				}
+				if (activeSpriteTexture == etx[i]) {
+					activeSpriteTexture = etx[i + 1];
+					break;
 				}
 			}
 		}
@@ -83,14 +94,14 @@ namespace planeGameEngine {
 	void AnimatedSprite::makeTextures(std::string& defaultSprite)
 	{
 		//för individuella sprites (inte spritesheets)
-		if (!animationSprites.empty()) {
+		/*if (!animationSprites.empty()) {
 			for (auto iter = animationSprites.begin(); iter != animationSprites.end(); iter++) {
 				for (std::string s : iter->second) {
 					SDL_Texture* tx = IMG_LoadTexture(sys.getRenderer(), s.c_str());
 					animationSpriteTextures[iter->first].push_back(tx);
 				}
 			}
-		}
+		}*/
 		activeSpriteTexture = IMG_LoadTexture(sys.getRenderer(), defaultSprite.c_str());
 		defaultSpriteTexture = activeSpriteTexture;
 		if (activeSpriteTexture == nullptr) {

@@ -5,7 +5,7 @@ namespace planeGameEngine {
 
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
-		makeTexture(imagePath);	
+		makeTexture(imagePath);
 	}
 
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
@@ -32,6 +32,13 @@ namespace planeGameEngine {
 
 	void MovingSprite::move()
 	{
+		//Use for UFO later.
+		if (getRect().x == 0 ||
+			getRect().x == sys.getXResolution() - getRect().w ||
+			getRect().y == 0 ||
+			getRect().y == sys.getYResolution() - getRect().h) {
+			hitBoundryAction(&getRect(), moveDir);
+		}
 		switch (moveDir) {
 		case MOVELEFT:
 			if (getRect().x < 0 - getRect().w) {
@@ -110,7 +117,7 @@ namespace planeGameEngine {
 		moveDir = moveDirection;
 	}
 
-	void MovingSprite::tick(const int iteractionCount)
+	void MovingSprite::tick()
 	{
 		move();
 	}

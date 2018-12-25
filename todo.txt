@@ -1,12 +1,10 @@
 Todo:
-* Change AnimatedSprite constructors to only receive 1 std::string imagepath. Instead add function addAnimation(string, vector) and let that function
-	insert to unordered_map. Add another addAnimation(string, string) for spritesheets. Implement eventAnimation
-* Kanske bättre att AnimatedSprite har en egen tickCounter för att reglera sina animationer är att den kommer som argument i tick?
-* FPS-grejjen. Kunna välja aktuell framerate.
+*  Add another addAnimation(string, string) for spritesheets. 
 * Ta bort allt som har med "FlagForDeletion " att göra?
 
 Betygskriterier:
 
+B:
 * kortkommandon (tangenttryckningar) ska kunna knytas även till medlemsfunktioner i angivna objekt (förutom till fria funktioner). Det ska vara lätt
 	för tillämpningen att ange antingen en funktionspekare till en fri funktion eller kombinationen av en objektpekare och en funktionsmedlemspekare
 	tillsammans med tangenten.

@@ -12,28 +12,28 @@ namespace planeGameEngine {
 	}
 	void ControllableSprite::determineMoveDirection()
 	{
-		if (moveUp && moveRight) {
+		if (moveUp && moveRight && getRect().y > 0 && getRect().x < (sys.getXResolution() - getRect().w)) {
 			setDirection(MovingSprite::MOVEUPRIGHT);
 		}
-		else if (moveUp && moveLeft) {
+		else if (moveUp && moveLeft && getRect().y > 0 && getRect().x > 0) {
 			setDirection(MovingSprite::MOVEUPLEFT);
 		}
-		else if (moveDown && moveRight) {
+		else if (moveDown && moveRight && getRect().y < (sys.getYResolution() - getRect().h) && getRect().x < (sys.getXResolution() - getRect().w)) {
 			setDirection(MovingSprite::MOVEDOWNRIGHT);
 		}
-		else if (moveDown && moveLeft) {
+		else if (moveDown && moveLeft && getRect().y < (sys.getYResolution() - getRect().h) && getRect().x > 0) {
 			setDirection(MovingSprite::MOVEDOWNLEFT);
 		}
-		else if (moveDown && !moveUp) {
+		else if (moveDown && !moveUp && getRect().y < (sys.getYResolution() - getRect().h)) {
 			setDirection(MovingSprite::MOVEDOWN);
 		}
-		else if (moveUp && !moveDown) {
+		else if (moveUp && !moveDown && getRect().y > 0) {
 			setDirection(MovingSprite::MOVEUP);
 		}
-		else if (moveLeft && !moveRight) {
+		else if (moveLeft && !moveRight && getRect().x > 0) {
 			setDirection(MovingSprite::MOVELEFT);
 		}
-		else if (moveRight && !moveLeft) {
+		else if (moveRight && !moveLeft && getRect().x < (sys.getXResolution() - getRect().w)) {
 			setDirection(MovingSprite::MOVERIGHT);
 		}
 		else {
@@ -48,26 +48,26 @@ namespace planeGameEngine {
 	{
 		return nullptr;
 	}
-	void ControllableSprite::tick(const int iteractionCount)
+	void ControllableSprite::tick()
 	{
 		determineMoveDirection();
-		MovingSprite::tick(0);
+		MovingSprite::tick();
 	}
 	void ControllableSprite::implementBasicMovement(const SDL_Event& event) {
 		if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym)
 			{
 			case SDLK_UP:
-				moveUp = true;
+				moveUp = getRect().y > 0;	
 				break;
 			case SDLK_DOWN:
-				moveDown = true;
+				moveDown = getRect().y < (sys.getYResolution() - getRect().h);
 				break;
 			case SDLK_LEFT:
-				moveLeft = true;
+				moveLeft = getRect().x > 0;
 				break;
 			case SDLK_RIGHT:
-				moveRight = true;
+				moveRight = getRect().x < (sys.getXResolution() - getRect().w);
 				break;
 			}
 		}
@@ -86,7 +86,7 @@ namespace planeGameEngine {
 				moveRight = false;
 				break;
 			}
-		} 
+		}
 
 	}
 	void ControllableSprite::mouseDown(const SDL_Event & event)
