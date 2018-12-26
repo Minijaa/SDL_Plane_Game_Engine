@@ -12,6 +12,17 @@ namespace planeGameEngine {
 	}
 	AnimatedSprite::~AnimatedSprite()
 	{
+		SDL_DestroyTexture(activeSpriteTexture);
+		SDL_DestroyTexture(defaultSpriteTexture);
+		SDL_DestroyTexture(lastAnimationTexture);
+
+		if (!animationSpriteTextures.empty()) {
+			for (auto iter = animationSpriteTextures.begin(); iter != animationSpriteTextures.end(); iter++) {
+				for (SDL_Texture* tx : iter->second) {
+					SDL_DestroyTexture(tx);
+				}
+			}
+		}
 	}
 	void AnimatedSprite::draw() const
 	{
@@ -48,7 +59,7 @@ namespace planeGameEngine {
 	void AnimatedSprite::idleAnimation(int intervalCounter) {
 
 		std::vector<SDL_Texture*> atx = animationSpriteTextures["idle"];
-		std::cout << "SIZE: " << atx.size() << std::endl;
+		//std::cout << "SIZE: " << atx.size() << std::endl;
 		if ((intervalCounter % 4) == 0) {
 			intervalCounter = 0;
 			for (unsigned i = 0; i < atx.size(); i++) {

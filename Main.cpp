@@ -13,18 +13,18 @@
 
 using namespace planeGameEngine;
 using namespace std;
-
+void setUp();
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 int killCount;
 int volume = 30;
 int score;
-//vector<std::string> highScores;
 vector<Label*> highScores;
 Label* scoreLabel;
 Label* highScoresLabel;
 TextInputLabel* playerNameInputLabel;
 Level* level3;
+
 
 GameEngine game(60); //Choose Frame Rate
 
@@ -75,7 +75,7 @@ public:
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (inferiorWeight) {
 			decreaseHp();
-			std::cout << "HIT!" << endl;
+			//std::cout << "HIT!" << endl;
 		}
 		if (getHp() < 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
@@ -84,6 +84,8 @@ public:
 			if (killCount > 3) {
 				killCount = 0;
 				game.setLevelChange(true, -1);
+				//game.setResetGame(true);
+				//setUp();
 			}
 			respawnEnemy();
 			//Add 100 points. Update Points label
@@ -180,6 +182,9 @@ public:
 			setMoveUp(false);
 			setMoveDown(false);
 			setMoveRight(false);
+		}if (event.key.keysym.sym == SDLK_ESCAPE) {
+			cout << "BYT BANAQ!" << endl;
+			game.setLevelChange(true, 0);
 		}
 	}
 	void keyUp(const SDL_Event& event)
@@ -199,7 +204,7 @@ public:
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (isAlive && otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound2", 0), 50);
-			cout << otherSprite->getCollisionWeight();
+			//cout << otherSprite->getCollisionWeight();
 			isAlive = false;
 			setMoveLeft(false);
 			setMoveUp(false);
@@ -212,8 +217,8 @@ public:
 private:
 	bool isAlive = true;
 };
+void setUp() {
 
-int main(int argc, char** argv) {
 	Level* level1 = game.addLevel(10);
 
 	// LEVEL 1 - Adding all sprites
@@ -251,9 +256,10 @@ int main(int argc, char** argv) {
 	level2->addSprite(playerInputName);
 
 	level3 = game.addLevel(1);
+	level3->addSprite(player);
 	level3->addSprite(Background::getInstance(path.bg_Level_2));
 	//highScoresLabel = Label::getInstance(sys.getXResolution() / 2, sys.getYResolution() / 2, "_", { 255, 255, 255 });
-	highScores.push_back(Label::getInstance(sys.getXResolution()/2 -140, 220, "HIGHSCORES:", { 255,255,255 }));
+	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 220, "HIGHSCORES:", { 255,255,255 }));
 	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 290, "Pelle 2100", { 255,255,255 }));
 	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 340, "Nisse 3100", { 255,255,255 }));
 	//level3->addSprite(highScoresLabel);
@@ -294,10 +300,10 @@ int main(int argc, char** argv) {
 	//Short Commands
 	game.addShortCommand('+', volumeUp);
 	game.addShortCommand('-', volumeDown);
+}
+int main(int argc, char** argv) {
+	setUp();
 	game.run();
 
 	return 0;
 }
-
-
-

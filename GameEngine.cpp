@@ -113,8 +113,7 @@ namespace planeGameEngine {
 			spritesToRemove.clear();
 			RenderSprites(nextTick);
 			changeLevel(levelChange);
-
-
+			//resetTheGame(resetGame);
 		} //Outer while loop
 	}
 
@@ -123,16 +122,42 @@ namespace planeGameEngine {
 		return iterationCount;
 	}
 
+	//void GameEngine::resetTheGame(bool reset)
+	//{
+	//	if (reset) {
+	//		//removeCurrentLevelSprites();
+	//		for (int i = 0; i < 3; i++) {
+	//			for (Sprite* s : levels[i]->getLevelSprites()) {
+	//				delete s;
+	//			}
+	//		}
+	//		/*for (Level* l : levels) {
+	//			for (Sprite* s : l->getLevelSprites()) {
+	//				delete s;
+	//			}
+	//		}*/
+	//		sprites = levels[0]->getLevelSprites();
+	//		resetGame = false;
+	//		activeLevelNumber = 0;
+	//	}
+	//}
+
 	GameEngine::~GameEngine()
 	{
 		for (Sprite* s : sprites) {
 			delete s;
 		}
+		for (Level* l : levels) {
+			delete l;
+		}
+		for (ShortCommand* sc : shortCommands) {
+			delete sc;
+		}
 
 	}
 	void GameEngine::RenderSprites(int nextTick)
 	{
-		//Render stuff for the current frame
+		//Render sprites for the current frame
 		SDL_RenderClear(sys.getRenderer());
 		for (Sprite*s : sprites) {
 			s->setCollisionHandeled(false);
@@ -150,24 +175,31 @@ namespace planeGameEngine {
 			iterationCount = 0;
 		}
 	}
-	void GameEngine::removeCurrentLevelSprites() {
-		//Remove current game Sprites
-		for (Sprite* s : sprites) {
-			if (!s->surviveLevelChange()) {
-				removeSprite(s);
-			}
-		}
-	}
+	//void GameEngine::removeCurrentLevelSprites() {
+	//	//Remove current game Sprites
+	//	for (Sprite* s : sprites) {
+	//		if (!s->surviveLevelChange()) {
+	//			removeSprite(s);
+	//		}
+	//	}
+	//}
 	void GameEngine::changeLevel(bool nextLevel)
 	{
 		if (nextLevel) {
 			if (levelToChangeToNr == -1 && (activeLevelNumber + 1) < levels.size()) {
-				removeCurrentLevelSprites();
+				//removeCurrentLevelSprites();
 				activeLevelNumber++;
-				//Load in sprites from new level
-				sprites = levels[activeLevelNumber]->getLevelSprites();
-				levelChange = false;
 			}
+			else {
+				activeLevelNumber = levelToChangeToNr;
+			}
+			SDL_RenderClear(sys.getRenderer());
+			//Load in sprites from new level
+			cout << "BYT BAN" << endl;
+			sprites = levels[activeLevelNumber]->getLevelSprites();
+			levelChange = false;
+			activeLevel = levels[activeLevelNumber];
 		}
 	}
+
 }
