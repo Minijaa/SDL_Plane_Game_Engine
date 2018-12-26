@@ -45,6 +45,7 @@ namespace planeGameEngine {
 
 		//FONTS [f]:
 			std::string f_BauhausFont= "Fonts/BAUHS93.TTF";
+			std::string f_GilsansFont = "Fonts/GILSANUB.TTF";
 	};
 
 	extern FilePaths path;

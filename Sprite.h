@@ -12,7 +12,7 @@ namespace planeGameEngine {
 		bool interactable;
 		bool flagForDeletion;
 		bool collisionHandeled = false;
-		bool player = false;
+		bool surviveLvlChng = false;
 
 	public:
 		//Inline function
@@ -29,6 +29,7 @@ namespace planeGameEngine {
 		virtual void mouseUp(const SDL_Event& event) {}
 		virtual void keyDown(const SDL_Event& event) {}
 		virtual void keyUp(const SDL_Event& event) {}
+		virtual void input(const SDL_Event& event) {}
 		virtual void tick() {}
 		virtual void collisionAction(Sprite* sprite, bool inferiorWeight) {}
 		virtual int getCollisionWeight() const { return 0; }
@@ -37,8 +38,8 @@ namespace planeGameEngine {
 		bool isCollisionHandeled() { return collisionHandeled; }
 		void setFlagForDeletion(bool deletionValue) { flagForDeletion = deletionValue; }
 		bool isFlaggedForDeletion() { return flagForDeletion; }
-		bool isPlayer() { return player; }
-		void setIsPlayer(bool isPlayer) { player = isPlayer; }
+		bool surviveLevelChange() { return surviveLvlChng; }
+		void setSurviveLevelChange(bool survive) { surviveLvlChng = survive; }
 		Sprite* makeTexture(std::string& imagepath) {}
 		//Subclasses must override this function
 		virtual void draw() const = 0;

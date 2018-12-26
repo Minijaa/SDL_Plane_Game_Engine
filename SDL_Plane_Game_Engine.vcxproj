@@ -131,11 +131,13 @@
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="ControllableSprite.cpp" />
     <ClCompile Include="GameEngine.cpp" />
+    <ClCompile Include="Label.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MovingSprite.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="System.cpp" />
+    <ClCompile Include="TextInputLabel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedSprite.h" />
@@ -143,10 +145,12 @@
     <ClInclude Include="ControllableSprite.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="FilePaths.h" />
+    <ClInclude Include="Label.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="MovingSprite.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="System.h" />
+    <ClInclude Include="TextInputLabel.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt" />

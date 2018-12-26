@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <iostream>
 #include "Level.h"
+#include "Label.h"
+#include "TextInputLabel.h"
 
 using namespace planeGameEngine;
 using namespace std;
@@ -16,6 +18,14 @@ const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 int killCount;
 int volume = 30;
+int score;
+//vector<std::string> highScores;
+vector<Label*> highScores;
+Label* scoreLabel;
+Label* highScoresLabel;
+TextInputLabel* playerNameInputLabel;
+Level* level3;
+
 GameEngine game(60); //Choose Frame Rate
 
 void volumeUp() {
@@ -26,6 +36,11 @@ void volumeDown() {
 	volume -= 2;
 	Mix_Volume(sys.audioChannel1, volume);
 }
+void incrementScore(int nr) {
+	score += 100;
+	scoreLabel->setText("Score: " + to_string(score));
+}
+
 
 //Implementation classes below
 class Cloud : public MovingSprite {
@@ -65,11 +80,11 @@ public:
 		if (getHp() < 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
 			killCount++;
+			incrementScore(100);
 			if (killCount > 3) {
 				killCount = 0;
-				game.setLevelChange(true);
+				game.setLevelChange(true, -1);
 			}
-
 			respawnEnemy();
 			//Add 100 points. Update Points label
 		}
@@ -91,6 +106,31 @@ private:
 		}
 	}
 	int defaultHp;
+};
+class HighScoreLabel : public TextInputLabel {
+
+public:
+	HighScoreLabel(int x, int y, const std::string& txt, SDL_Color col) : TextInputLabel(x, y, txt, col) {}
+	void perform() {
+		cout << "PERFORM " << endl;
+
+		if (!highScores.empty()) {
+			highScores.push_back(Label::getInstance(highScores[highScores.size() - 1]->getRect().x, highScores[highScores.size() - 1]->getRect().y + 50, getText() + " " + to_string(score), { 255,255,255 }));
+		}
+		else {
+			highScores.push_back(Label::getInstance(200, 150, getText() + " " + to_string(score), { 255,255,255 }));
+		}
+
+		//for (int i = 0; i < highScores.size(); i++) {
+
+		//	//highScoresLabel->setText(highScoresLabel->getText() + s);
+		//}
+		//highScoresLabel->setText(highScoresLabel->getText() + "Pelle " + to_string(score));
+		for (int i = 0; i < highScores.size(); i++) {
+			level3->addSprite(highScores[i]);
+		}
+		game.setLevelChange(true, -1);
+	}
 };
 
 class Bullet : public MovingSprite {
@@ -117,7 +157,7 @@ class Player : public AnimatedSprite, public ControllableSprite {
 public:
 	Player(int x, int y, int w, int h, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 6, 1, 3)
 	{
-		setIsPlayer(true);
+		setSurviveLevelChange(true);
 	}
 	void tick() {
 		AnimatedSprite::tick();
@@ -194,7 +234,9 @@ int main(int argc, char** argv) {
 		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
 		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
 		});
-
+	scoreLabel = Label::getInstance(20, 20, "Score: 0", { 255, 255, 255 });
+	scoreLabel->setSurviveLevelChange(true);
+	level1->addSprite(scoreLabel);
 	Player* player = new Player(100, 350, 148, 101, path.p_Plane_idle_1);
 	player->addAnimation("idle", { path.p_Plane_idle_1, path.p_Plane_idle_2 });
 	player->addAnimation("shoot", { path.p_Plane_shooting_1, path.p_Plane_shooting_2, path.p_Plane_shooting_3, path.p_Plane_shooting_4, path.p_Plane_shooting_5 });
@@ -202,7 +244,21 @@ int main(int argc, char** argv) {
 
 	Level* level2 = game.addLevel(1);
 	level2->addSprite(Background::getInstance(path.bg_Level_2));
+	//playerNameInputLabel = TextInputLabel::getInstance(500, 500, "", { 255, 255, 255 });
+	Label* died = Label::getInstance(sys.getXResolution() / 2 - 370, 250, "You died... please enter you name:", { 255, 255, 255 });
+	HighScoreLabel* playerInputName = new HighScoreLabel(sys.getXResolution() / 2 - 120, 300, "", { 255, 255, 255 });
+	level2->addSprite(died);
+	level2->addSprite(playerInputName);
 
+	level3 = game.addLevel(1);
+	level3->addSprite(Background::getInstance(path.bg_Level_2));
+	//highScoresLabel = Label::getInstance(sys.getXResolution() / 2, sys.getYResolution() / 2, "_", { 255, 255, 255 });
+	highScores.push_back(Label::getInstance(sys.getXResolution()/2 -140, 220, "HIGHSCORES:", { 255,255,255 }));
+	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 290, "Pelle 2100", { 255,255,255 }));
+	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 340, "Nisse 3100", { 255,255,255 }));
+	//level3->addSprite(highScoresLabel);
+
+	/*level2->addSprite(scoreLabel);
 	level2->addSprite(new Cloud(1180 + 1280, 50, 256, 256, 1, path.ni_Cloud_1d));
 	level2->addSprite(new Cloud(880 + 1280, 250, 450, 450, 2, path.ni_Cloud_2d));
 	level2->addSprite(new Cloud(1000 + 1280, 650, 300, 300, 3, path.ni_Cloud_1d));
@@ -223,7 +279,8 @@ int main(int argc, char** argv) {
 		});
 
 	level2->addSprite(new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 50));
-	level2->addSprite(player);
+	level2->addSprite(player);*/
+
 
 	//Add sounds
 	sys.addSfx("music", path.m_Level1_Music);
@@ -241,5 +298,6 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+
 
 

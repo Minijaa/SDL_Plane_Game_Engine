@@ -1,5 +1,5 @@
 Todo:
-*  Add another addAnimation(string, string) for spritesheets. 
+* Add another addAnimation(string, string) for spritesheets. 
 * Ta bort allt som har med "FlagForDeletion " att göra?
 
 Betygskriterier:
@@ -10,6 +10,7 @@ B:
 	tillsammans med tangenten.
 * det ska finnas en grafisk komponent (Sprite-subklass?) som ska kunna användas som ett inmatningsfält för text, som tillämpningen kan använda för 
 	textinmatning (t.ex. namn på spelaren för en high score-lista). Det behöver inte finnas editeringsmöjligheter för inmatningsfältet. 
+* Se över Level-filerna. Skippa allt killcount-tjafs
 
 A: 
 * kollisionsdetektering ska göras på pixelnivå, med hänsyn tagen till genomskinliga pixlar

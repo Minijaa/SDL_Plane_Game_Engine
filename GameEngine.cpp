@@ -68,6 +68,10 @@ namespace planeGameEngine {
 					for (Sprite* s : sprites) {
 						s->mouseUp(event);
 					}break;
+				case SDL_TEXTINPUT:
+					for (Sprite* s : sprites) {
+						s->input(event);
+					}break;
 				} //Switch
 			} //Inner while loop
 
@@ -146,23 +150,24 @@ namespace planeGameEngine {
 			iterationCount = 0;
 		}
 	}
+	void GameEngine::removeCurrentLevelSprites() {
+		//Remove current game Sprites
+		for (Sprite* s : sprites) {
+			if (!s->surviveLevelChange()) {
+				removeSprite(s);
+			}
+		}
+	}
 	void GameEngine::changeLevel(bool nextLevel)
 	{
 		if (nextLevel) {
-			if ((activeLevelNumber + 1) < levels.size()) {
-
-				//Remove current game Sprites
-				for (Sprite* s : sprites) {
-					if (!s->isPlayer()) {
-						removeSprite(s);
-					}
-				}
+			if (levelToChangeToNr == -1 && (activeLevelNumber + 1) < levels.size()) {
+				removeCurrentLevelSprites();
 				activeLevelNumber++;
 				//Load in sprites from new level
 				sprites = levels[activeLevelNumber]->getLevelSprites();
 				levelChange = false;
 			}
 		}
-
 	}
 }
