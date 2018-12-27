@@ -12,32 +12,35 @@ namespace planeGameEngine {
 	}
 	void ControllableSprite::determineMoveDirection()
 	{
-		if (moveUp && moveRight && getRect().y > 0 && getRect().x < (sys.getXResolution() - getRect().w)) {
-			setDirection(MovingSprite::MOVEUPRIGHT);
-		}
-		else if (moveUp && moveLeft && getRect().y > 0 && getRect().x > 0) {
-			setDirection(MovingSprite::MOVEUPLEFT);
-		}
-		else if (moveDown && moveRight && getRect().y < (sys.getYResolution() - getRect().h) && getRect().x < (sys.getXResolution() - getRect().w)) {
-			setDirection(MovingSprite::MOVEDOWNRIGHT);
-		}
-		else if (moveDown && moveLeft && getRect().y < (sys.getYResolution() - getRect().h) && getRect().x > 0) {
-			setDirection(MovingSprite::MOVEDOWNLEFT);
-		}
-		else if (moveDown && !moveUp && getRect().y < (sys.getYResolution() - getRect().h)) {
-			setDirection(MovingSprite::MOVEDOWN);
-		}
-		else if (moveUp && !moveDown && getRect().y > 0) {
-			setDirection(MovingSprite::MOVEUP);
-		}
-		else if (moveLeft && !moveRight && getRect().x > 0) {
-			setDirection(MovingSprite::MOVELEFT);
-		}
-		else if (moveRight && !moveLeft && getRect().x < (sys.getXResolution() - getRect().w)) {
-			setDirection(MovingSprite::MOVERIGHT);
-		}
-		else {
-			setDirection(MovingSprite::MOVESTOP);
+		if (alive) {
+
+			if (moveUp && moveRight && getRect().y > 0 && getRect().x < (sys.getXResolution() - getRect().w)) {
+				setDirection(MovingSprite::MOVEUPRIGHT);
+			}
+			else if (moveUp && moveLeft && getRect().y > 0 && getRect().x > 0) {
+				setDirection(MovingSprite::MOVEUPLEFT);
+			}
+			else if (moveDown && moveRight && getRect().y < (sys.getYResolution() - getRect().h) && getRect().x < (sys.getXResolution() - getRect().w)) {
+				setDirection(MovingSprite::MOVEDOWNRIGHT);
+			}
+			else if (moveDown && moveLeft && getRect().y < (sys.getYResolution() - getRect().h) && getRect().x > 0) {
+				setDirection(MovingSprite::MOVEDOWNLEFT);
+			}
+			else if (moveDown && !moveUp && getRect().y < (sys.getYResolution() - getRect().h)) {
+				setDirection(MovingSprite::MOVEDOWN);
+			}
+			else if (moveUp && !moveDown && getRect().y > 0) {
+				setDirection(MovingSprite::MOVEUP);
+			}
+			else if (moveLeft && !moveRight && getRect().x > 0) {
+				setDirection(MovingSprite::MOVELEFT);
+			}
+			else if (moveRight && !moveLeft && getRect().x < (sys.getXResolution() - getRect().w)) {
+				setDirection(MovingSprite::MOVERIGHT);
+			}
+			else {
+				setDirection(MovingSprite::MOVESTOP);
+			}
 		}
 	}
 	ControllableSprite * ControllableSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string & imagePath, int colissionWeight, int hp)
@@ -54,11 +57,12 @@ namespace planeGameEngine {
 		MovingSprite::tick();
 	}
 	void ControllableSprite::implementBasicMovement(const SDL_Event& event) {
+
 		if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym)
 			{
 			case SDLK_UP:
-				moveUp = getRect().y > 0;	
+				moveUp = getRect().y > 0;
 				break;
 			case SDLK_DOWN:
 				moveDown = getRect().y < (sys.getYResolution() - getRect().h);

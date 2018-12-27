@@ -14,6 +14,7 @@
 using namespace planeGameEngine;
 using namespace std;
 void setUp();
+
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 int killCount;
@@ -24,8 +25,7 @@ Label* scoreLabel;
 Label* highScoresLabel;
 TextInputLabel* playerNameInputLabel;
 Level* level3;
-
-
+ControllableSprite* playerPointer;
 GameEngine game(60); //Choose Frame Rate
 
 void volumeUp() {
@@ -40,7 +40,16 @@ void incrementScore(int nr) {
 	score += 100;
 	scoreLabel->setText("Score: " + to_string(score));
 }
-
+void restartGame() {
+	score = 0;
+	playerPointer->setXY(100, 100);
+	playerPointer->setAlive(true);
+	playerPointer->setMoveDown(false);
+	playerPointer->setMoveUp(false);
+	playerPointer->setMoveLeft(false);
+	playerPointer->setMoveRight(false);
+	game.setLevelChange(true, 0);
+}
 
 //Implementation classes below
 class Cloud : public MovingSprite {
@@ -123,11 +132,6 @@ public:
 			highScores.push_back(Label::getInstance(200, 150, getText() + " " + to_string(score), { 255,255,255 }));
 		}
 
-		//for (int i = 0; i < highScores.size(); i++) {
-
-		//	//highScoresLabel->setText(highScoresLabel->getText() + s);
-		//}
-		//highScoresLabel->setText(highScoresLabel->getText() + "Pelle " + to_string(score));
 		for (int i = 0; i < highScores.size(); i++) {
 			level3->addSprite(highScores[i]);
 		}
@@ -160,6 +164,7 @@ public:
 	Player(int x, int y, int w, int h, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 6, 1, 3)
 	{
 		setSurviveLevelChange(true);
+		setAlive(true);
 	}
 	void tick() {
 		AnimatedSprite::tick();
@@ -168,7 +173,7 @@ public:
 	}
 	void keyDown(const SDL_Event& event)
 	{
-		if (isAlive) {
+		if (isAlive()) {
 			implementBasicMovement(event);
 			if (event.key.keysym.sym == SDLK_SPACE) {
 				if (event.key.repeat == 0) { //Don't allow holding down space bar to shoot
@@ -176,7 +181,7 @@ public:
 				}
 			}
 		} if (event.key.keysym.sym == 'r') {
-			isAlive = true;
+			setAlive(true);
 			setXY(100, 100);
 			setMoveLeft(false);
 			setMoveUp(false);
@@ -189,7 +194,7 @@ public:
 	}
 	void keyUp(const SDL_Event& event)
 	{
-		if (isAlive) {
+		if (isAlive()) {
 			implementBasicMovement(event);
 		}
 	}
@@ -202,20 +207,26 @@ public:
 		setActiveEvent("shoot");
 	}
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
-		if (isAlive && otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
+		if (isAlive() && otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound2", 0), 50);
 			//cout << otherSprite->getCollisionWeight();
-			isAlive = false;
-			setMoveLeft(false);
+			setAlive(false);
+			setDirection(MOVEDOWNRIGHT);
+			/*setMoveLeft(false);
 			setMoveUp(false);
 			setMoveDown(true);
-			setMoveRight(true);
+			setMoveRight(true);*/
 			//Sätt Death-animation event eller liknande
 		}
 		//Play crash-sound
 	}
+	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+		cout << "OUTOFBOUNDS!" << endl;
+		//setXY(100, 100);
+		game.setLevelChange(true, 1);
+	};
 private:
-	bool isAlive = true;
+	//bool isAlive = true;
 };
 void setUp() {
 
@@ -246,7 +257,7 @@ void setUp() {
 	player->addAnimation("idle", { path.p_Plane_idle_1, path.p_Plane_idle_2 });
 	player->addAnimation("shoot", { path.p_Plane_shooting_1, path.p_Plane_shooting_2, path.p_Plane_shooting_3, path.p_Plane_shooting_4, path.p_Plane_shooting_5 });
 	level1->addSprite(player);
-
+	playerPointer = player;
 	Level* level2 = game.addLevel(1);
 	level2->addSprite(Background::getInstance(path.bg_Level_2));
 	//playerNameInputLabel = TextInputLabel::getInstance(500, 500, "", { 255, 255, 255 });
@@ -256,7 +267,7 @@ void setUp() {
 	level2->addSprite(playerInputName);
 
 	level3 = game.addLevel(1);
-	level3->addSprite(player);
+	//level3->addSprite(player);
 	level3->addSprite(Background::getInstance(path.bg_Level_2));
 	//highScoresLabel = Label::getInstance(sys.getXResolution() / 2, sys.getYResolution() / 2, "_", { 255, 255, 255 });
 	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 220, "HIGHSCORES:", { 255,255,255 }));
@@ -300,6 +311,7 @@ void setUp() {
 	//Short Commands
 	game.addShortCommand('+', volumeUp);
 	game.addShortCommand('-', volumeDown);
+	game.addShortCommand(SDLK_ESCAPE, restartGame);
 }
 int main(int argc, char** argv) {
 	setUp();
@@ -307,3 +319,4 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+

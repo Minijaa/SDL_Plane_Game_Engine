@@ -99,7 +99,7 @@ namespace planeGameEngine {
 			}
 			break;
 		case MOVEDOWNRIGHT:
-			if (getRect().x < 0 - getRect().w) {
+			if (getRect().y > sys.getYResolution()) {
 				outOfBoundsAction(&getRect(), MOVELEFT);
 			}
 			else {
@@ -107,6 +107,7 @@ namespace planeGameEngine {
 			}
 			break;
 		case MOVESTOP:
+			setXY(getRect().x, getRect().y);
 			break;
 		}
 	}

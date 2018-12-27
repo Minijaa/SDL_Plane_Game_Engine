@@ -7,7 +7,7 @@ namespace planeGameEngine {
 	class ControllableSprite : virtual public MovingSprite
 	{
 	private:
-		bool moveUp, moveDown, moveLeft, moveRight, isPlayer;
+		bool moveUp, moveDown, moveLeft, moveRight, isPlayer, alive;
 	public:
 		static ControllableSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight, int hp);
 		static ControllableSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp);
@@ -22,6 +22,8 @@ namespace planeGameEngine {
 		void setMoveUp(bool up) { moveUp = up; }
 		void setMoveLeft(bool left) { moveLeft = left; }
 		void setMoveRight(bool right) { moveRight = right; }
+		bool isAlive() const { return alive; }
+		void setAlive(bool isAlive) { alive = isAlive; }
 		
 		~ControllableSprite();
 	protected:

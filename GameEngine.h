@@ -20,7 +20,7 @@ namespace planeGameEngine {
 		int getIterationCount();
 		void setLevelChange(bool value, int levelNr) { levelChange = value; levelToChangeToNr = levelNr; }
 
-		void setResetGame(bool value) { resetGame = value; }
+		//void setResetGame(bool value) { resetGame = value; }
 		//void resetTheGame(bool value);
 		Level* addLevel(int killCount) {
 			Level* level = Level::getInstance(killCount);
@@ -42,10 +42,10 @@ namespace planeGameEngine {
 		int activeLevelNumber = 0;
 		Level* activeLevel;
 		bool levelChange = false;
-		bool resetGame = false;
+		//bool resetGame = false;
 		void RenderSprites(int nextTick);
 		void changeLevel(bool nextLevel);
-		void removeCurrentLevelSprites();
+		//void removeCurrentLevelSprites();
 	};
 }
 #endif

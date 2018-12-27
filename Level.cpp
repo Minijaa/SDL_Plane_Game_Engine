@@ -41,9 +41,11 @@ namespace planeGameEngine {
 
 	Level::~Level()
 	{
-		for (Sprite* s : levelSprites) {
+		// Krashar!!
+
+		/*for (Sprite* s : levelSprites) {
 			delete s;
-		}
+		}*/
 	}
 	int Level::defaultLevelCounter = 0;
 

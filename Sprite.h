@@ -50,11 +50,11 @@ namespace planeGameEngine {
 		//Forbids copy constructor and assignment operator in order to prevent using value semantics
 		Sprite(const Sprite&) = delete;
 		const Sprite& operator=(const Sprite&) = delete;
+		void setXY(int x, int y);
 
 	protected:
 		Sprite(int x, int y, int w, int h, bool interactable = false);
 		void setWH(int w, int h);
-		void setXY(int x, int y);
 
 
 	};
