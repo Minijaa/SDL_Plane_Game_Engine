@@ -9,33 +9,24 @@ namespace planeGameEngine {
 	class Level
 	{
 	public:
-		static Level* getInstance(std::string& name, std::vector<Sprite*> sprites);
-		static Level* getInstance(std::vector<Sprite*> sprites);
-		static Level* getInstance(std::string& name);
-		static Level* getInstance(int killCount);
-
+		static Level* getInstance();
 		std::string getLevelName() const { return levelName; }
-		int getKillCount() const { return killCounter; }
-		int getRequiredKillCount() const { return requiredKillCount; }
 		int getDefaultLevelCounter() const { return defaultLevelCounter; }
-		void incrementKillCounter() { killCounter++; }
 		Sprite* addSprite(Sprite* sprite);
 		void addSprite(std::vector<Sprite*> sprites);
 		std::vector<Sprite*> getLevelSprites();
+		void setActiveLevel(bool active) { activeLevel = active; }
+		bool getActiveLevel() { return activeLevel; }
 		~Level();
 	protected:
-		Level(std::string& name, std::vector<Sprite*> sprites);
-		Level(std::vector<Sprite*> sprites);
-		Level(std::string& name);
-		Level(int killCount);
+		Level();
 
 	private:
 		std::string levelName;
 		std::vector<Sprite*> levelSprites;
-		int killCounter = 0; //Can be used for instance if level should be switched when the player has reached a chosen kill count
+		bool activeLevel;
 		int requiredKillCount;
 		static int defaultLevelCounter; // Use to generate levelnumber if implementer don't want to implement "real levels".
 	};
-
 }
-#endif // !LEVEL_H
+#endif

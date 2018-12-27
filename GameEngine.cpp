@@ -40,6 +40,8 @@ namespace planeGameEngine {
 	}
 	void GameEngine::run() {
 		sprites = levels[activeLevelNumber]->getLevelSprites();
+		activeLevel = levels[activeLevelNumber];
+		activeLevel->setActiveLevel(true);
 		bool running = true;
 		while (running) {
 			Uint32 nextTick = SDL_GetTicks() + TICKINTERVAL;
@@ -194,11 +196,13 @@ namespace planeGameEngine {
 				activeLevelNumber = levelToChangeToNr;
 			}
 			SDL_RenderClear(sys.getRenderer());
+			activeLevel->setActiveLevel(false);
 			//Load in sprites from new level
-			cout << "BYT BAN" << endl;
+			cout << "BYT BANA" << endl;
 			sprites = levels[activeLevelNumber]->getLevelSprites();
 			levelChange = false;
 			activeLevel = levels[activeLevelNumber];
+			activeLevel->setActiveLevel(true);
 		}
 	}
 

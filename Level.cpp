@@ -1,26 +1,12 @@
 #include "Level.h"
-
 namespace planeGameEngine {
 
-	Level* Level::getInstance(std::string & name, std::vector<Sprite*> sprites) { return new Level(name, sprites); }
-	Level* Level::getInstance(std::vector<Sprite*> sprites) { return new Level(sprites); }
-	Level* Level::getInstance(std::string & name) { return new Level(name); }
-	Level* Level::getInstance(int killCount) { return new Level(killCount); }
+	Level* Level::getInstance() { return new Level(); }
 
-	Level::Level(std::string& name, std::vector<Sprite*> sprites) :levelName(name), levelSprites(sprites) {}
-	Level::Level(std::vector<Sprite*> sprites) : levelSprites(sprites)
-	{
+	Level::Level() {
 		defaultLevelCounter++;
-		this->levelName = "Level " + defaultLevelCounter;
+		levelName = "Level " + defaultLevelCounter;
 	}
-
-	Level::Level(std::string & name) : levelName(name)
-	{ }
-	Level::Level(int killCount): requiredKillCount(killCount) {
-		defaultLevelCounter++;
-		this->levelName = "Level " + defaultLevelCounter;
-	}
-
 	Sprite* Level::addSprite(Sprite* sprite)
 	{
 		levelSprites.push_back(sprite);
@@ -41,10 +27,11 @@ namespace planeGameEngine {
 
 	Level::~Level()
 	{
-		// Krashar!!
-
+		// Krashar vid extit!!
 		/*for (Sprite* s : levelSprites) {
-			delete s;
+			if (!this->activeLevel) {
+				delete s;
+			}
 		}*/
 	}
 	int Level::defaultLevelCounter = 0;

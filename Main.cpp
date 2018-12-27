@@ -23,8 +23,7 @@ int score;
 vector<Label*> highScores;
 Label* scoreLabel;
 Label* highScoresLabel;
-TextInputLabel* playerNameInputLabel;
-Level* level3;
+Level* level_Highscores;
 ControllableSprite* playerPointer;
 GameEngine game(60); //Choose Frame Rate
 
@@ -42,6 +41,7 @@ void incrementScore(int nr) {
 }
 void restartGame() {
 	score = 0;
+	scoreLabel->setText("Score: " + to_string(score));
 	playerPointer->setXY(100, 100);
 	playerPointer->setAlive(true);
 	playerPointer->setMoveDown(false);
@@ -95,6 +95,7 @@ public:
 				game.setLevelChange(true, -1);
 				//game.setResetGame(true);
 				//setUp();
+				sys.audioChannel1 = sys.playSfx(0, "music2", -1);
 			}
 			respawnEnemy();
 			//Add 100 points. Update Points label
@@ -133,7 +134,7 @@ public:
 		}
 
 		for (int i = 0; i < highScores.size(); i++) {
-			level3->addSprite(highScores[i]);
+			level_Highscores->addSprite(highScores[i]);
 		}
 		game.setLevelChange(true, -1);
 	}
@@ -209,30 +210,30 @@ public:
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (isAlive() && otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound2", 0), 50);
-			//cout << otherSprite->getCollisionWeight();
 			setAlive(false);
 			setDirection(MOVEDOWNRIGHT);
-			/*setMoveLeft(false);
-			setMoveUp(false);
-			setMoveDown(true);
-			setMoveRight(true);*/
 			//Sätt Death-animation event eller liknande
 		}
 		//Play crash-sound
 	}
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
-		cout << "OUTOFBOUNDS!" << endl;
-		//setXY(100, 100);
-		game.setLevelChange(true, 1);
+		//Game over, go to end-screen
+		game.setLevelChange(true, 2);
 	};
-private:
-	//bool isAlive = true;
 };
 void setUp() {
+	//Setting up player
+	Player* player = new Player(100, 350, 148, 101, path.p_Plane_idle_1);
+	player->addAnimation("idle", { path.p_Plane_idle_1, path.p_Plane_idle_2 });
+	player->addAnimation("shoot", { path.p_Plane_shooting_1, path.p_Plane_shooting_2, path.p_Plane_shooting_3, path.p_Plane_shooting_4, path.p_Plane_shooting_5 });
+	playerPointer = player;
 
-	Level* level1 = game.addLevel(10);
+	//Setting up score-label
+	scoreLabel = Label::getInstance(20, 20, "Score: 0", { 255, 255, 255 });
+	scoreLabel->setSurviveLevelChange(true);
 
 	// LEVEL 1 - Adding all sprites
+	Level* level1 = game.addLevel();
 	level1->addSprite({
 		Background::getInstance(path.bg_Level_3),
 		new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1),
@@ -249,58 +250,48 @@ void setUp() {
 		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2),
 		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
 		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
+		scoreLabel, player
 		});
-	scoreLabel = Label::getInstance(20, 20, "Score: 0", { 255, 255, 255 });
-	scoreLabel->setSurviveLevelChange(true);
-	level1->addSprite(scoreLabel);
-	Player* player = new Player(100, 350, 148, 101, path.p_Plane_idle_1);
-	player->addAnimation("idle", { path.p_Plane_idle_1, path.p_Plane_idle_2 });
-	player->addAnimation("shoot", { path.p_Plane_shooting_1, path.p_Plane_shooting_2, path.p_Plane_shooting_3, path.p_Plane_shooting_4, path.p_Plane_shooting_5 });
-	level1->addSprite(player);
-	playerPointer = player;
-	Level* level2 = game.addLevel(1);
-	level2->addSprite(Background::getInstance(path.bg_Level_2));
-	//playerNameInputLabel = TextInputLabel::getInstance(500, 500, "", { 255, 255, 255 });
-	Label* died = Label::getInstance(sys.getXResolution() / 2 - 370, 250, "You died... please enter you name:", { 255, 255, 255 });
-	HighScoreLabel* playerInputName = new HighScoreLabel(sys.getXResolution() / 2 - 120, 300, "", { 255, 255, 255 });
-	level2->addSprite(died);
-	level2->addSprite(playerInputName);
-
-	level3 = game.addLevel(1);
-	//level3->addSprite(player);
-	level3->addSprite(Background::getInstance(path.bg_Level_2));
-	//highScoresLabel = Label::getInstance(sys.getXResolution() / 2, sys.getYResolution() / 2, "_", { 255, 255, 255 });
-	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 220, "HIGHSCORES:", { 255,255,255 }));
-	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 290, "Pelle 2100", { 255,255,255 }));
-	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 340, "Nisse 3100", { 255,255,255 }));
-	//level3->addSprite(highScoresLabel);
-
-	/*level2->addSprite(scoreLabel);
-	level2->addSprite(new Cloud(1180 + 1280, 50, 256, 256, 1, path.ni_Cloud_1d));
-	level2->addSprite(new Cloud(880 + 1280, 250, 450, 450, 2, path.ni_Cloud_2d));
-	level2->addSprite(new Cloud(1000 + 1280, 650, 300, 300, 3, path.ni_Cloud_1d));
-	level2->addSprite(new Cloud(570 + 1280, 500, 280, 280, 2, path.ni_Cloud_2d));
-	level2->addSprite(new Cloud(350 + 1280, 400, 400, 400, 1, path.ni_Cloud_1d));
-	level2->addSprite(new Cloud(220 + 1280, 800, 256, 256, 2, path.ni_Cloud_2d));
-	level2->addSprite(new Cloud(70 + 1280, 100, 320, 320, 3, path.ni_Cloud_1d));
-	level2->addSprite(new Cloud(1570 + 1280, -100, 300, 300, 2, path.ni_Cloud_2d));
-
+	
+	// LEVEL 2 (Boss-level) - Adding all sprites
+	Level* level2 = game.addLevel();
 	level2->addSprite({
-
+		Background::getInstance(path.bg_Level_2), 
+		new Cloud(1180 + 1280, 50, 256, 256, 1, path.ni_Cloud_1d),
+		new Cloud(880 + 1280, 250, 450, 450, 2, path.ni_Cloud_2d),
+		new Cloud(1000 + 1280, 650, 300, 300, 3, path.ni_Cloud_1d),
+		new Cloud(570 + 1280, 500, 280, 280, 2, path.ni_Cloud_2d),
+		new Cloud(350 + 1280, 400, 400, 400, 1, path.ni_Cloud_1d),
+		new Cloud(220 + 1280, 800, 256, 256, 2, path.ni_Cloud_2d),
+		new Cloud(70 + 1280, 100, 320, 320, 3, path.ni_Cloud_1d),
+		new Cloud(1570 + 1280, -100, 300, 300, 2, path.ni_Cloud_2d),
 		new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 4),
 		new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 6),
 		new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 3),
 		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVELEFT, 7, path.e_SpaceShip, 2, 4),
 		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 8),
 		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVELEFT, 5, path.e_SpaceShip, 2, 9),
+		scoreLabel, player
 		});
 
-	level2->addSprite(new SpaceShip(1280, 350, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 50));
-	level2->addSprite(player);*/
+	// LEVEL GAMEOVER - Adding all sprites
+	Level* levelGameOver = game.addLevel();
+	levelGameOver->addSprite(Background::getInstance(path.bg_Level_2));
+	Label* died = Label::getInstance(sys.getXResolution() / 2 - 370, 250, "You died... please enter you name:", { 255, 255, 255 });
+	HighScoreLabel* playerInputName = new HighScoreLabel(sys.getXResolution() / 2 - 120, 300, "", { 255, 255, 255 });
+	levelGameOver->addSprite(died);
+	levelGameOver->addSprite(playerInputName);
 
+	// LEVEL HIGHSCORES - Adding all sprites
+	level_Highscores = game.addLevel();
+	level_Highscores->addSprite(Background::getInstance(path.bg_Level_2));
+	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 220, "HIGHSCORES:", { 255,255,255 }));
+	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 290, "Pelle 2100", { 255,255,255 }));
+	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 340, "Nisse 3100", { 255,255,255 }));
 
 	//Add sounds
 	sys.addSfx("music", path.m_Level1_Music);
+	sys.addSfx("music2", path.m_Level2_Music);
 	sys.addSfx("bulletSound", path.sfx_BulletSound);
 	sys.addSfx("boomSound", path.sfx_BoomSound_1);
 	sys.addSfx("boomSound2", path.sfx_BoomSound_2);
@@ -308,7 +299,7 @@ void setUp() {
 	Mix_Volume(sys.audioChannel1, 20);
 	Mix_Volume(sys.audioChannel2, 20);
 
-	//Short Commands
+	//Add Short Commands
 	game.addShortCommand('+', volumeUp);
 	game.addShortCommand('-', volumeDown);
 	game.addShortCommand(SDLK_ESCAPE, restartGame);
@@ -316,7 +307,6 @@ void setUp() {
 int main(int argc, char** argv) {
 	setUp();
 	game.run();
-
 	return 0;
 }
 

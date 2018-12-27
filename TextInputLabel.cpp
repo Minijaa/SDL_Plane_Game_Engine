@@ -9,8 +9,9 @@ namespace planeGameEngine {
 	void TextInputLabel::keyDown(const SDL_Event& event) {
 		if (event.type == SDL_KEYDOWN || event.type == SDL_TEXTINPUT) {
 			if (event.key.keysym.sym == SDLK_RETURN) {
-				SDL_StopTextInput();
+				//SDL_StopTextInput();
 				perform();
+				setText("");
 			}
 			else if (event.key.keysym.sym == SDLK_BACKSPACE && getText().length() > 0) {
 				setText(getText().substr(0, getText().length() -1));

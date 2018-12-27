@@ -15,6 +15,7 @@ namespace planeGameEngine {
 		GameEngine(int fps);
 		void addSprite(Sprite*);
 		void removeSprite(Sprite*);
+		Level* getActiveLevel() { return activeLevel; }
 		void addShortCommand(char keyDown, void(*f)());
 		void run();
 		int getIterationCount();
@@ -22,8 +23,8 @@ namespace planeGameEngine {
 
 		//void setResetGame(bool value) { resetGame = value; }
 		//void resetTheGame(bool value);
-		Level* addLevel(int killCount) {
-			Level* level = Level::getInstance(killCount);
+		Level* addLevel() {
+			Level* level = Level::getInstance();
 			levels.push_back(level);
 			return level;
 		}
