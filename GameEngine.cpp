@@ -2,22 +2,11 @@
 #include "System.h"
 #include "MovingSprite.h"
 #include <iostream>
+#include "FuncShortCommand.h"
+//#include "MemFuncShortCommand.h"
 using namespace std;
 
 namespace planeGameEngine {
-
-	struct GameEngine::ShortCommand {
-		ShortCommand(char k, void(*f)()) :key(k), func(f) {}
-
-		void action(SDL_Event event) {
-			if (event.key.keysym.sym == key) {
-				func();
-			}
-		}
-	private:
-		char key;
-		void(*func)();
-	};
 
 	GameEngine::GameEngine() :activeLevelNumber(0), FRAMERATE(60)
 	{
@@ -27,8 +16,13 @@ namespace planeGameEngine {
 	{
 	}
 
-	void GameEngine::addShortCommand(char keyDown, void(*f)()) {
-		shortCommands.push_back(new ShortCommand(keyDown, f));
+	void GameEngine::addFuncShortCommand(char keyDown, void(*f)()) {
+		shortCommands.push_back(FuncShortCommand::getInstance(keyDown, f));
+	}
+
+	void GameEngine::addMemFuncShortCommand(ShortCommand* mfunc)
+	{
+		shortCommands.push_back(mfunc);
 	}
 
 	void GameEngine::addSprite(Sprite* sprite) {
@@ -91,7 +85,9 @@ namespace planeGameEngine {
 						}
 					}
 				}
-				s->tick();
+				if (!paused) {
+					s->tick();
+				}
 			}
 
 			//Add added Sprites to main Sprite-vector

@@ -15,6 +15,8 @@ namespace planeGameEngine {
 		std::string getText() const;
 		void draw() const;
 		~Label();
+		Label(const Label&) = delete;
+		const Label& operator=(const Label&) = delete;
 
 	protected:
 		Label(int x, int y, const std::string& txt, SDL_Color col);

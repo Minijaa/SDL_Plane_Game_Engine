@@ -20,6 +20,7 @@ namespace planeGameEngine {
 		int generateRandomNumber(int maxRandomNr, int minRandomNr);
 		void addSfx(std::string name, std::string& path);
 		int playSfx(int channel, std::string name, int loops);
+		int playMusic(std::string name, int loops);
 		int audioChannel1, audioChannel2;
 
 	private:

@@ -83,6 +83,15 @@
     <ClInclude Include="TextInputLabel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MemFuncShortCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShortCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FuncShortCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt" />

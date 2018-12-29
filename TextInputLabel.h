@@ -16,7 +16,8 @@ namespace planeGameEngine {
 		static TextInputLabel* getInstance(int x, int y, const std::string& txt, SDL_Color col);
 		void startTextInput();
 		void stopTextInput();
-
+		TextInputLabel(const TextInputLabel&) = delete;
+		const TextInputLabel& operator=(const TextInputLabel&) = delete;
 	protected:
 		TextInputLabel(int x, int y, const std::string& txt, SDL_Color col);
 	};

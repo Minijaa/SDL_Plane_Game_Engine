@@ -59,7 +59,6 @@ namespace planeGameEngine {
 	void AnimatedSprite::idleAnimation(int intervalCounter) {
 
 		std::vector<SDL_Texture*> atx = animationSpriteTextures["idle"];
-		//std::cout << "SIZE: " << atx.size() << std::endl;
 		if ((intervalCounter % 4) == 0) {
 			intervalCounter = 0;
 			for (unsigned i = 0; i < atx.size(); i++) {

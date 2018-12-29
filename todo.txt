@@ -1,6 +1,7 @@
 Todo:
 * Add another addAnimation(string, string) for spritesheets. 
 * Ta bort allt som har med "FlagForDeletion " att göra?
+* Ändra så att musik spelas upp med Mix_FadeInMusic istället för spela ljud grejjen.
 
 Betygskriterier:
 

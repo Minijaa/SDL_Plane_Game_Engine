@@ -10,6 +10,7 @@
 #include "Level.h"
 #include "Label.h"
 #include "TextInputLabel.h"
+#include "MemFuncShortCommand.h"
 
 using namespace planeGameEngine;
 using namespace std;
@@ -49,9 +50,23 @@ void restartGame() {
 	playerPointer->setMoveLeft(false);
 	playerPointer->setMoveRight(false);
 	game.setLevelChange(true, 0);
+	//sys.playSfx(0, path.m_Level1_Music, -1); //Crashes, need to fix this
 }
 
 //Implementation classes below
+
+//Just to demonstrate the use of memberfunction pointers.
+struct PauseStruct {
+	void pauseGame() {
+		if (!game.isPaused()) {
+			game.setPause(true);
+		}
+		else {
+			game.setPause(false);
+		}
+	}
+};
+
 class Cloud : public MovingSprite {
 public:
 	Cloud(int x, int y, int w, int h, int speed, std::string& imagePath) : Sprite(x, y, w, h), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, speed, imagePath, 1, NULL)
@@ -84,7 +99,6 @@ public:
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 		if (inferiorWeight) {
 			decreaseHp();
-			//std::cout << "HIT!" << endl;
 		}
 		if (getHp() < 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
@@ -93,12 +107,9 @@ public:
 			if (killCount > 3) {
 				killCount = 0;
 				game.setLevelChange(true, -1);
-				//game.setResetGame(true);
-				//setUp();
 				sys.audioChannel1 = sys.playSfx(0, "music2", -1);
 			}
 			respawnEnemy();
-			//Add 100 points. Update Points label
 		}
 	}
 
@@ -149,15 +160,11 @@ public:
 
 		//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
 		if (otherSprite->getCollisionWeight() != 1) {
-			//cout << "hit " << otherSprite->getCollisionWeight() << endl; 
 			game.removeSprite(this);
 		}
 		//Play hit-sound
 	}
-
-	void hitBoundryAction(SDL_Rect* rect) {
-
-	}
+	void hitBoundryAction(SDL_Rect* rect) {}
 };
 
 class Player : public AnimatedSprite, public ControllableSprite {
@@ -176,7 +183,7 @@ public:
 	{
 		if (isAlive()) {
 			implementBasicMovement(event);
-			if (event.key.keysym.sym == SDLK_SPACE) {
+			if (event.key.keysym.sym == SDLK_SPACE && !game.isPaused()) {
 				if (event.key.repeat == 0) { //Don't allow holding down space bar to shoot
 					shoot();
 				}
@@ -252,11 +259,11 @@ void setUp() {
 		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
 		scoreLabel, player
 		});
-	
+
 	// LEVEL 2 (Boss-level) - Adding all sprites
 	Level* level2 = game.addLevel();
 	level2->addSprite({
-		Background::getInstance(path.bg_Level_2), 
+		Background::getInstance(path.bg_Level_2),
 		new Cloud(1180 + 1280, 50, 256, 256, 1, path.ni_Cloud_1d),
 		new Cloud(880 + 1280, 250, 450, 450, 2, path.ni_Cloud_2d),
 		new Cloud(1000 + 1280, 650, 300, 300, 3, path.ni_Cloud_1d),
@@ -299,14 +306,18 @@ void setUp() {
 	Mix_Volume(sys.audioChannel1, 20);
 	Mix_Volume(sys.audioChannel2, 20);
 
-	//Add Short Commands
-	game.addShortCommand('+', volumeUp);
-	game.addShortCommand('-', volumeDown);
-	game.addShortCommand(SDLK_ESCAPE, restartGame);
+	//Add Short Commands (Function pointer)
+	game.addFuncShortCommand('+', volumeUp); //increase music volume
+	game.addFuncShortCommand('-', volumeDown); // decrease music volume
+	game.addFuncShortCommand(SDLK_ESCAPE, restartGame);
+
+	//Add Short Command (Member function pointer)
+	PauseStruct ps;
+	ShortCommand* mfunc = MemFuncShortCommand<PauseStruct>::getInstance('p', &ps, &PauseStruct::pauseGame);
+	game.addMemFuncShortCommand(mfunc);
 }
 int main(int argc, char** argv) {
 	setUp();
 	game.run();
 	return 0;
 }
-

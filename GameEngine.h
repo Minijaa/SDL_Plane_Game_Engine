@@ -3,6 +3,9 @@
 #include <vector>
 #include "Sprite.h"
 #include "Level.h"
+#include "ShortCommand.h"
+#include "MemFuncShortCommand.h"
+#include "FuncShortCommand.h"
 
 namespace planeGameEngine {
 
@@ -10,17 +13,20 @@ namespace planeGameEngine {
 	{
 
 	public:
-		struct ShortCommand;
+		//struct ShortCommand;
 		GameEngine();
 		GameEngine(int fps);
 		void addSprite(Sprite*);
 		void removeSprite(Sprite*);
 		Level* getActiveLevel() { return activeLevel; }
-		void addShortCommand(char keyDown, void(*f)());
+		void addFuncShortCommand(char keyDown, void(*f)());
+		void addMemFuncShortCommand(ShortCommand* mfunc);
 		void run();
+
 		int getIterationCount();
 		void setLevelChange(bool value, int levelNr) { levelChange = value; levelToChangeToNr = levelNr; }
-
+		void setPause(bool pause) { paused = pause; }
+		bool isPaused() { return paused; }
 		//void setResetGame(bool value) { resetGame = value; }
 		//void resetTheGame(bool value);
 		Level* addLevel() {
@@ -34,6 +40,7 @@ namespace planeGameEngine {
 		~GameEngine();
 
 	private:
+		bool paused = false;
 		const int FRAMERATE;
 		const int TICKINTERVAL = 1000 / FRAMERATE;
 		std::vector<Sprite*> sprites, spritesToAdd, spritesToRemove;
@@ -43,10 +50,8 @@ namespace planeGameEngine {
 		int activeLevelNumber = 0;
 		Level* activeLevel;
 		bool levelChange = false;
-		//bool resetGame = false;
 		void RenderSprites(int nextTick);
 		void changeLevel(bool nextLevel);
-		//void removeCurrentLevelSprites();
 	};
 }
 #endif

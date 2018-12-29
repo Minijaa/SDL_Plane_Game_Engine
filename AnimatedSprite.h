@@ -16,6 +16,9 @@ namespace planeGameEngine {
 		void tick();
 		void setActiveEvent(std::string nameOfEvent);
 		void addAnimation(std::string eventName, std::vector<std::string> paths);
+		AnimatedSprite(const AnimatedSprite&) = delete;
+		const AnimatedSprite& operator=(const AnimatedSprite&) = delete;
+
 	protected:
 		AnimatedSprite(int x, int y, int w, int h, std::string& defaultImage);
 	private:

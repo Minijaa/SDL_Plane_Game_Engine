@@ -22,8 +22,6 @@ namespace planeGameEngine {
 		bool isInteractable() const {
 			return interactable;
 		}
-
-
 		//Subclasses can override these functions
 		virtual void mouseDown(const SDL_Event& event) {}
 		virtual void mouseUp(const SDL_Event& event) {}
@@ -40,6 +38,7 @@ namespace planeGameEngine {
 		bool isFlaggedForDeletion() { return flagForDeletion; }
 		bool surviveLevelChange() { return surviveLvlChng; }
 		void setSurviveLevelChange(bool survive) { surviveLvlChng = survive; }
+		void setXY(int x, int y);
 		Sprite* makeTexture(std::string& imagepath) {}
 		//Subclasses must override this function
 		virtual void draw() const = 0;
@@ -50,7 +49,6 @@ namespace planeGameEngine {
 		//Forbids copy constructor and assignment operator in order to prevent using value semantics
 		Sprite(const Sprite&) = delete;
 		const Sprite& operator=(const Sprite&) = delete;
-		void setXY(int x, int y);
 
 	protected:
 		Sprite(int x, int y, int w, int h, bool interactable = false);

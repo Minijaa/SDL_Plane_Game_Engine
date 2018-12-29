@@ -11,6 +11,8 @@ namespace planeGameEngine {
 	public:
 		static Background* getInstance(std::string& imagePath);
 		void draw() const;
+		Background(const Background&) = delete;
+		const Background& operator=(const Background&) = delete;
 
 		~Background();
 	protected:

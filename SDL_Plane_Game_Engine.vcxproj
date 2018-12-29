@@ -143,11 +143,14 @@
     <ClInclude Include="AnimatedSprite.h" />
     <ClInclude Include="Background.h" />
     <ClInclude Include="ControllableSprite.h" />
+    <ClInclude Include="FuncShortCommand.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="FilePaths.h" />
     <ClInclude Include="Label.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="MemFuncShortCommand.h" />
     <ClInclude Include="MovingSprite.h" />
+    <ClInclude Include="ShortCommand.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="TextInputLabel.h" />

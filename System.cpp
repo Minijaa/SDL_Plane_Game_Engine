@@ -43,6 +43,11 @@ namespace planeGameEngine {
 		return actualChannel;
 	}
 
+	int System::playMusic(std::string name, int loops)
+	{
+		return 0;
+	}
+
 	System::~System()
 	{
 		TTF_CloseFont(font);
