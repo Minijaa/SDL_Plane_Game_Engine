@@ -20,7 +20,8 @@ namespace planeGameEngine {
 		int generateRandomNumber(int maxRandomNr, int minRandomNr);
 		void addSfx(std::string name, std::string& path);
 		int playSfx(int channel, std::string name, int loops);
-		int playMusic(std::string name, int loops);
+		void addMusic(std::string name, std::string& path);
+		void playMusic(std::string name, int loops, int fade);
 		int audioChannel1, audioChannel2;
 
 	private:
@@ -29,8 +30,8 @@ namespace planeGameEngine {
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 		TTF_Font* font;
-		
-		std::unordered_map<std::string, Mix_Chunk*> musicAndSounds;
+		std::unordered_map<std::string, Mix_Music*> tunes;
+		std::unordered_map<std::string, Mix_Chunk*> sounds;
 	};
 
 	extern System sys;

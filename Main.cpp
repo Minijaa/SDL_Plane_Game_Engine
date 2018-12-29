@@ -30,11 +30,11 @@ GameEngine game(60); //Choose Frame Rate
 
 void volumeUp() {
 	volume += 2;
-	Mix_Volume(sys.audioChannel1, volume);
+	Mix_VolumeMusic(volume);
 }
 void volumeDown() {
 	volume -= 2;
-	Mix_Volume(sys.audioChannel1, volume);
+	Mix_VolumeMusic(volume);
 }
 void incrementScore(int nr) {
 	score += nr;
@@ -50,7 +50,8 @@ void restartGame() {
 	playerPointer->setMoveLeft(false);
 	playerPointer->setMoveRight(false);
 	game.setLevelChange(true, 0);
-	//sys.playSfx(0, path.m_Level1_Music, -1); //Crashes, need to fix this
+	Mix_HaltMusic();
+	sys.playMusic("music", -1, 0);
 }
 
 //Implementation classes below
@@ -94,9 +95,12 @@ private:
 	bool first = true;
 	bool alive = true;
 	int count;
+	int defaultHp;
 public:
-	Ufo(int x, int y, int w, int h, MovingSprite::moveDirections moveDir, int speed, std::string& imagePath, int weight, int hp) : Sprite(sys.getXResolution() + 200, sys.getYResolution() / 2, w, h, true), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, 2, path.e_Ufo, 2, 10)
-	{}
+	Ufo(int x, int y, int w, int h, MovingSprite::moveDirections moveDir, int speed, std::string& imagePath, int weight, int hp) : Sprite(sys.getXResolution() + 200, sys.getYResolution() / 2, w, h, true), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, 2, path.e_Ufo, 2, 50)
+	{
+		defaultHp = 50;
+	}
 
 	void tick() {
 		if (alive) {
@@ -119,13 +123,15 @@ public:
 			}
 			count++;
 			if (getRect().y > sys.getYResolution()) {
-				setHp(getHp() + 10);
+				setHp(defaultHp + 10);
 				alive = true;
 				first = true;
 				count = 0;
 				setXY(sys.getXResolution() + 200, sys.getYResolution() / 2);
 				setDirection(MovingSprite::MOVELEFT);
 				game.setLevelChange(true, 0);
+				Mix_HaltMusic();
+				sys.playMusic("music", -1, 1000);
 				
 			}
 		}
@@ -137,12 +143,8 @@ public:
 			cout << getHp();
 		}
 		if (alive && getHp() < 1) {
-			
 			incrementScore(10000);
 			alive = false;
-			
-			//game.setLevelChange(true, -1);
-			//sys.audioChannel1 = sys.playSfx(0, "music2", -1);
 		}
 	}
 };
@@ -163,7 +165,8 @@ public:
 			if (killCount > 3) {
 				killCount = 0;
 				game.setLevelChange(true, -1);
-				sys.audioChannel1 = sys.playSfx(0, "music2", -1);
+				Mix_HaltMusic();
+				sys.playMusic("music2", -1, 1000);
 			}
 			respawnEnemy();
 		}
@@ -329,12 +332,6 @@ void setUp() {
 		new Cloud(70 + 1280, 100, 320, 320, 3, path.ni_Cloud_1d),
 		new Cloud(1570 + 1280, -100, 300, 300, 2, path.ni_Cloud_2d),
 		new Ufo(0,0,272,200, MovingSprite::MOVELEFT,2,path.e_Ufo, 2, 100),
-		/*new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 4),
-		new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 6),
-		new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 3),
-		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVELEFT, 7, path.e_SpaceShip, 2, 4),
-		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 8),
-		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVELEFT, 5, path.e_SpaceShip, 2, 9),*/
 		scoreLabel, player
 		});
 
@@ -354,12 +351,12 @@ void setUp() {
 	highScores.push_back(Label::getInstance(sys.getXResolution() / 2 - 140, 340, "Nisse 3100", { 255,255,255 }));
 
 	//Add sounds
-	sys.addSfx("music", path.m_Level1_Music);
-	sys.addSfx("music2", path.m_Level2_Music);
+	sys.addMusic("music", path.m_Level1_Music);
+	sys.addMusic("music2", path.m_Level2_Music);
 	sys.addSfx("bulletSound", path.sfx_BulletSound);
 	sys.addSfx("boomSound", path.sfx_BoomSound_1);
 	sys.addSfx("boomSound2", path.sfx_BoomSound_2);
-	sys.audioChannel1 = sys.playSfx(0, "music", -1);
+	sys.playMusic("music", -1, 500);
 	Mix_Volume(sys.audioChannel1, 20);
 	Mix_Volume(sys.audioChannel2, 20);
 
