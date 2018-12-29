@@ -37,7 +37,7 @@ void volumeDown() {
 	Mix_Volume(sys.audioChannel1, volume);
 }
 void incrementScore(int nr) {
-	score += 100;
+	score += nr;
 	scoreLabel->setText("Score: " + to_string(score));
 }
 void restartGame() {
@@ -89,7 +89,63 @@ public:
 		}
 	}
 };
+class Ufo : public MovingSprite {
+private:
+	bool first = true;
+	bool alive = true;
+	int count;
+public:
+	Ufo(int x, int y, int w, int h, MovingSprite::moveDirections moveDir, int speed, std::string& imagePath, int weight, int hp) : Sprite(sys.getXResolution() + 200, sys.getYResolution() / 2, w, h, true), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, 2, path.e_Ufo, 2, 10)
+	{}
 
+	void tick() {
+		if (alive) {
+			if (first && getRect().x < sys.getXResolution() - 300) {
+				setDirection(MovingSprite::MOVEUP);
+				first = false;
+			}
+			if (getRect().y < 0) {
+				setDirection(MovingSprite::MOVEDOWN);
+			}
+			else if (getRect().y > sys.getYResolution() - getRect().h) {
+				setDirection(MovingSprite::MOVEUP);
+			}
+		}
+		else {
+			setDirection(MovingSprite::MOVEDOWNLEFT);
+			if (count == 30) {
+			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
+			count = 0;
+			}
+			count++;
+			if (getRect().y > sys.getYResolution()) {
+				setHp(getHp() + 10);
+				alive = true;
+				first = true;
+				count = 0;
+				setXY(sys.getXResolution() + 200, sys.getYResolution() / 2);
+				setDirection(MovingSprite::MOVELEFT);
+				game.setLevelChange(true, 0);
+				
+			}
+		}
+		MovingSprite::tick();
+	}
+	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
+		if (inferiorWeight) {
+			decreaseHp();
+			cout << getHp();
+		}
+		if (alive && getHp() < 1) {
+			
+			incrementScore(10000);
+			alive = false;
+			
+			//game.setLevelChange(true, -1);
+			//sys.audioChannel1 = sys.playSfx(0, "music2", -1);
+		}
+	}
+};
 class SpaceShip : public MovingSprite {
 public:
 	SpaceShip(int x, int y, int w, int h, MovingSprite::moveDirections moveDir, int speed, std::string& imagePath, int weight, int hp) : Sprite(x, y, w, h, true), MovingSprite(x, y, w, h, moveDir, speed, imagePath, weight, hp)
@@ -272,12 +328,13 @@ void setUp() {
 		new Cloud(220 + 1280, 800, 256, 256, 2, path.ni_Cloud_2d),
 		new Cloud(70 + 1280, 100, 320, 320, 3, path.ni_Cloud_1d),
 		new Cloud(1570 + 1280, -100, 300, 300, 2, path.ni_Cloud_2d),
-		new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 4),
+		new Ufo(0,0,272,200, MovingSprite::MOVELEFT,2,path.e_Ufo, 2, 100),
+		/*new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 4),
 		new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 6),
 		new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 3),
 		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVELEFT, 7, path.e_SpaceShip, 2, 4),
 		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 8),
-		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVELEFT, 5, path.e_SpaceShip, 2, 9),
+		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVELEFT, 5, path.e_SpaceShip, 2, 9),*/
 		scoreLabel, player
 		});
 

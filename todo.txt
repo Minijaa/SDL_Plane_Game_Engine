@@ -4,15 +4,6 @@ Todo:
 * Ändra så att musik spelas upp med Mix_FadeInMusic istället för spela ljud grejjen.
 
 Betygskriterier:
-
-B:
-* kortkommandon (tangenttryckningar) ska kunna knytas även till medlemsfunktioner i angivna objekt (förutom till fria funktioner). Det ska vara lätt
-	för tillämpningen att ange antingen en funktionspekare till en fri funktion eller kombinationen av en objektpekare och en funktionsmedlemspekare
-	tillsammans med tangenten.
-* det ska finnas en grafisk komponent (Sprite-subklass?) som ska kunna användas som ett inmatningsfält för text, som tillämpningen kan använda för 
-	textinmatning (t.ex. namn på spelaren för en high score-lista). Det behöver inte finnas editeringsmöjligheter för inmatningsfältet. 
-* Se över Level-filerna. Skippa allt killcount-tjafs
-
 A: 
 * kollisionsdetektering ska göras på pixelnivå, med hänsyn tagen till genomskinliga pixlar
 * spelmotorn ska implementera viss funktionalitet hos en fysikmotor, nämligen att rörliga Sprites kan
