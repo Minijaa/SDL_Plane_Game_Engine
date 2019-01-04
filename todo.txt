@@ -1,7 +1,10 @@
 Todo:
 * Add another addAnimation(string, string) for spritesheets. 
 * Ta bort allt som har med "FlagForDeletion " att göra?
-* Ändra så att musik spelas upp med Mix_FadeInMusic istället för spela ljud grejjen.
+* Bara basklassen behöver delete copy konstruktor och tilldelningsoperator!!! OBS!!!
+* Kolla upp om jag har const på alla metoder som inte påverkar något.
+* Se till at musikvolymen sätts till volume-variabeln så att det inte blir ett hopp när man ändrar volym med
+	shortcuts.
 
 Betygskriterier:
 A: 
@@ -11,5 +14,5 @@ A:
 	Sprites ska ha en viss elasticitet som påverkar deras studs-beteende. 
 
 Frågor:
-* Räcker det att hålla en Surface per sprite och göra kollisionsdetektering på pixelnivå utifrån den? Eller behöver man spara surfaces
+* Svar JA! Räcker det att hålla en Surface per sprite och göra kollisionsdetektering på pixelnivå utifrån den? Eller behöver man spara surfaces
 	för alla animations-texturer. (om man inte använder sprite sheets alltså)
