@@ -5,6 +5,8 @@ Todo:
 * Kolla upp om jag har const på alla metoder som inte påverkar något.
 * Se till at musikvolymen sätts till volume-variabeln så att det inte blir ett hopp när man ändrar volym med
 	shortcuts.
+* Lägg till ERROR-CHECKS!
+* Ordna refCounter så att Sprite-objekt bara tas bort om inga refererar till dem.
 
 Betygskriterier:
 A: 

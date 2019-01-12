@@ -1,9 +1,7 @@
 #include "Background.h"
 #include <SDL_image.h>
 #include "System.h"
-#include <string>
 #include <SDL.h>
-
 #include <iostream>
 
 namespace planeGameEngine {
