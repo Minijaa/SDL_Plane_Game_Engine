@@ -33,10 +33,10 @@ namespace planeGameEngine {
 		virtual int getCollisionWeight() const { return 0; }
 		virtual void changeTextureForLevelChange() {}
 		void setCollisionHandeled(bool value) { collisionHandeled = value; }
-		bool isCollisionHandeled() { return collisionHandeled; }
+		bool isCollisionHandeled() const { return collisionHandeled; }
 		void setFlagForDeletion(bool deletionValue) { flagForDeletion = deletionValue; }
-		bool isFlaggedForDeletion() { return flagForDeletion; }
-		bool surviveLevelChange() { return surviveLvlChng; }
+		bool isFlaggedForDeletion() const { return flagForDeletion; }
+		bool surviveLevelChange() const { return surviveLvlChng; }
 		void setSurviveLevelChange(bool survive) { surviveLvlChng = survive; }
 		void setXY(int x, int y);
 		Sprite* makeTexture(std::string& imagepath) {}

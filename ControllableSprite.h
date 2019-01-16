@@ -24,8 +24,6 @@ namespace planeGameEngine {
 		void setMoveRight(bool right) { moveRight = right; }
 		bool isAlive() const { return alive; }
 		void setAlive(bool isAlive) { alive = isAlive; }
-		ControllableSprite(const ControllableSprite&) = delete;
-		const ControllableSprite& operator=(const ControllableSprite&) = delete;
 		~ControllableSprite();
 	protected:
 		ControllableSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp);

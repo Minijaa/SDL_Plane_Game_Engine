@@ -16,7 +16,7 @@ namespace planeGameEngine {
 		void addSprite(std::vector<Sprite*> sprites);
 		std::vector<Sprite*> getLevelSprites();
 		void setActiveLevel(bool active) { activeLevel = active; }
-		bool getActiveLevel() { return activeLevel; }
+		bool getActiveLevel() const { return activeLevel; }
 		~Level();
 	protected:
 		Level();

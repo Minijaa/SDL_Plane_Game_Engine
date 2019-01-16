@@ -19,7 +19,7 @@ void setUp();
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 int killCount;
-int volume = 30;
+int musicVolume = 20;
 int score;
 vector<Label*> highScores;
 Label* scoreLabel;
@@ -29,12 +29,12 @@ ControllableSprite* playerPointer;
 GameEngine game(60); //Choose Frame Rate
 
 void volumeUp() {
-	volume += 2;
-	Mix_VolumeMusic(volume);
+	musicVolume += 2;
+	Mix_VolumeMusic(musicVolume);
 }
 void volumeDown() {
-	volume -= 2;
-	Mix_VolumeMusic(volume);
+	musicVolume -= 2;
+	Mix_VolumeMusic(musicVolume);
 }
 void incrementScore(int nr) {
 	score += nr;
@@ -52,6 +52,7 @@ void restartGame() {
 	game.setLevelChange(true, 0);
 	Mix_HaltMusic();
 	sys.playMusic("music", -1, 0);
+	Mix_VolumeMusic(musicVolume);
 }
 
 //Implementation classes below
@@ -132,6 +133,7 @@ public:
 				game.setLevelChange(true, 0);
 				Mix_HaltMusic();
 				sys.playMusic("music", -1, 1000);
+				Mix_VolumeMusic(musicVolume);
 				
 			}
 		}
@@ -167,6 +169,7 @@ public:
 				game.setLevelChange(true, -1);
 				Mix_HaltMusic();
 				sys.playMusic("music2", -1, 1000);
+				Mix_VolumeMusic(musicVolume);
 			}
 			respawnEnemy();
 		}
@@ -357,6 +360,7 @@ void setUp() {
 	sys.addSfx("boomSound", path.sfx_BoomSound_1);
 	sys.addSfx("boomSound2", path.sfx_BoomSound_2);
 	sys.playMusic("music", -1, 500);
+	Mix_VolumeMusic(musicVolume);
 	Mix_Volume(sys.audioChannel1, 20);
 	Mix_Volume(sys.audioChannel2, 20);
 

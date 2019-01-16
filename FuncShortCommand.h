@@ -16,8 +16,6 @@ namespace planeGameEngine {
 				func();
 			}
 		}
-		FuncShortCommand(const FuncShortCommand&) = delete;
-		const FuncShortCommand& operator=(const FuncShortCommand&) = delete;
 	private:
 		void(*func)();
 	};

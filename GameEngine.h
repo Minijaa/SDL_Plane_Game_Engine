@@ -18,15 +18,15 @@ namespace planeGameEngine {
 		GameEngine(int fps);
 		void addSprite(Sprite*);
 		void removeSprite(Sprite*);
-		Level* getActiveLevel() { return activeLevel; }
+		Level* getActiveLevel() const { return activeLevel; }
 		void addFuncShortCommand(char keyDown, void(*f)());
 		void addMemFuncShortCommand(ShortCommand* mfunc);
 		void run();
 
-		int getIterationCount();
+		int getIterationCount() const;
 		void setLevelChange(bool value, int levelNr) { levelChange = value; levelToChangeToNr = levelNr; }
 		void setPause(bool pause) { paused = pause; }
-		bool isPaused() { return paused; }
+		bool isPaused() const { return paused; }
 		//void setResetGame(bool value) { resetGame = value; }
 		//void resetTheGame(bool value);
 		Level* addLevel() {

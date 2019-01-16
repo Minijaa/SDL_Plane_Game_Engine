@@ -115,7 +115,7 @@ namespace planeGameEngine {
 		} //Outer while loop
 	}
 
-	int GameEngine::getIterationCount()
+	int GameEngine::getIterationCount() const
 	{
 		return iterationCount;
 	}
