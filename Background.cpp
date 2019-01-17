@@ -27,6 +27,8 @@ namespace planeGameEngine {
 
 	Background::~Background()
 	{
-		SDL_DestroyTexture(bgTexture);
+		if (bgTexture != nullptr) {
+			SDL_DestroyTexture(bgTexture);
+		}
 	}
 }

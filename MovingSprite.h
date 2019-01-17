@@ -42,8 +42,6 @@ namespace planeGameEngine {
 		virtual void hitBoundryAction(SDL_Rect* rect, int moveDirection) {} //Endast aktuell för Player och Ufo
 		virtual void collisionAction(Sprite* sprite_1, Sprite* sprite_2) {}
 		~MovingSprite();
-		MovingSprite(const MovingSprite&) = delete;
-		const MovingSprite& operator=(const MovingSprite&) = delete;
 
 	protected:
 		MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp);

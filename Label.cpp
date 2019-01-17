@@ -1,7 +1,7 @@
 #include "Label.h"
 #include "SDL_ttf.h"
 #include "System.h"
-
+#include <iostream>
 namespace planeGameEngine {
 	Label* Label::getInstance(int x, int y, const std::string& txt, SDL_Color col)
 	{
@@ -22,7 +22,11 @@ namespace planeGameEngine {
 	}
 	Label::~Label()
 	{
-		SDL_DestroyTexture(texture);
+		std::cout << "Label RefCount: " << getRefCount() << std::endl;
+		if (texture != nullptr) {
+			SDL_DestroyTexture(texture);
+
+		}
 	}
 	Label::Label(int x, int y, const std::string & txt, SDL_Color col) : Sprite(x, y, 0, 0), text(txt), color(col)
 	{

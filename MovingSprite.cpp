@@ -1,15 +1,17 @@
 #include "MovingSprite.h"
-
+#include <iostream>
 
 namespace planeGameEngine {
 
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
 		makeTexture(imagePath);
+
 	}
 
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
+
 	}
 	MovingSprite* MovingSprite::makeTexture(std::string& imagePath)
 	{
@@ -108,6 +110,7 @@ namespace planeGameEngine {
 			break;
 		case MOVESTOP:
 			setXY(getRect().x, getRect().y);
+
 			break;
 		}
 	}
@@ -127,6 +130,10 @@ namespace planeGameEngine {
 	}
 	MovingSprite::~MovingSprite()
 	{
-		SDL_DestroyTexture(spriteTexture);
+		std::cout << "Moving Weight: " << weight << " RefCount: " << getRefCount() << std::endl;
+		if (spriteTexture != nullptr) {
+			SDL_DestroyTexture(spriteTexture);
+		}
+
 	}
 }

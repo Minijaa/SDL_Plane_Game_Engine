@@ -7,6 +7,7 @@ namespace planeGameEngine {
 
 	Sprite::Sprite(int x, int y, int w, int h, bool isInteractable) :rect{ x, y, w, h },interactable(isInteractable)
 	{
+		
 	}
 
 	void Sprite::setWH(int w, int h) {

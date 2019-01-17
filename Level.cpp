@@ -9,6 +9,7 @@ namespace planeGameEngine {
 	}
 	Sprite* Level::addSprite(Sprite* sprite)
 	{
+		sprite->incrementRefCount();
 		levelSprites.push_back(sprite);
 		return sprite;
 	}
@@ -16,6 +17,7 @@ namespace planeGameEngine {
 	void Level::addSprite(std::vector<Sprite*> sprites)
 	{
 		for (Sprite* s : sprites) {
+			s->incrementRefCount();
 			levelSprites.push_back(s);
 		}
 	}
@@ -27,12 +29,14 @@ namespace planeGameEngine {
 
 	Level::~Level()
 	{
-		// Krashar vid extit!!
-		/*for (Sprite* s : levelSprites) {
-			if (!this->activeLevel) {
-				delete s;
+		for (Sprite* s : levelSprites) {
+			if (s != nullptr) {
+				s->decrementRefCount();
+				if (s->getRefCount() == 0) {
+					delete s;
+				}
 			}
-		}*/
+		}
 	}
 	int Level::defaultLevelCounter = 0;
 

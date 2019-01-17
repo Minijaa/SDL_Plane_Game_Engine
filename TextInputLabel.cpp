@@ -20,7 +20,6 @@ namespace planeGameEngine {
 	}
 	TextInputLabel::~TextInputLabel()
 	{
-		//SDL_DestroyTexture(getTexture());
 	}
 	TextInputLabel* TextInputLabel::getInstance(int x, int y, const std::string & txt, SDL_Color col)
 	{

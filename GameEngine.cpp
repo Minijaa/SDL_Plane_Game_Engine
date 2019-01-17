@@ -34,6 +34,9 @@ namespace planeGameEngine {
 	}
 	void GameEngine::run() {
 		sprites = levels[activeLevelNumber]->getLevelSprites();
+		for (Sprite* s : sprites) {
+			s->incrementRefCount();
+		}
 		activeLevel = levels[activeLevelNumber];
 		activeLevel->setActiveLevel(true);
 		bool running = true;
@@ -142,14 +145,21 @@ namespace planeGameEngine {
 
 	GameEngine::~GameEngine()
 	{
-		for (Sprite* s : sprites) {
-			delete s;
-		}
+
 		for (Level* l : levels) {
 			delete l;
 		}
+
 		for (ShortCommand* sc : shortCommands) {
 			delete sc;
+		}
+		for (Sprite* s : sprites) {
+			if (s != nullptr) {
+				s->decrementRefCount();
+				if (s->getRefCount() == 0) {
+					delete s;
+				}
+			}
 		}
 
 	}
@@ -173,14 +183,7 @@ namespace planeGameEngine {
 			iterationCount = 0;
 		}
 	}
-	//void GameEngine::removeCurrentLevelSprites() {
-	//	//Remove current game Sprites
-	//	for (Sprite* s : sprites) {
-	//		if (!s->surviveLevelChange()) {
-	//			removeSprite(s);
-	//		}
-	//	}
-	//}
+	
 	void GameEngine::changeLevel(bool nextLevel)
 	{
 		if (nextLevel) {
@@ -193,9 +196,24 @@ namespace planeGameEngine {
 			}
 			SDL_RenderClear(sys.getRenderer());
 			activeLevel->setActiveLevel(false);
-			//Load in sprites from new level
+			
 			cout << "BYT BANA" << endl;
+
+			//Remove current game Sprites if they aren't stored elsewhere
+			for (Sprite* s : sprites) {
+				if (s != nullptr) {
+					s->decrementRefCount();
+					if (s->getRefCount() == 0) {
+						delete s;
+					}
+				}
+			}
+			//Load in sprites from new level
+			sprites.clear();
 			sprites = levels[activeLevelNumber]->getLevelSprites();
+			for (Sprite* s : sprites) {
+				s->incrementRefCount();
+			}
 			levelChange = false;
 			activeLevel = levels[activeLevelNumber];
 			activeLevel->setActiveLevel(true);

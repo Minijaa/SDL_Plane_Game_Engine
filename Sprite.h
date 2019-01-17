@@ -10,18 +10,17 @@ namespace planeGameEngine {
 	private:
 		SDL_Rect rect;
 		bool interactable;
-		bool flagForDeletion;
 		bool collisionHandeled = false;
-		bool surviveLvlChng = false;
+		int refCount;
 
 	public:
 		//Inline function
-		SDL_Rect getRect() const {
-			return rect;
-		}
-		bool isInteractable() const {
-			return interactable;
-		}
+		SDL_Rect getRect() const { return rect; }
+		bool isInteractable() const { return interactable; }
+		int getRefCount() const { return refCount; }
+		void incrementRefCount() { refCount++; }
+		void decrementRefCount() { refCount--; }
+
 		//Subclasses can override these functions
 		virtual void mouseDown(const SDL_Event& event) {}
 		virtual void mouseUp(const SDL_Event& event) {}
@@ -34,10 +33,6 @@ namespace planeGameEngine {
 		virtual void changeTextureForLevelChange() {}
 		void setCollisionHandeled(bool value) { collisionHandeled = value; }
 		bool isCollisionHandeled() const { return collisionHandeled; }
-		void setFlagForDeletion(bool deletionValue) { flagForDeletion = deletionValue; }
-		bool isFlaggedForDeletion() const { return flagForDeletion; }
-		bool surviveLevelChange() const { return surviveLvlChng; }
-		void setSurviveLevelChange(bool survive) { surviveLvlChng = survive; }
 		void setXY(int x, int y);
 		Sprite* makeTexture(std::string& imagepath) {}
 		//Subclasses must override this function

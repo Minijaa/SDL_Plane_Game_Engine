@@ -1,5 +1,5 @@
 #include "AnimatedSprite.h"
-
+#include <iostream>
 namespace planeGameEngine {
 
 	AnimatedSprite::AnimatedSprite(int x, int y, int w, int h, std::string & defaultImage) :Sprite(x, y, w, h)
@@ -12,10 +12,10 @@ namespace planeGameEngine {
 	}
 	AnimatedSprite::~AnimatedSprite()
 	{
+		std::cout << "Animated RefCount: " << getRefCount() << std::endl;
 		SDL_DestroyTexture(activeSpriteTexture);
 		SDL_DestroyTexture(defaultSpriteTexture);
 		SDL_DestroyTexture(lastAnimationTexture);
-
 		if (!animationSpriteTextures.empty()) {
 			for (auto iter = animationSpriteTextures.begin(); iter != animationSpriteTextures.end(); iter++) {
 				for (SDL_Texture* tx : iter->second) {

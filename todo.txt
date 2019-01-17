@@ -1,8 +1,6 @@
 Todo:
 - Add another addAnimation(string, string) for spritesheets. 
-* Ta bort allt som har med "FlagForDeletion " att göra?
 * Lägg till ERROR-CHECKS!
-* Ordna refCounter så att Sprite-objekt bara tas bort om inga refererar till dem.
 
 Betygskriterier:
 A: 

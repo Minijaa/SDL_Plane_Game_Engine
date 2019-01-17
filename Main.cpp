@@ -79,16 +79,10 @@ public:
 		MovingSprite::tick();
 	}
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
-		if (!isFlaggedForDeletion()) {
-
-			setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
-			int size = sys.generateRandomNumber(400, 256);
-			setWH(size, size);
-			setMoveSpeed(sys.generateRandomNumber(3, 1));
-		}
-		else {
-			game.removeSprite(this);
-		}
+		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
+		int size = sys.generateRandomNumber(400, 256);
+		setWH(size, size);
+		setMoveSpeed(sys.generateRandomNumber(3, 1));
 	}
 };
 class Ufo : public MovingSprite {
@@ -119,8 +113,8 @@ public:
 		else {
 			setDirection(MovingSprite::MOVEDOWNLEFT);
 			if (count == 30) {
-			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
-			count = 0;
+				Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
+				count = 0;
 			}
 			count++;
 			if (getRect().y > sys.getYResolution()) {
@@ -134,7 +128,7 @@ public:
 				Mix_HaltMusic();
 				sys.playMusic("music", -1, 1000);
 				Mix_VolumeMusic(musicVolume);
-				
+
 			}
 		}
 		MovingSprite::tick();
@@ -180,15 +174,9 @@ public:
 	}
 private:
 	void respawnEnemy() {
-		if (!isFlaggedForDeletion()) {
-
-			setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
-			setMoveSpeed(sys.generateRandomNumber(8, 3));
-			this->setHp(defaultHp);
-		}
-		else {
-			game.removeSprite(this);
-		}
+		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
+		setMoveSpeed(sys.generateRandomNumber(8, 3));
+		this->setHp(defaultHp);
 	}
 	int defaultHp;
 };
@@ -233,7 +221,6 @@ class Player : public AnimatedSprite, public ControllableSprite {
 public:
 	Player(int x, int y, int w, int h, std::string& defaultImage) :Sprite(x, y, w, h, true), AnimatedSprite(x, y, w, h, defaultImage), ControllableSprite(x, y, w, h, MovingSprite::MOVESTOP, 5, 1, 3), MovingSprite(x, y, w, h, MovingSprite::MOVESTOP, 6, 1, 3)
 	{
-		setSurviveLevelChange(true);
 		setAlive(true);
 	}
 	void tick() {
@@ -299,7 +286,6 @@ void setUp() {
 
 	//Setting up score-label
 	scoreLabel = Label::getInstance(20, 20, "Score: 0", { 255, 255, 255 });
-	scoreLabel->setSurviveLevelChange(true);
 
 	// LEVEL 1 - Adding all sprites
 	Level* level1 = game.addLevel();
