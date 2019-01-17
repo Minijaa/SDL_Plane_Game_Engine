@@ -6,16 +6,18 @@ namespace planeGameEngine {
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
 		makeTexture(imagePath);
-
+		hasImage = true;
 	}
 
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
-
+		hasImage = false;
 	}
 	MovingSprite* MovingSprite::makeTexture(std::string& imagePath)
 	{
-		spriteTexture = IMG_LoadTexture(sys.getRenderer(), imagePath.c_str());
+		SDL_Surface* surf = IMG_Load(imagePath.c_str());
+		spriteTexture = SDL_CreateTextureFromSurface(sys.getRenderer(), surf);
+		setSurf(surf);
 		if (spriteTexture == nullptr) {
 			throw std::runtime_error("Sprite image not found");
 		}
@@ -29,7 +31,7 @@ namespace planeGameEngine {
 
 	MovingSprite* MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp)
 	{
-		return nullptr;
+		return new MovingSprite(x, y, w, h, moveDirection, speed, colissionWeight, hp);
 	}
 
 	void MovingSprite::move()
@@ -131,9 +133,12 @@ namespace planeGameEngine {
 	MovingSprite::~MovingSprite()
 	{
 		std::cout << "Moving Weight: " << weight << " RefCount: " << getRefCount() << std::endl;
-		if (spriteTexture != nullptr) {
+		if (spriteTexture) {
 			SDL_DestroyTexture(spriteTexture);
 		}
-
+		if (hasImage) {
+			SDL_FreeSurface(getSurf());
+		}
+		
 	}
 }

@@ -16,6 +16,9 @@ namespace planeGameEngine {
 		SDL_DestroyTexture(activeSpriteTexture);
 		SDL_DestroyTexture(defaultSpriteTexture);
 		SDL_DestroyTexture(lastAnimationTexture);
+		if (getSurf()) {
+			SDL_FreeSurface(getSurf());
+		}
 		if (!animationSpriteTextures.empty()) {
 			for (auto iter = animationSpriteTextures.begin(); iter != animationSpriteTextures.end(); iter++) {
 				for (SDL_Texture* tx : iter->second) {
@@ -112,7 +115,10 @@ namespace planeGameEngine {
 				}
 			}
 		}*/
-		activeSpriteTexture = IMG_LoadTexture(sys.getRenderer(), defaultSprite.c_str());
+		SDL_Surface* surf = IMG_Load(defaultSprite.c_str());
+		activeSpriteTexture = SDL_CreateTextureFromSurface(sys.getRenderer(), surf);
+		setSurf(surf);
+
 		defaultSpriteTexture = activeSpriteTexture;
 		if (activeSpriteTexture == nullptr) {
 			throw std::runtime_error("Sprite image not found");

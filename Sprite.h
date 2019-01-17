@@ -9,12 +9,15 @@ namespace planeGameEngine {
 	{
 	private:
 		SDL_Rect rect;
+		SDL_Surface* surf = nullptr;
 		bool interactable;
 		bool collisionHandeled = false;
 		int refCount;
 
 	public:
 		//Inline function
+		SDL_Surface* getSurf() const { return surf; }
+		void setSurf(SDL_Surface* s) { surf = s; }
 		SDL_Rect getRect() const { return rect; }
 		bool isInteractable() const { return interactable; }
 		int getRefCount() const { return refCount; }
@@ -48,7 +51,6 @@ namespace planeGameEngine {
 	protected:
 		Sprite(int x, int y, int w, int h, bool interactable = false);
 		void setWH(int w, int h);
-
 
 	};
 

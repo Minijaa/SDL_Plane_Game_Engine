@@ -25,7 +25,7 @@ namespace planeGameEngine {
 		std::cout << "Label RefCount: " << getRefCount() << std::endl;
 		if (texture != nullptr) {
 			SDL_DestroyTexture(texture);
-
+			SDL_FreeSurface(getSurf());
 		}
 	}
 	Label::Label(int x, int y, const std::string & txt, SDL_Color col) : Sprite(x, y, 0, 0), text(txt), color(col)
@@ -40,9 +40,9 @@ namespace planeGameEngine {
 		SDL_Surface* surf = TTF_RenderText_Solid(sys.getFont(), text.c_str(), color);
 		if (surf == nullptr) {
 			surf = TTF_RenderText_Solid(sys.getFont(), "_", color);
+			setSurf(surf);
 		}
 		texture = SDL_CreateTextureFromSurface(sys.getRenderer(), surf);
 		setWH(surf->w, surf->h);
-		SDL_FreeSurface(surf);
 	}
 }
