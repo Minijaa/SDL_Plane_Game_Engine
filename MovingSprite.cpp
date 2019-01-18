@@ -2,19 +2,24 @@
 #include <iostream>
 
 namespace planeGameEngine {
-
+	
+	void MovingSprite::bounce(Sprite* other)
+	{
+		moveSpeedX *= -1.0 *getElasticity();
+		moveSpeedY *= -1.0 *getElasticity();
+	}
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
-		moveSpeedX = static_cast<float>(moveSpeed);
-		moveSpeedY = static_cast<float>(moveSpeed);
+		moveSpeedX = moveSpeed;
+		moveSpeedY = moveSpeed;
 		makeTexture(imagePath);
 		hasImage = true;
 	}
 
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
-		moveSpeedX = static_cast<float>(moveSpeed);
-		moveSpeedY = static_cast<float>(moveSpeed);
+		moveSpeedX = moveSpeed;
+		moveSpeedY = moveSpeed;
 		hasImage = false;
 	}
 	MovingSprite* MovingSprite::makeTexture(std::string& imagePath)
@@ -44,14 +49,14 @@ namespace planeGameEngine {
 
 	void MovingSprite::move()
 	{
-		float gravity;
+		double gravity;
 		if (affectedByGravity()) {
 			gravity = sys.getGravity();
 		}
 		else {
 			gravity = 0.0;
 		}
-		//Use for UFO later.
+		//Check for collision with boundary
 		if (getRect().x == 0 ||
 			getRect().x == sys.getXResolution() - getRect().w ||
 			getRect().y == 0 ||
@@ -67,8 +72,8 @@ namespace planeGameEngine {
 				setXY(getRect().x - moveSpeed, getRect().y);
 				
 				//include gravity
-				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY += gravity * 1;
+				setXY(getRect().x, getRect().y + affectedByGravity()*(moveSpeed *gravity + moveSpeedY * gravity));
+				moveSpeedY += gravity * 1.0;
 			}
 			break;
 		case MOVERIGHT:
@@ -76,11 +81,11 @@ namespace planeGameEngine {
 				outOfBoundsAction(&getRect(), MOVERIGHT);
 			}
 			else {
-				setXY(getRect().x + moveSpeed, getRect().y);
+				setXY(getRect().x + moveSpeedX, getRect().y );
 				
 				//include gravity
-				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY += gravity * 1;
+				setXY(getRect().x, getRect().y + affectedByGravity()*(moveSpeed + moveSpeedY * gravity));
+				moveSpeedY += gravity * 1.0;
 			}
 			break;
 		case MOVEUP:
@@ -92,7 +97,7 @@ namespace planeGameEngine {
 				
 				//include gravity
 				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY -= gravity * 1;
+				moveSpeedY -= gravity * 1.0;
 			}
 			break;
 		case MOVEDOWN:
@@ -104,7 +109,7 @@ namespace planeGameEngine {
 				
 				//include gravity
 				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY += gravity * 1;
+				moveSpeedY += gravity * 1.0;
 			}
 			break;
 		case MOVEUPLEFT:
@@ -117,7 +122,7 @@ namespace planeGameEngine {
 				
 				//include gravity
 				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY -= gravity * 1;
+				moveSpeedY -= gravity * 1.0;
 			}
 			break;
 		case MOVEUPRIGHT:
@@ -129,7 +134,7 @@ namespace planeGameEngine {
 				
 				//include gravity
 				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY -= gravity * 1;
+				moveSpeedY -= gravity * 1.0;
 			}
 			break;
 		case MOVEDOWNLEFT:
@@ -141,7 +146,7 @@ namespace planeGameEngine {
 				
 				//include gravity
 				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY += gravity * 1;
+				moveSpeedY += gravity * 1.0;
 			}
 
 			break;
@@ -154,7 +159,7 @@ namespace planeGameEngine {
 				
 				//include gravity
 				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY += gravity * 1;
+				moveSpeedY += gravity * 1.0;
 			}
 			break;
 		case MOVESTOP:
@@ -162,10 +167,9 @@ namespace planeGameEngine {
 			
 			//include gravity
 			setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-			moveSpeedY += gravity * 1;
+			moveSpeedY += gravity * 1.0;
 			break;
-		}
-		
+		}	
 	}
 
 
@@ -183,7 +187,7 @@ namespace planeGameEngine {
 	}
 	MovingSprite::~MovingSprite()
 	{
-		std::cout << "Moving Weight: " << weight << " RefCount: " << getRefCount() << std::endl;
+		//std::cout << "Moving Weight: " << weight << " RefCount: " << getRefCount() << std::endl;
 		if (spriteTexture) {
 			SDL_DestroyTexture(spriteTexture);
 		}

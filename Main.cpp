@@ -72,10 +72,7 @@ struct PauseStruct {
 
 class Cloud : public MovingSprite {
 public:
-	Cloud(int x, int y, int w, int h, int speed, std::string& imagePath) : Sprite(x, y, w, h), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, speed, imagePath, 1, NULL)
-	{
-
-	}
+	Cloud(int x, int y, int w, int h, int speed, std::string& imagePath) : Sprite(x, y, w, h), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, speed, imagePath, 1, NULL){}
 	void tick() {
 		MovingSprite::tick();
 	}
@@ -93,7 +90,6 @@ public:
 	{
 		setAffectedByGravity(true);
 	}
-
 
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 
@@ -118,6 +114,13 @@ public:
 	Ufo(int x, int y, int w, int h, MovingSprite::moveDirections moveDir, int speed, std::string& imagePath, int weight, int hp) : Sprite(sys.getXResolution() + 200, sys.getYResolution() / 2, w, h, true), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, 2, path.e_Ufo, 2, 50)
 	{
 		defaultHp = 50;
+	}
+	void resetSpriteInstance() {
+		setHp(defaultHp);
+		first = true;
+		alive = true; count = 0;
+		setXY(sys.getXResolution() + 200, sys.getYResolution() / 2);
+		setDirection(MovingSprite::MOVELEFT);
 	}
 
 	void tick() {
@@ -151,12 +154,6 @@ public:
 			}
 			count++;
 			if (getRect().y > sys.getYResolution()) {
-				setHp(defaultHp + 10);
-				alive = true;
-				first = true;
-				count = 0;
-				setXY(sys.getXResolution() + 200, sys.getYResolution() / 2);
-				setDirection(MovingSprite::MOVELEFT);
 				game.setLevelChange(true, 0);
 				Mix_HaltMusic();
 				sys.playMusic("music", -1, 1000);
@@ -166,9 +163,10 @@ public:
 		MovingSprite::tick();
 	}
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
-		if (inferiorWeight && otherSprite->getCollisionWeight() != 4) {
+		if (alive && inferiorWeight && otherSprite->getCollisionWeight() != 4) {
 			decreaseHp();
-			cout << getHp();
+			incrementScore(20);
+			cout << "UFO HP: " << getHp() << endl;
 		}
 		if (alive && getHp() < 1) {
 			incrementScore(10000);
@@ -235,12 +233,20 @@ public:
 class Bullet : public MovingSprite {
 public:
 	Bullet(int x, int y, GameEngine& engine) : Sprite(x, y, 0, 0, true), MovingSprite(x, y, 0, 0, MovingSprite::MOVERIGHT, 20, path.fx_Bullet, 3, 0)
-	{}
-
+	{
+		activateBounce(true, 0.6);
+	}
+	void bounce(Sprite* other) {
+		if (other->getCollisionWeight() == 4) {
+			MovingSprite::bounce(other);
+			activateBounce(false);
+			setAffectedByGravity(true);
+		}
+	}
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 
 		//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
-		if (otherSprite->getCollisionWeight() != 1) {
+		if (otherSprite->getCollisionWeight() != 1 && otherSprite->getCollisionWeight() != 4) {
 			game.removeSprite(this);
 		}
 		//Play hit-sound
@@ -307,7 +313,6 @@ public:
 			Mix_Volume(sys.playSfx(-1, "boomSound2", 0), 50);
 			setAlive(false);
 			setDirection(MOVEDOWNRIGHT);
-			cout << "DEAD" << endl;
 			makeTextures(path.p_Plane_dead);
 			setIdleAnimation(false);
 		}
@@ -315,6 +320,7 @@ public:
 	}
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
 		//Game over, go to end-screen
+		makeTextures(path.p_Plane_idle_1);
 		game.setLevelChange(true, 2);
 	};
 };

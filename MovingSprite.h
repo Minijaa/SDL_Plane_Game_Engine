@@ -12,8 +12,8 @@ namespace planeGameEngine {
 	class MovingSprite : virtual public Sprite
 	{
 	private:
-		int moveSpeed, moveDir, width, height, healthPoints, weight;
-		float moveSpeedX, moveSpeedY;
+		int moveDir, width, height, healthPoints, weight;
+		double moveSpeedX, moveSpeedY, moveSpeed;
 		bool hasImage;
 		SDL_Texture* spriteTexture;
 
@@ -24,8 +24,8 @@ namespace planeGameEngine {
 		MovingSprite* makeTexture(std::string& imagePath);
 		static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight, int hp);
 		static MovingSprite* getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp);
-		int getMoveSpeed() const { return moveSpeed; }
-		void setMoveSpeed(int speed) { moveSpeed = speed; }
+		double getMoveSpeed() const { return moveSpeed; }
+		void setMoveSpeed(double speed) { moveSpeed = speed; }
 		
 		void setDirection(moveDirections moveDirection);
 		void setHp(int hp) { healthPoints = hp; }
@@ -43,6 +43,7 @@ namespace planeGameEngine {
 		virtual void hitBoundryAction(SDL_Rect* rect, int moveDirection) {} //Endast aktuell för Player och Ufo
 		virtual void collisionAction(Sprite* sprite_1, Sprite* sprite_2) {}
 		~MovingSprite();
+		void bounce(Sprite* other);
 
 	protected:
 		MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp);

@@ -83,6 +83,12 @@ namespace planeGameEngine {
 								s->setCollisionHandeled(true);
 								other->collisionAction(s, other->getCollisionWeight() < s->getCollisionWeight());
 								other->setCollisionHandeled(true);
+								if (s->bounceIsActivated()) {
+									s->bounce(other);
+								}
+								if (other->bounceIsActivated()) {
+									other->bounce(s);
+								}
 							}
 						}
 					}
@@ -105,7 +111,7 @@ namespace planeGameEngine {
 					if (*i == s) {
 						i = sprites.erase(i);
 						delete s;
-						cout << "DELETED " << endl;
+						//cout << "DELETED " << endl;
 					}
 					else {
 						i++;
@@ -199,14 +205,15 @@ namespace planeGameEngine {
 			SDL_RenderClear(sys.getRenderer());
 			activeLevel->setActiveLevel(false);
 
-			cout << "BYT BANA" << endl;
-
 			//Remove current game Sprites if they aren't stored elsewhere
 			for (Sprite* s : sprites) {
 				if (s != nullptr) {
 					s->decrementRefCount();
 					if (s->getRefCount() == 0) {
 						delete s;
+					}
+					else {
+						s->resetSpriteInstance();
 					}
 				}
 			}

@@ -12,10 +12,12 @@ namespace planeGameEngine {
 		SDL_Surface* surf = nullptr;
 		bool interactable;
 		bool collisionHandeled = false;
+		bool bounceActivated = false;
+		bool gravityActivated = false;
 		int refCount;
-		int gravityActivated = false;
 		int defaultPosX;
 		int defaultPosY;
+		double elasticity;
 
 	public:
 		//Inline function
@@ -32,8 +34,18 @@ namespace planeGameEngine {
 		int& getY() { return rect.y; }
 		bool affectedByGravity() { return gravityActivated; }
 		void setAffectedByGravity(bool value) { gravityActivated = value; }
+		bool bounceIsActivated() const { return bounceActivated; }
+		void activateBounce(bool value, double elast = 1.0) { bounceActivated = value; elasticity = elast; }
+		double getElasticity() const { return elasticity; }
 		int getDefaultPosX() const { return defaultPosX; }
 		int getDefaultPosY() const { return defaultPosY; }
+		void setCollisionHandeled(bool value) { collisionHandeled = value; }
+		bool isCollisionHandeled() const { return collisionHandeled; }
+		void setXY(int x, int y);
+		virtual int getCollisionWeight() const { return 0; }
+		Sprite* makeTexture(std::string& imagepath) {}
+		//Subclasses must override this function
+		virtual void draw() = 0;
 
 		//Subclasses can override these functions
 		virtual void mouseDown(const SDL_Event& event) {}
@@ -43,15 +55,9 @@ namespace planeGameEngine {
 		virtual void input(const SDL_Event& event) {}
 		virtual void tick() {}
 		virtual void collisionAction(Sprite* sprite, bool inferiorWeight) {}
-		virtual int getCollisionWeight() const { return 0; }
 		virtual void changeTextureForLevelChange() {}
-		void setCollisionHandeled(bool value) { collisionHandeled = value; }
-		bool isCollisionHandeled() const { return collisionHandeled; }
-		void setXY(int x, int y);
-		Sprite* makeTexture(std::string& imagepath) {}
-		//Subclasses must override this function
-		virtual void draw() = 0;
-
+		virtual void resetSpriteInstance() {}
+		virtual void bounce(Sprite* other) {}
 		//Subclasses can override desctructor
 		virtual ~Sprite() {}
 
