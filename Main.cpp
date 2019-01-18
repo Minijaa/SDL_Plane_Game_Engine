@@ -57,8 +57,9 @@ void restartGame() {
 
 //Implementation classes below
 
-//Just to demonstrate the use of memberfunction pointers.
+//Struct to demonstrate the use of memberfunction pointers.
 struct PauseStruct {
+
 	void pauseGame() {
 		if (!game.isPaused()) {
 			game.setPause(true);
@@ -88,22 +89,18 @@ public:
 
 class Bomb : public MovingSprite {
 public:
-	Bomb(int x, int y, GameEngine& engine, MovingSprite::moveDirections move) : Sprite(x, y, 0, 0, true), MovingSprite(x, y, 0, 0, move, sys.generateRandomNumber(7, 2), path.fx_Bomb, 1, 0)
+	Bomb(int x, int y, GameEngine& engine, MovingSprite::moveDirections move) : Sprite(x, y, 0, 0, true), MovingSprite(x, y, 0, 0, move, sys.generateRandomNumber(7, 2), path.fx_Bomb, 4, 0)
 	{
 		setAffectedByGravity(true);
 	}
 
 
-	//void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
+	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 
-	//	//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
-	//	if (otherSprite->getCollisionWeight() != 1) {
-	//		game.removeSprite(this);
-	//	}
-	//	//Play hit-sound
-	//}
-
-	void hitBoundryAction(SDL_Rect* rect) {	}
+		if (inferiorWeight) {
+			game.removeSprite(this);
+		}
+	}
 
 	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
 		if (rect->y > sys.getYResolution()) {
@@ -115,7 +112,6 @@ class Ufo : public MovingSprite {
 private:
 	bool first = true;
 	bool alive = true;
-	bool bombLeft = true;
 	int count, defaultHp;
 	int bombCounter = 0;
 public:
@@ -127,17 +123,8 @@ public:
 	void tick() {
 		if (alive) {
 
-			if (first == false && bombCounter > 50) {
-				if (bombLeft) {
-					game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVEUPLEFT));
-					bombLeft = false;
-					cout << "moveLEFT" << endl;
-				}
-				else {
-					game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVELEFT));
-					bombLeft = true;
-					cout << "moveUPLEFT" << endl;
-				}
+			if (first == false && bombCounter > 40) {
+				game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVEUPLEFT));
 				sys.playSfx(-1, "bulletSound", 0);
 				bombCounter = 0;
 			}
@@ -179,7 +166,7 @@ public:
 		MovingSprite::tick();
 	}
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
-		if (inferiorWeight) {
+		if (inferiorWeight && otherSprite->getCollisionWeight() != 4) {
 			decreaseHp();
 			cout << getHp();
 		}
