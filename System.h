@@ -23,10 +23,12 @@ namespace planeGameEngine {
 		void addMusic(std::string name, std::string& path);
 		void playMusic(std::string name, int loops, int fade);
 		int audioChannel1, audioChannel2;
+		float getGravity() const { return GRAVITY; }
 
 	private:
 		const int XRESOLUTION = 1280;
 		const int YRESOLUTION = 720;
+		const float GRAVITY = 0.15f;
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 		TTF_Font* font;

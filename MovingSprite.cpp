@@ -5,12 +5,16 @@ namespace planeGameEngine {
 
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
+		moveSpeedX = static_cast<float>(moveSpeed);
+		moveSpeedY = static_cast<float>(moveSpeed);
 		makeTexture(imagePath);
 		hasImage = true;
 	}
 
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
+		moveSpeedX = static_cast<float>(moveSpeed);
+		moveSpeedY = static_cast<float>(moveSpeed);
 		hasImage = false;
 	}
 	MovingSprite* MovingSprite::makeTexture(std::string& imagePath)
@@ -40,6 +44,13 @@ namespace planeGameEngine {
 
 	void MovingSprite::move()
 	{
+		float gravity;
+		if (affectedByGravity()) {
+			gravity = sys.getGravity();
+		}
+		else {
+			gravity = 0.0;
+		}
 		//Use for UFO later.
 		if (getRect().x == 0 ||
 			getRect().x == sys.getXResolution() - getRect().w ||
@@ -54,24 +65,34 @@ namespace planeGameEngine {
 			}
 			else {
 				setXY(getRect().x - moveSpeed, getRect().y);
+				
+				//include gravity
+				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+				moveSpeedY += gravity * 1;
 			}
 			break;
 		case MOVERIGHT:
 			if (getRect().x > sys.getXResolution()) {
 				outOfBoundsAction(&getRect(), MOVERIGHT);
-
 			}
 			else {
 				setXY(getRect().x + moveSpeed, getRect().y);
+				
+				//include gravity
+				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+				moveSpeedY += gravity * 1;
 			}
 			break;
 		case MOVEUP:
 			if (getRect().y < 0 - getRect().h) {
 				outOfBoundsAction(&getRect(), MOVEUP);
-
 			}
 			else {
 				setXY(getRect().x, getRect().y - moveSpeed);
+				
+				//include gravity
+				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+				moveSpeedY -= gravity * 1;
 			}
 			break;
 		case MOVEDOWN:
@@ -80,14 +101,23 @@ namespace planeGameEngine {
 			}
 			else {
 				setXY(getRect().x, getRect().y + moveSpeed);
+				
+				//include gravity
+				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+				moveSpeedY += gravity * 1;
 			}
 			break;
 		case MOVEUPLEFT:
 			if (getRect().x < 0 - getRect().w) {
 				outOfBoundsAction(&getRect(), MOVELEFT);
+
 			}
 			else {
-				setXY(getRect().x - moveSpeed, getRect().y - moveSpeed);
+				setXY(getRect().x - moveSpeed, getRect().y - moveSpeedY);
+				
+				//include gravity
+				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+				moveSpeedY -= gravity * 1;
 			}
 			break;
 		case MOVEUPRIGHT:
@@ -96,6 +126,10 @@ namespace planeGameEngine {
 			}
 			else {
 				setXY(getRect().x + moveSpeed, getRect().y - moveSpeed);
+				
+				//include gravity
+				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+				moveSpeedY -= gravity * 1;
 			}
 			break;
 		case MOVEDOWNLEFT:
@@ -104,7 +138,12 @@ namespace planeGameEngine {
 			}
 			else {
 				setXY(getRect().x - moveSpeed, getRect().y + moveSpeed);
+				
+				//include gravity
+				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+				moveSpeedY += gravity * 1;
 			}
+
 			break;
 		case MOVEDOWNRIGHT:
 			if (getRect().y > sys.getYResolution()) {
@@ -112,13 +151,21 @@ namespace planeGameEngine {
 			}
 			else {
 				setXY(getRect().x + moveSpeed, getRect().y + moveSpeed);
+				
+				//include gravity
+				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+				moveSpeedY += gravity * 1;
 			}
 			break;
 		case MOVESTOP:
 			setXY(getRect().x, getRect().y);
-
+			
+			//include gravity
+			setXY(getRect().x, getRect().y + moveSpeedY * gravity);
+			moveSpeedY += gravity * 1;
 			break;
 		}
+		
 	}
 
 

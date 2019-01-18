@@ -13,6 +13,9 @@ namespace planeGameEngine {
 		bool interactable;
 		bool collisionHandeled = false;
 		int refCount;
+		int gravityActivated = false;
+		int defaultPosX;
+		int defaultPosY;
 
 	public:
 		//Inline function
@@ -27,6 +30,10 @@ namespace planeGameEngine {
 		bool collidableColor(int x, int y);
 		int& getX() { return rect.x; }
 		int& getY() { return rect.y; }
+		bool affectedByGravity() { return gravityActivated; }
+		void setAffectedByGravity(bool value) { gravityActivated = value; }
+		int getDefaultPosX() const { return defaultPosX; }
+		int getDefaultPosY() const { return defaultPosY; }
 
 		//Subclasses can override these functions
 		virtual void mouseDown(const SDL_Event& event) {}

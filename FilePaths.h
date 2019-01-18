@@ -20,6 +20,7 @@ namespace planeGameEngine {
 
 		//Effects [fx]
 		std::string fx_Bullet = "Images/Bullet.png";
+		std::string fx_Bomb = "Images/bomb.png";
 
 		//Player Sprites [p]
 		std::string p_Plane_idle_1 = "Images/Fly1.png";

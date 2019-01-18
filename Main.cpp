@@ -85,12 +85,39 @@ public:
 		setMoveSpeed(sys.generateRandomNumber(3, 1));
 	}
 };
+
+class Bomb : public MovingSprite {
+public:
+	Bomb(int x, int y, GameEngine& engine, MovingSprite::moveDirections move) : Sprite(x, y, 0, 0, true), MovingSprite(x, y, 0, 0, move, sys.generateRandomNumber(7, 2), path.fx_Bomb, 1, 0)
+	{
+		setAffectedByGravity(true);
+	}
+
+
+	//void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
+
+	//	//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
+	//	if (otherSprite->getCollisionWeight() != 1) {
+	//		game.removeSprite(this);
+	//	}
+	//	//Play hit-sound
+	//}
+
+	void hitBoundryAction(SDL_Rect* rect) {	}
+
+	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+		if (rect->y > sys.getYResolution()) {
+			game.removeSprite(this);
+		}
+	}
+};
 class Ufo : public MovingSprite {
 private:
 	bool first = true;
 	bool alive = true;
-	int count;
-	int defaultHp;
+	bool bombLeft = true;
+	int count, defaultHp;
+	int bombCounter = 0;
 public:
 	Ufo(int x, int y, int w, int h, MovingSprite::moveDirections moveDir, int speed, std::string& imagePath, int weight, int hp) : Sprite(sys.getXResolution() + 200, sys.getYResolution() / 2, w, h, true), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, 2, path.e_Ufo, 2, 50)
 	{
@@ -99,16 +126,35 @@ public:
 
 	void tick() {
 		if (alive) {
+
+			if (first == false && bombCounter > 50) {
+				if (bombLeft) {
+					game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVEUPLEFT));
+					bombLeft = false;
+					cout << "moveLEFT" << endl;
+				}
+				else {
+					game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVELEFT));
+					bombLeft = true;
+					cout << "moveUPLEFT" << endl;
+				}
+				sys.playSfx(-1, "bulletSound", 0);
+				bombCounter = 0;
+			}
 			if (first && getRect().x < sys.getXResolution() - 300) {
 				setDirection(MovingSprite::MOVEUP);
 				first = false;
+
 			}
 			if (getRect().y < 0) {
 				setDirection(MovingSprite::MOVEDOWN);
+
 			}
 			else if (getRect().y > sys.getYResolution() - getRect().h) {
 				setDirection(MovingSprite::MOVEUP);
+
 			}
+			bombCounter++;
 		}
 		else {
 			setDirection(MovingSprite::MOVEDOWNLEFT);
@@ -157,7 +203,7 @@ public:
 			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
 			killCount++;
 			incrementScore(100);
-			if (killCount > 3) {
+			if (killCount > 0) {
 				killCount = 0;
 				game.setLevelChange(true, -1);
 				Mix_HaltMusic();
@@ -173,7 +219,7 @@ public:
 	}
 private:
 	void respawnEnemy() {
-		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), this->getRect().y);
+		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), getDefaultPosY()); //this->getRect().y
 		setMoveSpeed(sys.generateRandomNumber(8, 3));
 		this->setHp(defaultHp);
 	}
@@ -214,10 +260,11 @@ public:
 	}
 	void hitBoundryAction(SDL_Rect* rect) {	}
 
-	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection){
+	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
 		game.removeSprite(this);
 	}
 };
+
 
 class Player : public AnimatedSprite, public ControllableSprite {
 public:
@@ -306,12 +353,12 @@ void setUp() {
 		new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1),
 		new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2),
 		new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_2),
-		new SpaceShip(1280, 150, 0, 0, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2), 
-		new SpaceShip(2500, 250, 0, 0, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2), 
-		new SpaceShip(3600, 650, 0, 0, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2), 
-		new SpaceShip(1570, 500, 0, 0, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2), 
-		new SpaceShip(2050, 400, 0, 0, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2), 
-		new SpaceShip(2000, 30, 0, 0, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2), 
+		new SpaceShip(1280, 150, 0, 0, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2),
+		new SpaceShip(2500, 250, 0, 0, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
+		new SpaceShip(3600, 650, 0, 0, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2),
+		new SpaceShip(1570, 500, 0, 0, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2),
+		new SpaceShip(2050, 400, 0, 0, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
+		new SpaceShip(2000, 30, 0, 0, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
 		scoreLabel, player
 		});
 
