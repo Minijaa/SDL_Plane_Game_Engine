@@ -18,6 +18,10 @@ namespace planeGameEngine {
 		SDL_Surface* surf = IMG_Load(imagePath.c_str());
 		spriteTexture = SDL_CreateTextureFromSurface(sys.getRenderer(), surf);
 		setSurf(surf);
+		//if Texture size is undefined assign surf size to texture
+		if (getRect().w == 0 || getRect().h == 0) {
+			setWH(surf->w, surf->h);
+		}
 		if (spriteTexture == nullptr) {
 			throw std::runtime_error("Sprite image not found");
 		}
@@ -127,7 +131,7 @@ namespace planeGameEngine {
 	{
 		move();
 	}
-	void MovingSprite::draw() const {
+	void MovingSprite::draw() {
 		SDL_RenderCopy(sys.getRenderer(), spriteTexture, NULL, &getRect());
 	}
 	MovingSprite::~MovingSprite()
@@ -139,6 +143,6 @@ namespace planeGameEngine {
 		if (hasImage) {
 			SDL_FreeSurface(getSurf());
 		}
-		
+
 	}
 }

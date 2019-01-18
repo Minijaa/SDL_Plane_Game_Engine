@@ -13,7 +13,7 @@ namespace planeGameEngine {
 		static Label* getInstance(int x, int y, const std::string& txt, SDL_Color col);
 		void setText(const std::string& txt);
 		std::string getText() const;
-		void draw() const;
+		void draw();
 		~Label();
 
 	protected:

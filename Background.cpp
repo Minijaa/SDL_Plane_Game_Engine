@@ -20,7 +20,7 @@ namespace planeGameEngine {
 		return new Background(imagePath);
 	}
 
-	void Background::draw() const
+	void Background::draw() 
 	{
 		SDL_RenderCopy(sys.getRenderer(), bgTexture, NULL, NULL);
 	}

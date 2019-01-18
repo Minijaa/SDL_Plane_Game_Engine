@@ -74,12 +74,11 @@ namespace planeGameEngine {
 				} //Switch
 			} //Inner while loop
 
-			//Discover collisions
 			for (Sprite* s : sprites) {
 				if (s->isInteractable() && !s->isCollisionHandeled()) {
 					for (Sprite* other : sprites) {
 						if (other->isInteractable() && s != other && !other->isCollisionHandeled()) {
-							if (SDL_HasIntersection(&s->getRect(), &other->getRect())) {
+							if (s->collisionDetected(other)) {
 								s->collisionAction(other, s->getCollisionWeight() < other->getCollisionWeight());
 								s->setCollisionHandeled(true);
 								other->collisionAction(s, other->getCollisionWeight() < s->getCollisionWeight());
@@ -92,6 +91,7 @@ namespace planeGameEngine {
 					s->tick();
 				}
 			}
+			
 
 			//Add added Sprites to main Sprite-vector
 			for (Sprite* s : spritesToAdd) {
@@ -105,6 +105,7 @@ namespace planeGameEngine {
 					if (*i == s) {
 						i = sprites.erase(i);
 						delete s;
+						cout << "DELETED " << endl;
 					}
 					else {
 						i++;
@@ -115,6 +116,7 @@ namespace planeGameEngine {
 			RenderSprites(nextTick);
 			changeLevel(levelChange);
 			//resetTheGame(resetGame);
+			//cout << "ANTAL SPRITES: " << sprites.size() << endl;
 		} //Outer while loop
 	}
 
@@ -183,7 +185,7 @@ namespace planeGameEngine {
 			iterationCount = 0;
 		}
 	}
-	
+
 	void GameEngine::changeLevel(bool nextLevel)
 	{
 		if (nextLevel) {
@@ -196,7 +198,7 @@ namespace planeGameEngine {
 			}
 			SDL_RenderClear(sys.getRenderer());
 			activeLevel->setActiveLevel(false);
-			
+
 			cout << "BYT BANA" << endl;
 
 			//Remove current game Sprites if they aren't stored elsewhere

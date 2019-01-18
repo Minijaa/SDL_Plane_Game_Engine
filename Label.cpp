@@ -16,7 +16,7 @@ namespace planeGameEngine {
 	{
 		return text;
 	}
-	void Label::draw() const
+	void Label::draw() 
 	{
 		SDL_RenderCopy(sys.getRenderer(), getTexture(), NULL, &getRect());
 	}

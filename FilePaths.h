@@ -11,7 +11,6 @@ namespace planeGameEngine {
 			//Background Sprites [bg]
 		std::string bg_Level_1 = "Images/background.png";
 		std::string bg_Level_2 = "Images/background_night.png";
-		std::string bg_Level_3 = "Images/background3_darker.png";
 
 		//Non-interactable Sprites [ni] 
 		std::string ni_Cloud_1 = "Images/Cloud1.png";
@@ -30,6 +29,7 @@ namespace planeGameEngine {
 		std::string p_Plane_shooting_3 = "Images/Shoot3.png";
 		std::string p_Plane_shooting_4 = "Images/Shoot4.png";
 		std::string p_Plane_shooting_5 = "Images/Shoot5.png";
+		std::string p_Plane_dead = "Images/Dead.png";
 
 		//Enemy Sprites [e]
 		std::string e_SpaceShip = "Images/Enemy1.png";

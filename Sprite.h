@@ -18,11 +18,15 @@ namespace planeGameEngine {
 		//Inline function
 		SDL_Surface* getSurf() const { return surf; }
 		void setSurf(SDL_Surface* s) { surf = s; }
-		SDL_Rect getRect() const { return rect; }
+		SDL_Rect& getRect() { return rect; }
 		bool isInteractable() const { return interactable; }
 		int getRefCount() const { return refCount; }
 		void incrementRefCount() { refCount++; }
 		void decrementRefCount() { refCount--; }
+		bool collisionDetected(Sprite* other);
+		bool collidableColor(int x, int y);
+		int& getX() { return rect.x; }
+		int& getY() { return rect.y; }
 
 		//Subclasses can override these functions
 		virtual void mouseDown(const SDL_Event& event) {}
@@ -39,7 +43,7 @@ namespace planeGameEngine {
 		void setXY(int x, int y);
 		Sprite* makeTexture(std::string& imagepath) {}
 		//Subclasses must override this function
-		virtual void draw() const = 0;
+		virtual void draw() = 0;
 
 		//Subclasses can override desctructor
 		virtual ~Sprite() {}

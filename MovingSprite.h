@@ -29,7 +29,7 @@ namespace planeGameEngine {
 		void setDirection(moveDirections moveDirection);
 		void setHp(int hp) { healthPoints = hp; }
 		void tick();
-		void draw() const;
+		void draw();
 		void move();
 		int getCollisionWeight() const {
 			return weight;

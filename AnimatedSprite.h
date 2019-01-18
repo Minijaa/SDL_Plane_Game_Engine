@@ -12,10 +12,12 @@ namespace planeGameEngine {
 	public:
 		static AnimatedSprite* getInstance(int x, int y, int w, int h, std::string& defaultImage);
 		~AnimatedSprite();
-		void draw() const;
+		void draw();
 		void tick();
 		void setActiveEvent(std::string nameOfEvent);
 		void addAnimation(std::string eventName, std::vector<std::string> paths);
+		void makeTextures(std::string& defaultSprite);
+		void setIdleAnimation(bool value) { idleAnimationActive = value; }
 
 	protected:
 		AnimatedSprite(int x, int y, int w, int h, std::string& defaultImage);
@@ -23,6 +25,7 @@ namespace planeGameEngine {
 		unsigned intervalCounter;
 		int eventCounter;
 		bool eventAnimationActive = false;
+		bool idleAnimationActive = true;
 		void idleAnimation(int intervalCounter);
 		void eventAnimation(int intervalCounter);
 		std::unordered_map<std::string, std::vector<SDL_Texture*>> animationSpriteTextures;
@@ -30,7 +33,6 @@ namespace planeGameEngine {
 		SDL_Texture* activeSpriteTexture;
 		SDL_Texture* defaultSpriteTexture;
 		SDL_Texture* lastAnimationTexture;
-		void makeTextures(std::string& defaultSprite);
 	};
 }
 #endif

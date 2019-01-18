@@ -27,7 +27,7 @@ namespace planeGameEngine {
 			}
 		}
 	}
-	void AnimatedSprite::draw() const
+	void AnimatedSprite::draw()
 	{
 		SDL_RenderCopy(sys.getRenderer(), activeSpriteTexture, NULL, &getRect());
 	}
@@ -61,22 +61,24 @@ namespace planeGameEngine {
 
 	void AnimatedSprite::idleAnimation(int intervalCounter) {
 
-		std::vector<SDL_Texture*> atx = animationSpriteTextures["idle"];
-		if ((intervalCounter % 4) == 0) {
-			intervalCounter = 0;
-			for (unsigned i = 0; i < atx.size(); i++) {
-				if (activeSpriteTexture == defaultSpriteTexture) {
-					activeSpriteTexture = atx[0];
-					break;
-				}
-				if (activeSpriteTexture == atx[atx.size() - 1]) {
-					activeSpriteTexture = defaultSpriteTexture;
-					lastAnimationTexture = nullptr;
-					break;
-				}
-				if (activeSpriteTexture == atx[i]) {
-					activeSpriteTexture = atx[i + 1];
-					break;
+		if (idleAnimationActive) {
+			std::vector<SDL_Texture*> atx = animationSpriteTextures["idle"];
+			if ((intervalCounter % 4) == 0) {
+				intervalCounter = 0;
+				for (unsigned i = 0; i < atx.size(); i++) {
+					if (activeSpriteTexture == defaultSpriteTexture) {
+						activeSpriteTexture = atx[0];
+						break;
+					}
+					if (activeSpriteTexture == atx[atx.size() - 1]) {
+						activeSpriteTexture = defaultSpriteTexture;
+						lastAnimationTexture = nullptr;
+						break;
+					}
+					if (activeSpriteTexture == atx[i]) {
+						activeSpriteTexture = atx[i + 1];
+						break;
+					}
 				}
 			}
 		}
@@ -118,7 +120,10 @@ namespace planeGameEngine {
 		SDL_Surface* surf = IMG_Load(defaultSprite.c_str());
 		activeSpriteTexture = SDL_CreateTextureFromSurface(sys.getRenderer(), surf);
 		setSurf(surf);
-
+		//if Texture size is undefined assign surf size to texture
+		if (getRect().w == 0 || getRect().h == 0) {
+			setWH(surf->w, surf->h);
+		}
 		defaultSpriteTexture = activeSpriteTexture;
 		if (activeSpriteTexture == nullptr) {
 			throw std::runtime_error("Sprite image not found");

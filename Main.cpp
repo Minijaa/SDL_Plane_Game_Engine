@@ -19,7 +19,7 @@ void setUp();
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 int killCount;
-int musicVolume = 20;
+int musicVolume = 0;
 int score;
 vector<Label*> highScores;
 Label* scoreLabel;
@@ -128,7 +128,6 @@ public:
 				Mix_HaltMusic();
 				sys.playMusic("music", -1, 1000);
 				Mix_VolumeMusic(musicVolume);
-
 			}
 		}
 		MovingSprite::tick();
@@ -185,7 +184,6 @@ class HighScoreLabel : public TextInputLabel {
 public:
 	HighScoreLabel(int x, int y, const std::string& txt, SDL_Color col) : TextInputLabel(x, y, txt, col) {}
 	void perform() {
-		cout << "PERFORM " << endl;
 
 		if (!highScores.empty()) {
 			highScores.push_back(Label::getInstance(highScores[highScores.size() - 1]->getRect().x, highScores[highScores.size() - 1]->getRect().y + 50, getText() + " " + to_string(score), { 255,255,255 }));
@@ -203,7 +201,7 @@ public:
 
 class Bullet : public MovingSprite {
 public:
-	Bullet(int x, int y, GameEngine& engine) : Sprite(x, y, 40, 40, true), MovingSprite(x, y, 40, 40, MovingSprite::MOVERIGHT, 20, path.fx_Bullet, 3, 0)
+	Bullet(int x, int y, GameEngine& engine) : Sprite(x, y, 0, 0, true), MovingSprite(x, y, 0, 0, MovingSprite::MOVERIGHT, 20, path.fx_Bullet, 3, 0)
 	{}
 
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
@@ -214,7 +212,11 @@ public:
 		}
 		//Play hit-sound
 	}
-	void hitBoundryAction(SDL_Rect* rect) {}
+	void hitBoundryAction(SDL_Rect* rect) {	}
+
+	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection){
+		game.removeSprite(this);
+	}
 };
 
 class Player : public AnimatedSprite, public ControllableSprite {
@@ -239,14 +241,17 @@ public:
 			}
 		} if (event.key.keysym.sym == 'r') {
 			setAlive(true);
+			makeTextures(path.p_Plane_idle_1);
+			setIdleAnimation(true);
 			setXY(100, 100);
 			setMoveLeft(false);
 			setMoveUp(false);
 			setMoveDown(false);
 			setMoveRight(false);
 		}if (event.key.keysym.sym == SDLK_ESCAPE) {
-			cout << "BYT BANAQ!" << endl;
 			game.setLevelChange(true, 0);
+			makeTextures(path.p_Plane_idle_1);
+			setIdleAnimation(true);
 		}
 	}
 	void keyUp(const SDL_Event& event)
@@ -255,7 +260,7 @@ public:
 			implementBasicMovement(event);
 		}
 	}
-	void draw() const {
+	void draw() {
 		AnimatedSprite::draw();
 	}
 	void shoot() {
@@ -268,7 +273,9 @@ public:
 			Mix_Volume(sys.playSfx(-1, "boomSound2", 0), 50);
 			setAlive(false);
 			setDirection(MOVEDOWNRIGHT);
-			//Sätt Death-animation event eller liknande
+			cout << "DEAD" << endl;
+			makeTextures(path.p_Plane_dead);
+			setIdleAnimation(false);
 		}
 		//Play crash-sound
 	}
@@ -279,7 +286,7 @@ public:
 };
 void setUp() {
 	//Setting up player
-	Player* player = new Player(100, 350, 148, 101, path.p_Plane_idle_1);
+	Player* player = new Player(100, 350, 0, 0, path.p_Plane_idle_1);
 	player->addAnimation("idle", { path.p_Plane_idle_1, path.p_Plane_idle_2 });
 	player->addAnimation("shoot", { path.p_Plane_shooting_1, path.p_Plane_shooting_2, path.p_Plane_shooting_3, path.p_Plane_shooting_4, path.p_Plane_shooting_5 });
 	playerPointer = player;
@@ -290,7 +297,7 @@ void setUp() {
 	// LEVEL 1 - Adding all sprites
 	Level* level1 = game.addLevel();
 	level1->addSprite({
-		Background::getInstance(path.bg_Level_3),
+		Background::getInstance(path.bg_Level_1),
 		new Cloud(1180, 50, 256, 256, 1, path.ni_Cloud_1),
 		new Cloud(1000, 650, 300, 300, 3, path.ni_Cloud_2),
 		new Cloud(880, 250, 450, 450, 2, path.ni_Cloud_1),
@@ -299,12 +306,12 @@ void setUp() {
 		new Cloud(350, 400, 400, 400, 1, path.ni_Cloud_1),
 		new Cloud(220, 800, 256, 256, 2, path.ni_Cloud_2),
 		new Cloud(70, 100, 320, 320, 3, path.ni_Cloud_2),
-		new SpaceShip(1280, 150, 126, 93, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2),
-		new SpaceShip(2500, 250, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
-		new SpaceShip(3600, 650, 126, 93, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2),
-		new SpaceShip(1570, 500, 126, 93, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2),
-		new SpaceShip(2050, 400, 126, 93, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2),
-		new SpaceShip(2000, 30, 126, 93, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2),
+		new SpaceShip(1280, 150, 0, 0, MovingSprite::MOVELEFT, 10, path.e_SpaceShip, 2, 2), 
+		new SpaceShip(2500, 250, 0, 0, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2), 
+		new SpaceShip(3600, 650, 0, 0, MovingSprite::MOVELEFT, 3, path.e_SpaceShip, 2, 2), 
+		new SpaceShip(1570, 500, 0, 0, MovingSprite::MOVERIGHT, 7, path.e_SpaceShip, 2, 2), 
+		new SpaceShip(2050, 400, 0, 0, MovingSprite::MOVELEFT, 6, path.e_SpaceShip, 2, 2), 
+		new SpaceShip(2000, 30, 0, 0, MovingSprite::MOVERIGHT, 5, path.e_SpaceShip, 2, 2), 
 		scoreLabel, player
 		});
 
@@ -320,7 +327,7 @@ void setUp() {
 		new Cloud(220 + 1280, 800, 256, 256, 2, path.ni_Cloud_2d),
 		new Cloud(70 + 1280, 100, 320, 320, 3, path.ni_Cloud_1d),
 		new Cloud(1570 + 1280, -100, 300, 300, 2, path.ni_Cloud_2d),
-		new Ufo(0,0,272,200, MovingSprite::MOVELEFT,2,path.e_Ufo, 2, 100),
+		new Ufo(0,0,0,0, MovingSprite::MOVELEFT,2,path.e_Ufo, 2, 100),
 		scoreLabel, player
 		});
 
