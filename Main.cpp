@@ -179,7 +179,6 @@ public:
 		if (alive && inferiorWeight && otherSprite->getCollisionWeight() != 4) {
 			decreaseHp();
 			incrementScore(20);
-			cout << "UFO HP: " << getHp() << endl;
 		}
 		if (alive && getHp() < 1) {
 			incrementScore(10000);
@@ -334,7 +333,6 @@ public:
 			makeTextures(path.p_Plane_dead);
 			setIdleAnimation(false);
 		}
-		//Play crash-sound
 	}
 	void outOfBoundsAction(SDL_Rect* rect) {
 		//Game over, go to end-screen

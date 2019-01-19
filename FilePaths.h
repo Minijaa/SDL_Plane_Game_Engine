@@ -46,7 +46,7 @@ namespace planeGameEngine {
 
 		//Music [m]
 		std::string m_Level1_Music = "Sfx/L1Music.mp3";
-		std::string m_Level2_Music = "Sfx/L2Music.wav";
+		std::string m_Level2_Music = "Sfx/L2Music.mp3";
 
 		//FONTS [f]:
 		std::string f_BauhausFont = "Fonts/BAUHS93.TTF";
