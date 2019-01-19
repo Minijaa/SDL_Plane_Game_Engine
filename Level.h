@@ -6,8 +6,7 @@
 
 namespace planeGameEngine {
 
-	class Level
-	{
+	class Level {
 	public:
 		static Level* getInstance();
 		std::string getLevelName() const { return levelName; }
@@ -25,7 +24,6 @@ namespace planeGameEngine {
 		std::string levelName;
 		std::vector<Sprite*> levelSprites;
 		bool activeLevel;
-		int requiredKillCount;
 		static int defaultLevelCounter; // Use to generate levelnumber if implementer don't want to implement "real levels".
 	};
 }

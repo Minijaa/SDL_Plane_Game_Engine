@@ -9,11 +9,9 @@
 
 namespace planeGameEngine {
 
-	class GameEngine
-	{
+	class GameEngine {
 
 	public:
-		//struct ShortCommand;
 		GameEngine();
 		GameEngine(int fps);
 		void addSprite(Sprite*);
@@ -22,36 +20,27 @@ namespace planeGameEngine {
 		void addFuncShortCommand(char keyDown, void(*f)());
 		void addMemFuncShortCommand(ShortCommand* mfunc);
 		void run();
-
-		int getIterationCount() const;
+		void checkForCollisions();
+		int getIterationCount() const { return iterationCount; }
 		void setLevelChange(bool value, int levelNr) { levelChange = value; levelToChangeToNr = levelNr; }
 		void setPause(bool pause) { paused = pause; }
 		bool isPaused() const { return paused; }
-		//void setResetGame(bool value) { resetGame = value; }
-		//void resetTheGame(bool value);
-		Level* addLevel() {
-			Level* level = Level::getInstance();
-			levels.push_back(level);
-			return level;
-		}
-		GameEngine* getEngine() {
-			return this;
-		}
+		Level* addLevel(); 
+		GameEngine* getEngine() { return this; }
 		~GameEngine();
 
 	private:
-		bool paused = false;
 		const int FRAMERATE;
 		const int TICKINTERVAL = 1000 / FRAMERATE;
-		std::vector<Sprite*> sprites, spritesToAdd, spritesToRemove;
-		std::vector<Level*> levels;
-		std::vector<ShortCommand*> shortCommands;
-		int iterationCount, levelToChangeToNr;
-		int activeLevelNumber = 0;
-		Level* activeLevel;
+		int iterationCount, levelToChangeToNr, activeLevelNumber;
+		bool paused = false;
 		bool levelChange = false;
 		void RenderSprites(int nextTick);
 		void changeLevel(bool nextLevel);
+		Level* activeLevel;
+		std::vector<Sprite*> sprites, spritesToAdd, spritesToRemove;
+		std::vector<Level*> levels;
+		std::vector<ShortCommand*> shortCommands;
 	};
 }
 #endif

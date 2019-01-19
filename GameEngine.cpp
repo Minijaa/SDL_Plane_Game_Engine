@@ -3,35 +3,20 @@
 #include "MovingSprite.h"
 #include <iostream>
 #include "FuncShortCommand.h"
-//#include "MemFuncShortCommand.h"
+
 using namespace std;
 
 namespace planeGameEngine {
 
-	GameEngine::GameEngine() :activeLevelNumber(0), FRAMERATE(60)
-	{
-	}
-
-	GameEngine::GameEngine(int fps) : activeLevelNumber(0), FRAMERATE(fps)
-	{
-	}
-
+	GameEngine::GameEngine() :activeLevelNumber(0), FRAMERATE(60) {}
+	GameEngine::GameEngine(int fps) : activeLevelNumber(0), FRAMERATE(fps) {}
+	void GameEngine::addMemFuncShortCommand(ShortCommand* mfunc) { shortCommands.push_back(mfunc); }
+	void GameEngine::addSprite(Sprite* sprite) { spritesToAdd.push_back(sprite); }
+	void GameEngine::removeSprite(Sprite* sprite) { spritesToRemove.push_back(sprite); }
 	void GameEngine::addFuncShortCommand(char keyDown, void(*f)()) {
 		shortCommands.push_back(FuncShortCommand::getInstance(keyDown, f));
 	}
 
-	void GameEngine::addMemFuncShortCommand(ShortCommand* mfunc)
-	{
-		shortCommands.push_back(mfunc);
-	}
-
-	void GameEngine::addSprite(Sprite* sprite) {
-		spritesToAdd.push_back(sprite);
-	}
-
-	void GameEngine::removeSprite(Sprite* sprite) {
-		spritesToRemove.push_back(sprite);
-	}
 	void GameEngine::run() {
 		sprites = levels[activeLevelNumber]->getLevelSprites();
 		for (Sprite* s : sprites) {
@@ -74,30 +59,7 @@ namespace planeGameEngine {
 				} //Switch
 			} //Inner while loop
 
-			for (Sprite* s : sprites) {
-				if (s->isInteractable() && !s->isCollisionHandeled()) {
-					for (Sprite* other : sprites) {
-						if (other->isInteractable() && s != other && !other->isCollisionHandeled()) {
-							if (s->collisionDetected(other)) {
-								s->collisionAction(other, s->getCollisionWeight() < other->getCollisionWeight());
-								s->setCollisionHandeled(true);
-								other->collisionAction(s, other->getCollisionWeight() < s->getCollisionWeight());
-								other->setCollisionHandeled(true);
-								if (s->bounceIsActivated()) {
-									s->bounce(other);
-								}
-								if (other->bounceIsActivated()) {
-									other->bounce(s);
-								}
-							}
-						}
-					}
-				}
-				if (!paused) {
-					s->tick();
-				}
-			}
-			
+			checkForCollisions();
 
 			//Add added Sprites to main Sprite-vector
 			for (Sprite* s : spritesToAdd) {
@@ -111,7 +73,6 @@ namespace planeGameEngine {
 					if (*i == s) {
 						i = sprites.erase(i);
 						delete s;
-						//cout << "DELETED " << endl;
 					}
 					else {
 						i++;
@@ -121,39 +82,44 @@ namespace planeGameEngine {
 			spritesToRemove.clear();
 			RenderSprites(nextTick);
 			changeLevel(levelChange);
-			//resetTheGame(resetGame);
-			//cout << "ANTAL SPRITES: " << sprites.size() << endl;
 		} //Outer while loop
 	}
 
-	int GameEngine::getIterationCount() const
+	//Checks for collisions between sprites and initiates action functions.
+	void GameEngine::checkForCollisions()
 	{
-		return iterationCount;
+		for (Sprite* s : sprites) {
+			if (s->isInteractable() && !s->isCollisionHandeled()) {
+				for (Sprite* other : sprites) {
+					if (other->isInteractable() && s != other && !other->isCollisionHandeled()) {
+						if (s->collisionDetected(other)) {
+							s->collisionAction(other, s->getCollisionWeight() < other->getCollisionWeight());
+							s->setCollisionHandeled(true);
+							other->collisionAction(s, other->getCollisionWeight() < s->getCollisionWeight());
+							other->setCollisionHandeled(true);
+							if (s->bounceIsActivated()) {
+								s->bounce(other);
+							}
+							if (other->bounceIsActivated()) {
+								other->bounce(s);
+							}
+						}
+					}
+				}
+			}
+			if (!paused) {
+				s->tick();
+			}
+		}
 	}
 
-	//void GameEngine::resetTheGame(bool reset)
-	//{
-	//	if (reset) {
-	//		//removeCurrentLevelSprites();
-	//		for (int i = 0; i < 3; i++) {
-	//			for (Sprite* s : levels[i]->getLevelSprites()) {
-	//				delete s;
-	//			}
-	//		}
-	//		/*for (Level* l : levels) {
-	//			for (Sprite* s : l->getLevelSprites()) {
-	//				delete s;
-	//			}
-	//		}*/
-	//		sprites = levels[0]->getLevelSprites();
-	//		resetGame = false;
-	//		activeLevelNumber = 0;
-	//	}
-	//}
+	Level* GameEngine::addLevel() {
+		Level* level = Level::getInstance();
+		levels.push_back(level);
+		return level;
+	}
 
-	GameEngine::~GameEngine()
-	{
-
+	GameEngine::~GameEngine() {
 		for (Level* l : levels) {
 			delete l;
 		}
@@ -169,7 +135,6 @@ namespace planeGameEngine {
 				}
 			}
 		}
-
 	}
 	void GameEngine::RenderSprites(int nextTick)
 	{
@@ -196,7 +161,6 @@ namespace planeGameEngine {
 	{
 		if (nextLevel) {
 			if (levelToChangeToNr == -1 && (activeLevelNumber + 1) < levels.size()) {
-				//removeCurrentLevelSprites();
 				activeLevelNumber++;
 			}
 			else {
@@ -228,5 +192,4 @@ namespace planeGameEngine {
 			activeLevel->setActiveLevel(true);
 		}
 	}
-
 }

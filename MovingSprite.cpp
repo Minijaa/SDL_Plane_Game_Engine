@@ -145,7 +145,6 @@ namespace planeGameEngine {
 		SDL_RenderCopy(sys.getRenderer(), spriteTexture, NULL, &getRect());
 	}
 	MovingSprite::~MovingSprite() {
-		//std::cout << "Moving Weight: " << weight << " RefCount: " << getRefCount() << std::endl;
 		if (spriteTexture) {
 			SDL_DestroyTexture(spriteTexture);
 		}

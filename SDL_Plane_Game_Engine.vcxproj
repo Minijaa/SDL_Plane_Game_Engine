@@ -155,9 +155,6 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="TextInputLabel.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="todo.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

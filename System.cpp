@@ -4,8 +4,7 @@
 using namespace std;
 namespace planeGameEngine {
 
-	System::System()
-	{
+	System::System() {
 		srand(NULL);
 		if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
 			cerr << "SDL_Init-error: " << SDL_GetError() << endl;
@@ -45,39 +44,34 @@ namespace planeGameEngine {
 		return result;
 	}
 
-	void System::addSfx(std::string name, std::string& path)
-	{
+	void System::addSfx(std::string name, std::string& path) {
 		Mix_Chunk* sound = Mix_LoadWAV(path.c_str());
 		if (sound == nullptr) {
 			throw std::runtime_error(Mix_GetError());
 		}
 		sounds[name] = sound;
 	}
-	int System::playSfx(int channel, std::string name, int loops)
-	{
+	int System::playSfx(int channel, std::string name, int loops) {
 		int actualChannel = Mix_PlayChannel(channel, sounds[name], loops);
 		if (actualChannel == -1) {
 			throw std::runtime_error(Mix_GetError());
 		}
 		return actualChannel;
 	}
-	void System::addMusic(std::string name, std::string& path)
-	{
+	void System::addMusic(std::string name, std::string& path) {
 		Mix_Music* music = Mix_LoadMUS(path.c_str());
 		if (music == nullptr) {
 			throw std::runtime_error(Mix_GetError());
 		}
 		tunes[name] = music;
 	}
-	void System::playMusic(std::string name, int loops, int fade)
-	{
+	void System::playMusic(std::string name, int loops, int fade) {
 		if (Mix_PlayMusic(tunes[name], -1) == -1) {
 			throw std::runtime_error(Mix_GetError());
 		}
 	}
 
-	System::~System()
-	{
+	System::~System() {
 		TTF_CloseFont(font);
 		TTF_Quit();
 		if (!sounds.empty()) {
@@ -96,4 +90,4 @@ namespace planeGameEngine {
 	}
 	FilePaths path;
 	System sys;
-} //ns
+}

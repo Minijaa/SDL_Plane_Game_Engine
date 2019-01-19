@@ -4,16 +4,16 @@
 
 namespace planeGameEngine {
 
-	Sprite::Sprite(int x, int y, int w, int h, bool isInteractable) :rect{ x, y, w, h },interactable(isInteractable), defaultPosX(x), defaultPosY(y)
-	{}
+	Sprite::Sprite(int x, int y, int w, int h, bool isInteractable) :rect{ x, y, w, h },interactable(isInteractable), defaultPosX(x), defaultPosY(y) {}
 
 	void Sprite::setWH(int w, int h) {
 		rect.w = w;
 		rect.h = h;
 	}
 
-	bool Sprite::collisionDetected(Sprite* other) 
-	{
+	// If rectangle based collission is detected between two sprites, loop through each pixel of the intersect rectangle
+	// and forward pixel position to function "collidableColor" in both Sprites.
+	bool Sprite::collisionDetected(Sprite* other) {
 		SDL_Rect intersect;
 		if (SDL_IntersectRect(&getRect(), &other->getRect(), &intersect)) {
 			for (int x = 0; x < intersect.w; x++) {
@@ -27,6 +27,7 @@ namespace planeGameEngine {
 		return false;
 	}
 
+	// check argument pixel position for color and returns true if color isn't fully transparent
 	bool Sprite::collidableColor(int intersectX, int intersectY) 
 	{
 		int x = intersectX - getX();
@@ -44,5 +45,4 @@ namespace planeGameEngine {
 		rect.x = x;
 		rect.y = y;
 	}
-	
 }

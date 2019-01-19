@@ -16,11 +16,12 @@ namespace planeGameEngine {
 		void tick();
 		void setActiveEvent(std::string nameOfEvent);
 		void addAnimation(std::string eventName, std::vector<std::string> paths);
-		void makeTextures(std::string& defaultSprite);
 		void setIdleAnimation(bool value) { idleAnimationActive = value; }
 
 	protected:
+		void makeTextures(std::string& defaultSprite);
 		AnimatedSprite(int x, int y, int w, int h, std::string& defaultImage);
+	
 	private:
 		unsigned intervalCounter;
 		int eventCounter;

@@ -6,13 +6,12 @@
 
 namespace planeGameEngine {
 
-	class Label : public Sprite
-	{
+	class Label : public Sprite {
 
 	public:
 		static Label* getInstance(int x, int y, const std::string& txt, SDL_Color col);
 		void setText(const std::string& txt);
-		std::string getText() const;
+		std::string getText() const { return text; }
 		void draw();
 		~Label();
 
@@ -26,6 +25,5 @@ namespace planeGameEngine {
 		SDL_Texture* texture = nullptr;
 		SDL_Color color;
 	};
-
 }
 #endif

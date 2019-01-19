@@ -1,19 +1,9 @@
 #include "ControllableSprite.h"
 
 namespace planeGameEngine {
-	ControllableSprite::~ControllableSprite()
-	{
-	}
-	ControllableSprite::ControllableSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string & imagePath, int collissionWeight, int hp) :Sprite(x, y, w, h, true), MovingSprite(x, y, w, h, moveDirection, speed, imagePath, collissionWeight, hp)
-	{
-	}
-	ControllableSprite::ControllableSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), MovingSprite(x, y, w, h, moveDirection, speed, collissionWeight, hp)
-	{
-	}
-	void ControllableSprite::determineMoveDirection()
-	{
+	ControllableSprite::ControllableSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), MovingSprite(x, y, w, h, moveDirection, speed, collissionWeight, hp) {}
+	void ControllableSprite::determineMoveDirection() {
 		if (alive) {
-
 			if (moveUp && moveRight && getRect().y > 0 && getRect().x < (sys.getXResolution() - getRect().w)) {
 				setDirection(MovingSprite::MOVEUPRIGHT);
 			}
@@ -43,21 +33,14 @@ namespace planeGameEngine {
 			}
 		}
 	}
-	ControllableSprite * ControllableSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string & imagePath, int colissionWeight, int hp)
-	{
-		return nullptr;
+	ControllableSprite * ControllableSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp) {
+		return new ControllableSprite(x, y, w, h, moveDirection, speed, colissionWeight, hp);
 	}
-	ControllableSprite * ControllableSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp)
-	{
-		return nullptr;
-	}
-	void ControllableSprite::tick()
-	{
+	void ControllableSprite::tick() {
 		determineMoveDirection();
 		MovingSprite::tick();
 	}
 	void ControllableSprite::implementBasicMovement(const SDL_Event& event) {
-
 		if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym)
 			{
@@ -91,18 +74,5 @@ namespace planeGameEngine {
 				break;
 			}
 		}
-
-	}
-	void ControllableSprite::mouseDown(const SDL_Event & event)
-	{
-	}
-	void ControllableSprite::mouseUp(const SDL_Event & event)
-	{
-	}
-	void ControllableSprite::keyDown(const SDL_Event & event)
-	{
-	}
-	void ControllableSprite::keyUp(const SDL_Event & event)
-	{
 	}
 }

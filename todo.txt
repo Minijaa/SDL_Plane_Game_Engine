@@ -1,4 +1,0 @@
-Todo:
-- Add another addAnimation(string, string) for spritesheets. 
-* Lägg till ERROR-CHECKS! Kolla Jozefs ppt slide
-* Lägg in grejjer i GameEngine.cpp i funktioner. t ex col detection?

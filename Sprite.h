@@ -5,22 +5,15 @@
 
 namespace planeGameEngine {
 
-	class Sprite
-	{
+	class Sprite {
 	private:
 		SDL_Rect rect;
 		SDL_Surface* surf = nullptr;
-		bool interactable;
-		bool collisionHandeled = false;
-		bool bounceActivated = false;
-		bool gravityActivated = false;
-		int refCount;
-		int defaultPosX;
-		int defaultPosY;
+		bool interactable, collisionHandeled, bounceActivated, gravityActivated;
+		int refCount, defaultPosX, defaultPosY;
 		double elasticity;
 
 	public:
-		//Inline function
 		SDL_Surface* getSurf() const { return surf; }
 		void setSurf(SDL_Surface* s) { surf = s; }
 		SDL_Rect& getRect() { return rect; }
@@ -44,7 +37,6 @@ namespace planeGameEngine {
 		void setXY(int x, int y);
 		virtual int getCollisionWeight() const { return 0; }
 		Sprite* makeTexture(std::string& imagepath) {}
-		//Subclasses must override this function
 		virtual void draw() = 0;
 
 		//Subclasses can override these functions
@@ -68,8 +60,6 @@ namespace planeGameEngine {
 	protected:
 		Sprite(int x, int y, int w, int h, bool interactable = false);
 		void setWH(int w, int h);
-
 	};
-
 }
 #endif

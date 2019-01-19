@@ -8,8 +8,7 @@
 
 namespace planeGameEngine {
 
-	class System
-	{
+	class System {
 	public:
 		System();
 		~System();
@@ -35,9 +34,6 @@ namespace planeGameEngine {
 		std::unordered_map<std::string, Mix_Music*> tunes;
 		std::unordered_map<std::string, Mix_Chunk*> sounds;
 	};
-
 	extern System sys;
-	
-
 } //ns
 #endif
