@@ -4,7 +4,8 @@
 
 namespace planeGameEngine {
 
-	//Path variables to image, sound and font files.
+	//Path variables to image, sound and font files. Data members are made public 
+	//in order for quick and easy access and editing.
 	class FilePaths {
 	public:
 		//IMAGES:
@@ -51,7 +52,6 @@ namespace planeGameEngine {
 		std::string f_BauhausFont = "Fonts/BAUHS93.TTF";
 		std::string f_GilsansFont = "Fonts/GILSANUB.TTF";
 	};
-
 	extern FilePaths path;
 }
 #endif // !IMAGEPATHS_H

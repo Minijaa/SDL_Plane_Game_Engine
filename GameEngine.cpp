@@ -34,6 +34,7 @@ namespace planeGameEngine {
 					running = false;
 					break;
 				case SDL_KEYDOWN:
+					//Check for activated shortcut command
 					for (ShortCommand* sc : shortCommands) {
 						sc->action(event);
 					}
@@ -107,6 +108,7 @@ namespace planeGameEngine {
 					}
 				}
 			}
+			//All sprites tick() function is called
 			if (!paused) {
 				s->tick();
 			}
@@ -145,6 +147,7 @@ namespace planeGameEngine {
 			s->draw();
 		}
 		SDL_RenderPresent(sys.getRenderer());
+		//Time is checked and possible delay is initiated
 		int delay = nextTick - SDL_GetTicks();
 		if (delay > 0) {
 			SDL_Delay(delay);

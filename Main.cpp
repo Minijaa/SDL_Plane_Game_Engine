@@ -201,7 +201,7 @@ public:
 			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
 			killCount++;
 			incrementScore(100);
-			if (killCount > 2) {
+			if (killCount > 4) {
 				killCount = 0;
 				game.setLevelChange(true, -1);
 				Mix_HaltMusic();
