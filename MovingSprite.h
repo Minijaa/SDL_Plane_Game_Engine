@@ -13,7 +13,7 @@ namespace planeGameEngine {
 	{
 	private:
 		int moveDir, width, height, healthPoints, weight;
-		double moveSpeedX, moveSpeedY, moveSpeed;
+		double moveSpeedX, moveSpeedY, moveSpeed, gravityPullSpeed;
 		bool hasImage;
 		SDL_Texture* spriteTexture;
 

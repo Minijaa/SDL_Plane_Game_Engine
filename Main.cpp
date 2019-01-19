@@ -20,7 +20,7 @@ const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 int killCount;
 int musicVolume = 0;
-int score;
+int score, bombDirectionCount;
 vector<Label*> highScores;
 Label* scoreLabel;
 Label* highScoresLabel;
@@ -72,7 +72,7 @@ struct PauseStruct {
 
 class Cloud : public MovingSprite {
 public:
-	Cloud(int x, int y, int w, int h, int speed, std::string& imagePath) : Sprite(x, y, w, h), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, speed, imagePath, 1, NULL){}
+	Cloud(int x, int y, int w, int h, int speed, std::string& imagePath) : Sprite(x, y, w, h), MovingSprite(x, y, w, h, MovingSprite::MOVELEFT, speed, imagePath, 1, NULL) {}
 	void tick() {
 		MovingSprite::tick();
 	}
@@ -127,22 +127,30 @@ public:
 		if (alive) {
 
 			if (first == false && bombCounter > 40) {
-				game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVEUPLEFT));
+				if (bombDirectionCount == 0) {
+					game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVEUPLEFT));
+					bombDirectionCount = 1;
+				}
+				else if (bombDirectionCount == 1) {
+					game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVEDOWNLEFT));
+					bombDirectionCount = 2;
+				}
+				else if (bombDirectionCount == 2) {
+					game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVELEFT));
+					bombDirectionCount = 0;
+				}
 				sys.playSfx(-1, "bulletSound", 0);
 				bombCounter = 0;
 			}
 			if (first && getRect().x < sys.getXResolution() - 300) {
 				setDirection(MovingSprite::MOVEUP);
 				first = false;
-
 			}
 			if (getRect().y < 0) {
 				setDirection(MovingSprite::MOVEDOWN);
-
 			}
 			else if (getRect().y > sys.getYResolution() - getRect().h) {
 				setDirection(MovingSprite::MOVEUP);
-
 			}
 			bombCounter++;
 		}

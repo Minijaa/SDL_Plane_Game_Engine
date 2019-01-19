@@ -28,7 +28,7 @@ namespace planeGameEngine {
 	private:
 		const int XRESOLUTION = 1280;
 		const int YRESOLUTION = 720;
-		const double GRAVITY = 0.15f;
+		const double GRAVITY = 0.35f;
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 		TTF_Font* font;

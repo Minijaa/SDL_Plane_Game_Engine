@@ -2,11 +2,57 @@
 #include <iostream>
 
 namespace planeGameEngine {
-	
+
 	void MovingSprite::bounce(Sprite* other)
 	{
-		moveSpeedX *= -1.0 *getElasticity();
-		moveSpeedY *= -1.0 *getElasticity();
+		SDL_Rect rect = getRect();
+		int centerX = rect.x + rect.w / 2;
+		int centerY = rect.y + rect.h / 2;
+
+		SDL_Rect oRect = other->getRect();
+		int oCenterX = oRect.x + oRect.w / 2;
+		int oCenterY = oRect.y + oRect.h / 2;
+
+		//Determine which side of rectangle was hit, then change moveDirection to opposite direction.
+		
+		if ((oCenterX < centerX) && ((oCenterY < (centerY + rect.h / 2))
+			&& (oCenterY > (centerY - rect.h / 2)))) {
+			//Left side hit!
+			moveDir = moveDirections::MOVERIGHT;
+		}
+		else if ((oCenterX > centerX) && ((oCenterY < (centerY + rect.h / 2))
+			&& (oCenterY > (centerY - rect.h / 2)))) {
+			//Right side hit!
+			moveDir = moveDirections::MOVELEFT;
+		}
+		else if ((oCenterY < centerY) && ((oCenterX < (centerX + rect.w / 2))
+			&& (oCenterX > (centerX - rect.w / 2)))) {
+			//Top side hit!
+			moveDir = moveDirections::MOVEDOWN;
+		}
+		else if ((oCenterY > centerY) && ((oCenterX < (centerX + rect.w / 2))
+			&& (oCenterX > (centerX - rect.w / 2)))) {
+			//Bottom side hit!
+			moveDir = moveDirections::MOVEUP;
+		}
+		else if ((oCenterY < centerY) && (oCenterX > centerX)) {
+			//Top right corner is hit!
+			moveDir = moveDirections::MOVEDOWNLEFT;
+		}
+		else if ((oCenterY < centerY) && (oCenterX < centerX)) {
+			//Top left corner is hit!
+			moveDir = moveDirections::MOVEDOWNRIGHT;
+		}
+		else if ((oCenterY > centerY) && (oCenterX < centerX)) {
+			//Bottom left corner is hit!
+			moveDir = moveDirections::MOVEUPRIGHT;
+		}
+		else {
+			//Bottom right corner is hit!
+			moveDir = moveDirections::MOVEUPLEFT;
+		}
+		moveSpeed *= getElasticity();
+
 	}
 	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
 	{
@@ -69,11 +115,8 @@ namespace planeGameEngine {
 				outOfBoundsAction(&getRect(), MOVELEFT);
 			}
 			else {
-				setXY(getRect().x - moveSpeed, getRect().y);
-				
-				//include gravity
-				setXY(getRect().x, getRect().y + affectedByGravity()*(moveSpeed *gravity + moveSpeedY * gravity));
-				moveSpeedY += gravity * 1.0;
+				setXY(getRect().x - moveSpeed, getRect().y + (gravityPullSpeed * gravity));
+				gravityPullSpeed += gravity * 1.0;
 			}
 			break;
 		case MOVERIGHT:
@@ -81,11 +124,8 @@ namespace planeGameEngine {
 				outOfBoundsAction(&getRect(), MOVERIGHT);
 			}
 			else {
-				setXY(getRect().x + moveSpeedX, getRect().y );
-				
-				//include gravity
-				setXY(getRect().x, getRect().y + affectedByGravity()*(moveSpeed + moveSpeedY * gravity));
-				moveSpeedY += gravity * 1.0;
+				setXY(getRect().x + moveSpeedX, getRect().y + (gravityPullSpeed * gravity));
+				gravityPullSpeed += gravity * 1.0;
 			}
 			break;
 		case MOVEUP:
@@ -93,11 +133,8 @@ namespace planeGameEngine {
 				outOfBoundsAction(&getRect(), MOVEUP);
 			}
 			else {
-				setXY(getRect().x, getRect().y - moveSpeed);
-				
-				//include gravity
-				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY -= gravity * 1.0;
+				setXY(getRect().x, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
+				gravityPullSpeed += gravity * 1.0;
 			}
 			break;
 		case MOVEDOWN:
@@ -105,11 +142,8 @@ namespace planeGameEngine {
 				outOfBoundsAction(&getRect(), MOVEDOWN);
 			}
 			else {
-				setXY(getRect().x, getRect().y + moveSpeed);
-				
-				//include gravity
-				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY += gravity * 1.0;
+				setXY(getRect().x, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
+				gravityPullSpeed += gravity * 1.0;
 			}
 			break;
 		case MOVEUPLEFT:
@@ -118,11 +152,8 @@ namespace planeGameEngine {
 
 			}
 			else {
-				setXY(getRect().x - moveSpeed, getRect().y - moveSpeedY);
-				
-				//include gravity
-				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY -= gravity * 1.0;
+				setXY(getRect().x - moveSpeed, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
+				gravityPullSpeed += gravity * 1.0;
 			}
 			break;
 		case MOVEUPRIGHT:
@@ -130,11 +161,8 @@ namespace planeGameEngine {
 				outOfBoundsAction(&getRect(), MOVELEFT);
 			}
 			else {
-				setXY(getRect().x + moveSpeed, getRect().y - moveSpeed);
-				
-				//include gravity
-				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY -= gravity * 1.0;
+				setXY(getRect().x + moveSpeed, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
+				gravityPullSpeed += gravity * 1.0;
 			}
 			break;
 		case MOVEDOWNLEFT:
@@ -142,11 +170,8 @@ namespace planeGameEngine {
 				outOfBoundsAction(&getRect(), MOVELEFT);
 			}
 			else {
-				setXY(getRect().x - moveSpeed, getRect().y + moveSpeed);
-				
-				//include gravity
-				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY += gravity * 1.0;
+				setXY(getRect().x - moveSpeed, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
+				gravityPullSpeed += gravity * 1.0;
 			}
 
 			break;
@@ -155,21 +180,15 @@ namespace planeGameEngine {
 				outOfBoundsAction(&getRect(), MOVELEFT);
 			}
 			else {
-				setXY(getRect().x + moveSpeed, getRect().y + moveSpeed);
-				
-				//include gravity
-				setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-				moveSpeedY += gravity * 1.0;
+				setXY(getRect().x + moveSpeed, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
+				gravityPullSpeed += gravity * 1.0;
 			}
 			break;
 		case MOVESTOP:
-			setXY(getRect().x, getRect().y);
-			
-			//include gravity
-			setXY(getRect().x, getRect().y + moveSpeedY * gravity);
-			moveSpeedY += gravity * 1.0;
+			setXY(getRect().x, getRect().y + (gravityPullSpeed * gravity));
+			gravityPullSpeed += gravity * 1.0;
 			break;
-		}	
+		}
 	}
 
 

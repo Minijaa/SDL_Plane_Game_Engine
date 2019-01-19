@@ -30,8 +30,8 @@ namespace planeGameEngine {
 		void decrementRefCount() { refCount--; }
 		bool collisionDetected(Sprite* other);
 		bool collidableColor(int x, int y);
-		int& getX() { return rect.x; }
-		int& getY() { return rect.y; }
+		int getX() { return rect.x; }
+		int getY() { return rect.y; }
 		bool affectedByGravity() { return gravityActivated; }
 		void setAffectedByGravity(bool value) { gravityActivated = value; }
 		bool bounceIsActivated() const { return bounceActivated; }
