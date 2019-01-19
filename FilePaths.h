@@ -41,6 +41,7 @@ namespace planeGameEngine {
 		std::string sfx_BulletSound = "Sfx/shot.wav";
 		std::string sfx_BoomSound_1 = "Sfx/boom.wav";
 		std::string sfx_BoomSound_2 = "Sfx/boom2.wav";
+		std::string sfx_Plop = "Sfx/plop.wav";
 
 		//Music [m]
 		std::string m_Level1_Music = "Sfx/L1Music.mp3";

@@ -3,8 +3,7 @@
 
 namespace planeGameEngine {
 
-	void MovingSprite::bounce(Sprite* other)
-	{
+	void MovingSprite::bounce(Sprite* other) {
 		SDL_Rect rect = getRect();
 		int centerX = rect.x + rect.w / 2;
 		int centerY = rect.y + rect.h / 2;
@@ -14,7 +13,7 @@ namespace planeGameEngine {
 		int oCenterY = oRect.y + oRect.h / 2;
 
 		//Determine which side of rectangle was hit, then change moveDirection to opposite direction.
-		
+
 		if ((oCenterX < centerX) && ((oCenterY < (centerY + rect.h / 2))
 			&& (oCenterY > (centerY - rect.h / 2)))) {
 			//Left side hit!
@@ -54,22 +53,15 @@ namespace planeGameEngine {
 		moveSpeed *= getElasticity();
 
 	}
-	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
-	{
-		moveSpeedX = moveSpeed;
-		moveSpeedY = moveSpeed;
+	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp) {
 		makeTexture(imagePath);
 		hasImage = true;
 	}
 
-	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp)
-	{
-		moveSpeedX = moveSpeed;
-		moveSpeedY = moveSpeed;
+	MovingSprite::MovingSprite(int x, int y, int w, int h, moveDirections moveDirection, int speed, int collissionWeight, int hp) : Sprite(x, y, w, h, true), moveDir(moveDirection), moveSpeed(speed), weight(collissionWeight), healthPoints(hp) {
 		hasImage = false;
 	}
-	MovingSprite* MovingSprite::makeTexture(std::string& imagePath)
-	{
+	MovingSprite* MovingSprite::makeTexture(std::string& imagePath) {
 		SDL_Surface* surf = IMG_Load(imagePath.c_str());
 		spriteTexture = SDL_CreateTextureFromSurface(sys.getRenderer(), surf);
 		setSurf(surf);
@@ -83,13 +75,11 @@ namespace planeGameEngine {
 		return this;
 	}
 
-	MovingSprite* MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight, int hp)
-	{
+	MovingSprite* MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, std::string& imagePath, int colissionWeight, int hp) {
 		return new MovingSprite(x, y, w, h, moveDirection, speed, imagePath, colissionWeight, hp);
 	}
 
-	MovingSprite* MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp)
-	{
+	MovingSprite* MovingSprite::getInstance(int x, int y, int w, int h, moveDirections moveDirection, int speed, int colissionWeight, int hp) {
 		return new MovingSprite(x, y, w, h, moveDirection, speed, colissionWeight, hp);
 	}
 
@@ -109,103 +99,52 @@ namespace planeGameEngine {
 			getRect().y == sys.getYResolution() - getRect().h) {
 			hitBoundryAction(&getRect(), moveDir);
 		}
+		//Check for out of bounds
+		if (getRect().x > sys.getXResolution() ||
+			getRect().x < 0 - getRect().w ||
+			getRect().y < 0 - getRect().h ||
+			getRect().y > sys.getYResolution()) {
+			outOfBoundsAction(&getRect());
+		}
+		//Move according to move direction. If gravity is enabled gravity affects move direction
 		switch (moveDir) {
 		case MOVELEFT:
-			if (getRect().x < 0 - getRect().w) {
-				outOfBoundsAction(&getRect(), MOVELEFT);
-			}
-			else {
-				setXY(getRect().x - moveSpeed, getRect().y + (gravityPullSpeed * gravity));
-				gravityPullSpeed += gravity * 1.0;
-			}
+			setXY(getRect().x - moveSpeed, getRect().y + (gravityPullSpeed * gravity));
 			break;
 		case MOVERIGHT:
-			if (getRect().x > sys.getXResolution()) {
-				outOfBoundsAction(&getRect(), MOVERIGHT);
-			}
-			else {
-				setXY(getRect().x + moveSpeedX, getRect().y + (gravityPullSpeed * gravity));
-				gravityPullSpeed += gravity * 1.0;
-			}
+			setXY(getRect().x + moveSpeed, getRect().y + (gravityPullSpeed * gravity));
 			break;
 		case MOVEUP:
-			if (getRect().y < 0 - getRect().h) {
-				outOfBoundsAction(&getRect(), MOVEUP);
-			}
-			else {
-				setXY(getRect().x, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
-				gravityPullSpeed += gravity * 1.0;
-			}
+			setXY(getRect().x, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
 			break;
 		case MOVEDOWN:
-			if (getRect().y > sys.getYResolution()) {
-				outOfBoundsAction(&getRect(), MOVEDOWN);
-			}
-			else {
-				setXY(getRect().x, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
-				gravityPullSpeed += gravity * 1.0;
-			}
+			setXY(getRect().x, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
 			break;
 		case MOVEUPLEFT:
-			if (getRect().x < 0 - getRect().w) {
-				outOfBoundsAction(&getRect(), MOVELEFT);
-
-			}
-			else {
-				setXY(getRect().x - moveSpeed, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
-				gravityPullSpeed += gravity * 1.0;
-			}
+			setXY(getRect().x - moveSpeed, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
 			break;
 		case MOVEUPRIGHT:
-			if (getRect().x < 0 - getRect().w) {
-				outOfBoundsAction(&getRect(), MOVELEFT);
-			}
-			else {
-				setXY(getRect().x + moveSpeed, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
-				gravityPullSpeed += gravity * 1.0;
-			}
+			setXY(getRect().x + moveSpeed, getRect().y - moveSpeed + (gravityPullSpeed * gravity));
 			break;
 		case MOVEDOWNLEFT:
-			if (getRect().x < 0 - getRect().w) {
-				outOfBoundsAction(&getRect(), MOVELEFT);
-			}
-			else {
-				setXY(getRect().x - moveSpeed, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
-				gravityPullSpeed += gravity * 1.0;
-			}
-
+			setXY(getRect().x - moveSpeed, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
 			break;
 		case MOVEDOWNRIGHT:
-			if (getRect().y > sys.getYResolution()) {
-				outOfBoundsAction(&getRect(), MOVELEFT);
-			}
-			else {
-				setXY(getRect().x + moveSpeed, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
-				gravityPullSpeed += gravity * 1.0;
-			}
+			setXY(getRect().x + moveSpeed, getRect().y + moveSpeed + (gravityPullSpeed * gravity));
 			break;
 		case MOVESTOP:
 			setXY(getRect().x, getRect().y + (gravityPullSpeed * gravity));
-			gravityPullSpeed += gravity * 1.0;
 			break;
 		}
+		gravityPullSpeed += gravity * 1.0;
 	}
 
-
-	void MovingSprite::setDirection(moveDirections moveDirection)
-	{
-		moveDir = moveDirection;
-	}
-
-	void MovingSprite::tick()
-	{
-		move();
-	}
+	void MovingSprite::setDirection(moveDirections moveDirection) { moveDir = moveDirection; }
+	void MovingSprite::tick() { move(); }
 	void MovingSprite::draw() {
 		SDL_RenderCopy(sys.getRenderer(), spriteTexture, NULL, &getRect());
 	}
-	MovingSprite::~MovingSprite()
-	{
+	MovingSprite::~MovingSprite() {
 		//std::cout << "Moving Weight: " << weight << " RefCount: " << getRefCount() << std::endl;
 		if (spriteTexture) {
 			SDL_DestroyTexture(spriteTexture);
@@ -213,6 +152,5 @@ namespace planeGameEngine {
 		if (hasImage) {
 			SDL_FreeSurface(getSurf());
 		}
-
 	}
 }

@@ -17,7 +17,7 @@ namespace planeGameEngine {
 		TTF_Font* getFont() const;
 		int getXResolution() const { return XRESOLUTION; }
 		int getYResolution() const { return YRESOLUTION; }
-		int generateRandomNumber(int maxRandomNr, int minRandomNr);
+		int generateRandomNumber(int maxRandomNr, int minRandomNr) const;
 		void addSfx(std::string name, std::string& path);
 		int playSfx(int channel, std::string name, int loops);
 		void addMusic(std::string name, std::string& path);

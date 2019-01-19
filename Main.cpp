@@ -19,7 +19,7 @@ void setUp();
 const int minOutOfBoundsValue = 200;
 const int maxOutOfBoundsValue = 600;
 int killCount;
-int musicVolume = 0;
+int musicVolume = 20;
 int score, bombDirectionCount;
 vector<Label*> highScores;
 Label* scoreLabel;
@@ -49,7 +49,12 @@ void restartGame() {
 	playerPointer->setMoveUp(false);
 	playerPointer->setMoveLeft(false);
 	playerPointer->setMoveRight(false);
+	if (AnimatedSprite* p = dynamic_cast<AnimatedSprite*>(playerPointer)) {
+		p->setIdleAnimation(true);
+	}
 	game.setLevelChange(true, 0);
+	playerPointer->setAffectedByGravity(false);
+	playerPointer->setGravitySpeed(0.0);
 	Mix_HaltMusic();
 	sys.playMusic("music", -1, 0);
 	Mix_VolumeMusic(musicVolume);
@@ -76,7 +81,7 @@ public:
 	void tick() {
 		MovingSprite::tick();
 	}
-	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+	void outOfBoundsAction(SDL_Rect* rect) {
 		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), rect->y);
 		int size = sys.generateRandomNumber(400, 256);
 		setWH(size, size);
@@ -86,7 +91,7 @@ public:
 
 class Bomb : public MovingSprite {
 public:
-	Bomb(int x, int y, GameEngine& engine, MovingSprite::moveDirections move) : Sprite(x, y, 0, 0, true), MovingSprite(x, y, 0, 0, move, sys.generateRandomNumber(7, 2), path.fx_Bomb, 4, 0)
+	Bomb(int x, int y, GameEngine& engine, MovingSprite::moveDirections move) : Sprite(x, y, 0, 0, true), MovingSprite(x, y, 0, 0, move, sys.generateRandomNumber(7, 3), path.fx_Bomb, 4, 0)
 	{
 		setAffectedByGravity(true);
 	}
@@ -98,7 +103,7 @@ public:
 		}
 	}
 
-	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+	void outOfBoundsAction(SDL_Rect* rect) {
 		if (rect->y > sys.getYResolution()) {
 			game.removeSprite(this);
 		}
@@ -139,7 +144,7 @@ public:
 					game.addSprite(new Bomb(getRect().x + 80, getRect().y - 50, game, MOVELEFT));
 					bombDirectionCount = 0;
 				}
-				sys.playSfx(-1, "bulletSound", 0);
+				sys.playSfx(-1, "plopSound", 0);
 				bombCounter = 0;
 			}
 			if (first && getRect().x < sys.getXResolution() - 300) {
@@ -196,7 +201,7 @@ public:
 			Mix_Volume(sys.playSfx(-1, "boomSound", 0), 40);
 			killCount++;
 			incrementScore(100);
-			if (killCount > 0) {
+			if (killCount > 2) {
 				killCount = 0;
 				game.setLevelChange(true, -1);
 				Mix_HaltMusic();
@@ -207,13 +212,15 @@ public:
 		}
 	}
 
-	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
-		respawnEnemy();
+	void outOfBoundsAction(SDL_Rect* rect) {
+		if (rect->x < 0 + getRect().w) {
+			respawnEnemy();
+		}
 	}
 private:
 	void respawnEnemy() {
 		setXY(sys.generateRandomNumber(sys.getXResolution() + minOutOfBoundsValue, sys.getXResolution() + maxOutOfBoundsValue), getDefaultPosY()); //this->getRect().y
-		setMoveSpeed(sys.generateRandomNumber(8, 3));
+		setMoveSpeed(sys.generateRandomNumber(9, 4));
 		this->setHp(defaultHp);
 	}
 	int defaultHp;
@@ -231,7 +238,7 @@ public:
 			highScores.push_back(Label::getInstance(200, 150, getText() + " " + to_string(score), { 255,255,255 }));
 		}
 
-		for (int i = 0; i < highScores.size(); i++) {
+		for (unsigned i = 0; i < highScores.size(); i++) {
 			level_Highscores->addSprite(highScores[i]);
 		}
 		game.setLevelChange(true, -1);
@@ -246,7 +253,7 @@ public:
 	}
 	void bounce(Sprite* other) {
 		if (other->getCollisionWeight() == 4) {
-			
+
 			MovingSprite::bounce(other);
 			activateBounce(false);
 			setAffectedByGravity(true);
@@ -262,7 +269,7 @@ public:
 	}
 	void hitBoundryAction(SDL_Rect* rect) {	}
 
-	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+	void outOfBoundsAction(SDL_Rect* rect) {
 		game.removeSprite(this);
 	}
 };
@@ -292,6 +299,8 @@ public:
 			setAlive(true);
 			makeTextures(path.p_Plane_idle_1);
 			setIdleAnimation(true);
+			setAffectedByGravity(false);
+			setGravitySpeed(0.0);
 			setXY(100, 100);
 			setMoveLeft(false);
 			setMoveUp(false);
@@ -321,13 +330,13 @@ public:
 		if (isAlive() && otherSprite->getCollisionWeight() != 3 && otherSprite->getCollisionWeight() != 1) {
 			Mix_Volume(sys.playSfx(-1, "boomSound2", 0), 50);
 			setAlive(false);
-			setDirection(MOVEDOWNRIGHT);
+			setAffectedByGravity(true);
 			makeTextures(path.p_Plane_dead);
 			setIdleAnimation(false);
 		}
 		//Play crash-sound
 	}
-	void outOfBoundsAction(SDL_Rect* rect, moveDirections moveDirection) {
+	void outOfBoundsAction(SDL_Rect* rect) {
 		//Game over, go to end-screen
 		makeTextures(path.p_Plane_idle_1);
 		game.setLevelChange(true, 2);
@@ -401,6 +410,7 @@ void setUp() {
 	sys.addSfx("bulletSound", path.sfx_BulletSound);
 	sys.addSfx("boomSound", path.sfx_BoomSound_1);
 	sys.addSfx("boomSound2", path.sfx_BoomSound_2);
+	sys.addSfx("plopSound", path.sfx_Plop);
 	sys.playMusic("music", -1, 500);
 	Mix_VolumeMusic(musicVolume);
 	Mix_Volume(sys.audioChannel1, 20);

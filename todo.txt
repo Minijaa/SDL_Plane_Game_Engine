@@ -2,14 +2,3 @@ Todo:
 - Add another addAnimation(string, string) for spritesheets. 
 * Lägg till ERROR-CHECKS! Kolla Jozefs ppt slide
 * Lägg in grejjer i GameEngine.cpp i funktioner. t ex col detection?
-
-Betygskriterier:
-A: 
-* kollisionsdetektering ska göras på pixelnivå, med hänsyn tagen till genomskinliga pixlar
-* spelmotorn ska implementera viss funktionalitet hos en fysikmotor, nämligen att rörliga Sprites kan
-	påverkas av en gravitation samt ska kunna studsa mot varandra vid kollision osv.
-	Sprites ska ha en viss elasticitet som påverkar deras studs-beteende. 
-
-Frågor:
-* Svar JA! Räcker det att hålla en Surface per sprite och göra kollisionsdetektering på pixelnivå utifrån den? Eller behöver man spara surfaces
-	för alla animations-texturer. (om man inte använder sprite sheets alltså)
