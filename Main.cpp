@@ -246,6 +246,7 @@ public:
 	}
 	void bounce(Sprite* other) {
 		if (other->getCollisionWeight() == 4) {
+			
 			MovingSprite::bounce(other);
 			activateBounce(false);
 			setAffectedByGravity(true);
@@ -254,7 +255,7 @@ public:
 	void collisionAction(Sprite* otherSprite, bool inferiorWeight) {
 
 		//Ignore collision with plane, remove bullet if it connects with inferior weighted sprites.
-		if (otherSprite->getCollisionWeight() != 1 && otherSprite->getCollisionWeight() != 4) {
+		if (otherSprite->getCollisionWeight() != 1 && otherSprite->getCollisionWeight() != 4 && otherSprite->getCollisionWeight() != 3) {
 			game.removeSprite(this);
 		}
 		//Play hit-sound
